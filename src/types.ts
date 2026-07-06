@@ -12,6 +12,8 @@ export interface Entry {
   date?: string
   /** collection id the entry lives under, for collection entries */
   collectionId?: string
+  /** id of the entry this one was migrated from, forming a migration chain */
+  migratedFromId?: string
   createdAt: number
 }
 

@@ -70,6 +70,7 @@ export function useJournal() {
         priority: source.priority,
         date: opts?.toCollectionId ? undefined : opts?.toDate ?? todayISO(),
         collectionId: opts?.toCollectionId,
+        migratedFromId: source.id,
         createdAt: Date.now(),
       }
       return prev.map((e) => (e.id === id ? { ...e, status: 'migrated' as TaskStatus } : e)).concat(copy)

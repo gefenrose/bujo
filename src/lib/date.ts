@@ -42,6 +42,13 @@ export function formatMonthHeading(iso: string): string {
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`
 }
 
+export function formatShortDate(iso: string): string {
+  const d = fromISODate(iso)
+  return `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`
+}
+
+export const WEEKDAY_LABELS = WEEKDAYS_SHORT
+
 export function weekdayShort(iso: string): string {
   return WEEKDAYS_SHORT[fromISODate(iso).getDay()]
 }

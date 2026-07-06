@@ -5,13 +5,15 @@ import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
 import { MonthlyLog } from './components/MonthlyLog'
 import { Collections } from './components/Collections'
+import { Analytics } from './components/Analytics'
 
-type View = 'daily' | 'monthly' | 'collections'
+type View = 'daily' | 'monthly' | 'collections' | 'analytics'
 
 const NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'Daily' },
   { view: 'monthly', label: 'Monthly' },
   { view: 'collections', label: 'Collections' },
+  { view: 'analytics', label: 'Analytics' },
 ]
 
 function App() {
@@ -70,6 +72,7 @@ function App() {
           {view === 'collections' && (
             <Collections journal={journal} selectedId={collectionId} onSelect={setCollectionId} />
           )}
+          {view === 'analytics' && <Analytics journal={journal} />}
         </main>
 
         <footer className="border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30">
