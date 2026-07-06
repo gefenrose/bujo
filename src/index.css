@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-paper: #faf8f4;
+  --color-paperdark: #1b1a17;
+  --color-ink: #2b2a27;
+  --color-inkdark: #e9e4d9;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-paper);
+}
+
+html.dark body {
+  background-color: var(--color-paperdark);
+}
