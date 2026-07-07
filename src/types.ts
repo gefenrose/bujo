@@ -28,6 +28,8 @@ export interface Entry {
   subtasks?: SubTask[]
   /** freeform labels, normalized lowercase/trimmed, cross-cutting across dates and collections */
   tags?: string[]
+  /** linked Google Calendar event id, for two-way calendar sync (event entries only) */
+  googleEventId?: string
   createdAt: number
 }
 

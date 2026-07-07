@@ -65,7 +65,14 @@ export function useJournal() {
   }, [undoActions, dismissUndo])
 
   const addEntry = useCallback(
-    (input: { text: string; type: EntryType; date?: string; collectionId?: string; time?: string }) => {
+    (input: {
+      text: string
+      type: EntryType
+      date?: string
+      collectionId?: string
+      time?: string
+      googleEventId?: string
+    }) => {
       const text = input.text.trim()
       if (!text) return
       setEntries((prev) => {
@@ -79,6 +86,7 @@ export function useJournal() {
           date: input.date,
           collectionId: input.collectionId,
           time: input.time,
+          googleEventId: input.googleEventId,
           order: nextOrder(scope),
           createdAt: Date.now(),
         }

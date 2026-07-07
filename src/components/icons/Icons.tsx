@@ -231,6 +231,24 @@ export function RepeatIcon({ className }: IconProps) {
   )
 }
 
+export function CalendarIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="3.5" y="4.5" width="13" height="12" rx="1.5" />
+      <path d="M3.5 8.5h13M6.5 3v3M13.5 3v3" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

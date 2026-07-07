@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useJournal } from './hooks/useJournal'
 import { useTheme } from './hooks/useTheme'
 import { useReminders } from './hooks/useReminders'
+import { useGoogleCalendar } from './hooks/useGoogleCalendar'
 import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
@@ -13,7 +14,8 @@ import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
-import { BellIcon, ChartIcon, InboxIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
+import { GoogleCalendarPanel } from './components/GoogleCalendarPanel'
+import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
 type View = 'daily' | 'weekly' | 'monthly' | 'inbox' | 'collections' | 'habits' | 'analytics'
 
@@ -27,6 +29,7 @@ function App() {
   const journal = useJournal()
   const { theme, toggle } = useTheme()
   const reminders = useReminders(journal)
+  const googleCalendar = useGoogleCalendar(journal)
 
   const [view, setView] = useState<View>('daily')
   const [date, setDate] = useState(todayISO())
@@ -34,6 +37,7 @@ function App() {
   const [collectionId, setCollectionId] = useState<string | null>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [googlePanelOpen, setGooglePanelOpen] = useState(false)
 
   const goToDate = (d: string) => {
     setDate(d)
@@ -70,6 +74,17 @@ function App() {
               </button>
               <button onClick={() => setView('inbox')} title="תיבת קלט" className={iconButton(view === 'inbox')}>
                 <InboxIcon className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setGooglePanelOpen(true)}
+                title="Google Calendar"
+                className={
+                  googleCalendar.status === 'connected'
+                    ? 'flex h-7 w-7 items-center justify-center rounded-full text-amber-600 dark:text-amber-500'
+                    : iconButton(false)
+                }
+              >
+                <CalendarIcon className="h-4 w-4" />
               </button>
               <button
                 onClick={() => {
@@ -180,6 +195,10 @@ function App() {
           onSelectDate={goToDate}
           onSelectCollection={goToCollection}
         />
+      )}
+
+      {googlePanelOpen && (
+        <GoogleCalendarPanel google={googleCalendar} onClose={() => setGooglePanelOpen(false)} />
       )}
     </div>
   )
