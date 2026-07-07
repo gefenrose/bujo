@@ -1,5 +1,6 @@
 import type { Journal } from '../hooks/useJournal'
-import { addMonths, daysInMonth, formatMonthHeading, isToday, weekdayShort } from '../lib/date'
+import { addMonths, daysInMonth, formatMonthHeading, formatTime12h, isToday, weekdayShort } from '../lib/date'
+import { sortByOrder } from '../lib/entries'
 import { moodLevel, moodValue } from '../lib/mood'
 import { Bullet } from './Bullet'
 import { MoodFaceIcon } from './icons/MoodFaceIcon'
@@ -32,9 +33,7 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
 
       <div className="flex flex-col">
         {days.map((date) => {
-          const entries = journal.entries
-            .filter((e) => e.date === date)
-            .sort((a, b) => a.createdAt - b.createdAt)
+          const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
           const day = Number(date.slice(-2))
           const mood = moodLevel(moodValue(journal.moodLogs, date))
 
@@ -71,6 +70,11 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
                             : 'text-ink/80 dark:text-inkdark/80'
                         }`}
                       >
+                        {entry.time && (
+                          <span className="mr-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                            {formatTime12h(entry.time)}
+                          </span>
+                        )}
                         {entry.text}
                       </span>
                     </span>

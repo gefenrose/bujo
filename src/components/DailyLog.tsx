@@ -1,7 +1,7 @@
 import type { Journal } from '../hooks/useJournal'
 import { addDays, formatDayHeading, isToday, todayISO } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
-import { habitValue } from '../lib/habits'
+import { habitValue, isHabitScheduledOn } from '../lib/habits'
 import { moodValue } from '../lib/mood'
 import { EntryList } from './EntryList'
 import { HabitStripChip } from './habits/HabitStripChip'
@@ -15,6 +15,7 @@ interface DailyLogProps {
 
 export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
   const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
+  const scheduledHabits = journal.habits.filter((h) => isHabitScheduledOn(h, date))
 
   return (
     <div>
@@ -39,9 +40,9 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
 
       <MoodPicker value={moodValue(journal.moodLogs, date)} onChange={(v) => journal.setMood(date, v)} />
 
-      {journal.habits.length > 0 && (
+      {scheduledHabits.length > 0 && (
         <div className="mb-6 flex flex-wrap gap-2">
-          {journal.habits.map((habit) => (
+          {scheduledHabits.map((habit) => (
             <HabitStripChip
               key={habit.id}
               habit={habit}
@@ -58,7 +59,7 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
         journal={journal}
         entries={entries}
         onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: addDays(date, 1) })}
-        onAdd={(text, type) => journal.addEntry({ text, type, date })}
+        onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
         emptyMessage="Nothing logged yet — start writing above."
       />
     </div>

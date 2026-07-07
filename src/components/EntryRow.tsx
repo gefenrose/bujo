@@ -2,13 +2,15 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
+import { formatTime12h } from '../lib/date'
 import { Bullet } from './Bullet'
-import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon } from './icons/Icons'
+import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon, ClockIcon } from './icons/Icons'
 
 interface EntryRowProps {
   entry: Entry
   onToggle: () => void
   onEdit: (text: string) => void
+  onEditTime: (time: string | undefined) => void
   onDelete: () => void
   onMigrate: () => void
   onTogglePriority: () => void
@@ -28,6 +30,7 @@ export function EntryRow({
   entry,
   onToggle,
   onEdit,
+  onEditTime,
   onDelete,
   onMigrate,
   onTogglePriority,
@@ -36,6 +39,7 @@ export function EntryRow({
 }: EntryRowProps) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(entry.text)
+  const [timeDraft, setTimeDraft] = useState(entry.time ?? '')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [dragX, setDragX] = useState(0)
@@ -46,11 +50,18 @@ export function EntryRow({
     if (editing) inputRef.current?.select()
   }, [editing])
 
+  const startEditing = () => {
+    setDraft(entry.text)
+    setTimeDraft(entry.time ?? '')
+    setEditing(true)
+  }
+
   const commit = () => {
     setEditing(false)
     const trimmed = draft.trim()
     if (trimmed && trimmed !== entry.text) onEdit(trimmed)
     else setDraft(entry.text)
+    if (timeDraft !== (entry.time ?? '')) onEditTime(timeDraft || undefined)
   }
 
   const struck = entry.status === 'done' || entry.status === 'cancelled'
@@ -142,31 +153,51 @@ export function EntryRow({
         <Bullet entry={entry} onClick={onToggle} />
 
         {editing ? (
-          <input
-            ref={inputRef}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={commit}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commit()
-              if (e.key === 'Escape') {
-                setDraft(entry.text)
-                setEditing(false)
-              }
+          <div
+            className="flex min-w-0 flex-1 items-center gap-2"
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) commit()
             }}
-            className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none dark:text-inkdark"
-          />
-        ) : (
-          <p
-            onClick={() => {
-              setDraft(entry.text)
-              setEditing(true)
-            }}
-            className={`min-w-0 flex-1 cursor-text py-0.5 text-[0.95rem] leading-snug ${
-              struck ? 'line-through decoration-1' : ''
-            } ${dimmed ? 'text-ink/40 dark:text-inkdark/40' : 'text-ink dark:text-inkdark'}`}
           >
-            {entry.text}
+            <input
+              ref={inputRef}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commit()
+                if (e.key === 'Escape') {
+                  setDraft(entry.text)
+                  setTimeDraft(entry.time ?? '')
+                  setEditing(false)
+                }
+              }}
+              className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none dark:text-inkdark"
+            />
+            <input
+              type="time"
+              value={timeDraft}
+              onChange={(e) => setTimeDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commit()
+              }}
+              className="shrink-0 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+            />
+          </div>
+        ) : (
+          <p onClick={startEditing} className="flex min-w-0 flex-1 cursor-text items-baseline gap-2 py-0.5">
+            {entry.time && (
+              <span className="flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                <ClockIcon className="h-3 w-3" />
+                {formatTime12h(entry.time)}
+              </span>
+            )}
+            <span
+              className={`min-w-0 text-[0.95rem] leading-snug ${struck ? 'line-through decoration-1' : ''} ${
+                dimmed ? 'text-ink/40 dark:text-inkdark/40' : 'text-ink dark:text-inkdark'
+              }`}
+            >
+              {entry.text}
+            </span>
           </p>
         )}
 

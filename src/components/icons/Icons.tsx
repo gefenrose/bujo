@@ -60,3 +60,39 @@ export function CloseIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+export function ClockIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="10" cy="10" r="7.5" />
+      <path d="M10 5.75V10l3 2" />
+    </svg>
+  )
+}
+
+export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill={filled ? 'currentColor' : 'none'}
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M5 8a5 5 0 0 1 10 0c0 3.5 1.2 4.7 1.2 4.7H3.8S5 11.5 5 8Z" />
+      <path d="M8.2 15.5a1.9 1.9 0 0 0 3.6 0" />
+    </svg>
+  )
+}

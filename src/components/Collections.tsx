@@ -89,7 +89,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
             journal={journal}
             entries={entries}
             onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: todayISO() })}
-            onAdd={(text, type) => journal.addEntry({ text, type, collectionId: selected.id })}
+            onAdd={(text, type, time) => journal.addEntry({ text, type, collectionId: selected.id, time })}
             emptyMessage="No entries yet — add one above."
           />
         </>

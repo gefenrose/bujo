@@ -57,6 +57,17 @@ export function isToday(iso: string): boolean {
   return iso === todayISO()
 }
 
+/** Formats a "HH:MM" 24h time string as "h:MM AM/PM". Returns the input unchanged if malformed. */
+export function formatTime12h(time: string): string {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(time)
+  if (!match) return time
+  const hour24 = Number(match[1])
+  const minute = match[2]
+  const period = hour24 >= 12 ? 'PM' : 'AM'
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12
+  return `${hour12}:${minute} ${period}`
+}
+
 export function daysInMonth(iso: string): string[] {
   const d = fromISODate(iso)
   const year = d.getFullYear()

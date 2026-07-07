@@ -18,7 +18,7 @@ interface EntryListProps {
   journal: Journal
   entries: Entry[]
   onMigrate: (entry: Entry) => void
-  onAdd: (text: string, type: EntryType) => void
+  onAdd: (text: string, type: EntryType, time?: string) => void
   emptyMessage: string
 }
 
@@ -47,6 +47,7 @@ export function EntryList({ journal, entries, onMigrate, onAdd, emptyMessage }: 
               entry={entry}
               onToggle={() => journal.cycleStatus(entry.id)}
               onEdit={(text) => journal.updateEntry(entry.id, { text })}
+              onEditTime={(time) => journal.updateEntry(entry.id, { time })}
               onDelete={() => journal.deleteEntry(entry.id)}
               onMigrate={() => onMigrate(entry)}
               onTogglePriority={() => journal.togglePriority(entry.id)}

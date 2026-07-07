@@ -1,8 +1,9 @@
 import { useState, type KeyboardEvent } from 'react'
 import type { EntryType } from '../types'
+import { ClockIcon, CloseIcon } from './icons/Icons'
 
 interface EntryInputProps {
-  onSubmit: (text: string, type: EntryType) => void
+  onSubmit: (text: string, type: EntryType, time?: string) => void
   placeholder?: string
 }
 
@@ -15,12 +16,16 @@ const TYPES: { type: EntryType; glyph: string; label: string }[] = [
 export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryInputProps) {
   const [type, setType] = useState<EntryType>('task')
   const [value, setValue] = useState('')
+  const [time, setTime] = useState('')
+  const [showTime, setShowTime] = useState(false)
 
   const submit = () => {
     const text = value.trim()
     if (!text) return
-    onSubmit(text, type)
+    onSubmit(text, type, time || undefined)
     setValue('')
+    setTime('')
+    setShowTime(false)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -59,6 +64,37 @@ export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryI
         placeholder={placeholder}
         className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
       />
+      {showTime || time ? (
+        <div className="flex shrink-0 items-center gap-1">
+          <input
+            type="time"
+            autoFocus={showTime && !time}
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              setTime('')
+              setShowTime(false)
+            }}
+            title="Remove time"
+            className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+          >
+            <CloseIcon className="h-3 w-3" />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setShowTime(true)}
+          title="Add a time"
+          className="shrink-0 text-ink/25 hover:text-ink dark:text-inkdark/25 dark:hover:text-inkdark"
+        >
+          <ClockIcon className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import type { Journal } from '../hooks/useJournal'
 import type { HabitType } from '../types'
 import { addMonths, formatMonthHeading } from '../lib/date'
 import { HabitGrid } from './habits/HabitGrid'
+import { WeekdayPicker } from './habits/WeekdayPicker'
 
 interface HabitsProps {
   journal: Journal
@@ -15,6 +16,8 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
   const [name, setName] = useState('')
   const [type, setType] = useState<HabitType>('check')
   const [target, setTarget] = useState(5)
+  const [days, setDays] = useState<number[]>([])
+  const [time, setTime] = useState('')
 
   const commitCreate = () => {
     const trimmed = name.trim()
@@ -22,8 +25,10 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
     setName('')
     setType('check')
     setTarget(5)
+    setDays([])
+    setTime('')
     if (!trimmed) return
-    journal.addHabit({ name: trimmed, type, target })
+    journal.addHabit({ name: trimmed, type, target, days, time })
   }
 
   return (
@@ -46,67 +51,88 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
 
       <div className="mt-5">
         {creating ? (
-          <div className="flex flex-wrap items-center gap-2 rounded-lg border border-ink/10 p-3 dark:border-inkdark/10">
-            <input
-              autoFocus
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Habit name (e.g. Water, Steps, Sleep)"
-              className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
-            />
-            <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
-              <button
-                type="button"
-                onClick={() => setType('check')}
-                className={`rounded-full px-2.5 py-1 ${
-                  type === 'check'
-                    ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                    : 'text-ink/50 dark:text-inkdark/50'
-                }`}
-              >
-                Check
-              </button>
-              <button
-                type="button"
-                onClick={() => setType('count')}
-                className={`rounded-full px-2.5 py-1 ${
-                  type === 'count'
-                    ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                    : 'text-ink/50 dark:text-inkdark/50'
-                }`}
-              >
-                Count
-              </button>
+          <div className="flex flex-col gap-3 rounded-lg border border-ink/10 p-3 dark:border-inkdark/10">
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                autoFocus
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Habit name (e.g. Water, Steps, Sleep)"
+                className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+              />
+              <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
+                <button
+                  type="button"
+                  onClick={() => setType('check')}
+                  className={`rounded-full px-2.5 py-1 ${
+                    type === 'check'
+                      ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
+                      : 'text-ink/50 dark:text-inkdark/50'
+                  }`}
+                >
+                  Check
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setType('count')}
+                  className={`rounded-full px-2.5 py-1 ${
+                    type === 'count'
+                      ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
+                      : 'text-ink/50 dark:text-inkdark/50'
+                  }`}
+                >
+                  Count
+                </button>
+              </div>
+              {type === 'count' && (
+                <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
+                  Goal
+                  <input
+                    type="number"
+                    min={1}
+                    value={target}
+                    onChange={(e) => setTarget(Math.max(1, Number(e.target.value) || 1))}
+                    className="w-12 rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+                  />
+                </label>
+              )}
             </div>
-            {type === 'count' && (
+
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-ink/50 dark:text-inkdark/50">Repeat</span>
+                <WeekdayPicker value={days} onChange={setDays} />
+              </div>
               <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
-                Goal
+                Reminder
                 <input
-                  type="number"
-                  min={1}
-                  value={target}
-                  onChange={(e) => setTarget(Math.max(1, Number(e.target.value) || 1))}
-                  className="w-12 rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
                 />
               </label>
-            )}
-            <button
-              type="button"
-              onClick={commitCreate}
-              className="rounded-full bg-ink px-3 py-1 text-xs text-paper hover:opacity-90 dark:bg-inkdark dark:text-paperdark"
-            >
-              Add
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCreating(false)
-                setName('')
-              }}
-              className="text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
-            >
-              Cancel
-            </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={commitCreate}
+                className="rounded-full bg-ink px-3 py-1 text-xs text-paper hover:opacity-90 dark:bg-inkdark dark:text-paperdark"
+              >
+                Add
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCreating(false)
+                  setName('')
+                }}
+                className="text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         ) : (
           <button

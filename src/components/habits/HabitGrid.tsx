@@ -1,7 +1,8 @@
 import type { Journal } from '../../hooks/useJournal'
-import { daysInMonth, todayISO } from '../../lib/date'
-import { habitMonthStats, habitValue } from '../../lib/habits'
+import { daysInMonth, formatTime12h, todayISO } from '../../lib/date'
+import { habitMonthStats, habitValue, isHabitScheduledOn } from '../../lib/habits'
 import { monthlyMoodAverage, moodValue } from '../../lib/mood'
+import { ClockIcon } from '../icons/Icons'
 import { HabitCell } from './HabitCell'
 import { MoodGridCell } from './MoodGridCell'
 
@@ -63,7 +64,7 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
             const stats = habitMonthStats(habit, journal.habitLogs, month)
             const summary =
               habit.type === 'check'
-                ? `${stats.loggedDays}/${days.length}`
+                ? `${stats.loggedDays}/${stats.scheduledDays}`
                 : stats.average === null
                   ? '—'
                   : stats.average.toFixed(1)
@@ -71,7 +72,17 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
             return (
               <div key={habit.id} className="group/hrow flex items-center gap-1">
                 <div className="sticky left-0 z-10 flex w-28 shrink-0 items-center justify-between bg-paper pr-1 dark:bg-paperdark">
-                  <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
+                  <span className="flex min-w-0 items-center gap-1">
+                    <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
+                    {habit.time && (
+                      <span
+                        className="shrink-0 text-ink/30 dark:text-inkdark/30"
+                        title={`Reminder at ${formatTime12h(habit.time)}`}
+                      >
+                        <ClockIcon className="h-3 w-3" />
+                      </span>
+                    )}
+                  </span>
                   <button
                     type="button"
                     onClick={() => journal.deleteHabit(habit.id)}
@@ -85,17 +96,25 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
                   {summary}
                 </div>
                 <div className="flex gap-[3px] pl-1">
-                  {days.map((d) => (
-                    <HabitCell
-                      key={d}
-                      habit={habit}
-                      value={habitValue(journal.habitLogs, habit.id, d)}
-                      isToday={d === today}
-                      onToggle={() => journal.toggleHabitCheck(habit.id, d)}
-                      onIncrement={() => journal.incrementHabit(habit.id, d, 1)}
-                      onDecrement={() => journal.incrementHabit(habit.id, d, -1)}
-                    />
-                  ))}
+                  {days.map((d) =>
+                    isHabitScheduledOn(habit, d) ? (
+                      <HabitCell
+                        key={d}
+                        habit={habit}
+                        value={habitValue(journal.habitLogs, habit.id, d)}
+                        isToday={d === today}
+                        onToggle={() => journal.toggleHabitCheck(habit.id, d)}
+                        onIncrement={() => journal.incrementHabit(habit.id, d, 1)}
+                        onDecrement={() => journal.incrementHabit(habit.id, d, -1)}
+                      />
+                    ) : (
+                      <div
+                        key={d}
+                        className="h-5 w-5 shrink-0 rounded-[4px] bg-[repeating-linear-gradient(135deg,transparent,transparent_2px,currentColor_2px,currentColor_3px)] text-ink/[0.05] dark:text-inkdark/[0.06]"
+                        title="Not scheduled"
+                      />
+                    ),
+                  )}
                 </div>
               </div>
             )

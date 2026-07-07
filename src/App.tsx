@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { useJournal } from './hooks/useJournal'
 import { useTheme } from './hooks/useTheme'
+import { useReminders } from './hooks/useReminders'
 import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
 import { MonthlyLog } from './components/MonthlyLog'
 import { Collections } from './components/Collections'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
+import { ReminderToasts } from './components/ReminderToasts'
+import { BellIcon } from './components/icons/Icons'
 
 type View = 'daily' | 'monthly' | 'collections' | 'habits' | 'analytics'
 
@@ -21,6 +24,7 @@ const NAV: { view: View; label: string }[] = [
 function App() {
   const journal = useJournal()
   const { theme, toggle } = useTheme()
+  const reminders = useReminders(journal)
 
   const [view, setView] = useState<View>('daily')
   const [date, setDate] = useState(todayISO())
@@ -57,13 +61,32 @@ function App() {
             ))}
           </nav>
 
-          <button
-            onClick={toggle}
-            title="Toggle theme"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
-          >
-            {theme === 'dark' ? '☾' : '☼'}
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              onClick={reminders.enableReminders}
+              title={
+                reminders.permission === 'granted'
+                  ? 'Reminders on — fires while bujo is open in this browser'
+                  : reminders.permission === 'denied'
+                    ? 'Notifications blocked — allow them in your browser settings'
+                    : 'Enable reminders (fires while bujo is open in this browser)'
+              }
+              className={`flex h-7 w-7 items-center justify-center rounded-full ${
+                reminders.permission === 'granted'
+                  ? 'text-amber-600 dark:text-amber-500'
+                  : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+              }`}
+            >
+              <BellIcon filled={reminders.permission === 'granted'} className="h-4 w-4" />
+            </button>
+            <button
+              onClick={toggle}
+              title="Toggle theme"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
+            >
+              {theme === 'dark' ? '☾' : '☼'}
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 py-8">
@@ -82,6 +105,8 @@ function App() {
           saved locally in this browser
         </footer>
       </div>
+
+      <ReminderToasts toasts={reminders.toasts} onDismiss={reminders.dismissToast} />
     </div>
   )
 }

@@ -7,6 +7,7 @@ interface SortableEntryRowProps {
   entry: Entry
   onToggle: () => void
   onEdit: (text: string) => void
+  onEditTime: (time: string | undefined) => void
   onDelete: () => void
   onMigrate: () => void
   onTogglePriority: () => void

@@ -21,7 +21,7 @@ export function useJournal() {
   }, [entries, collections, habits, habitLogs, moodLogs])
 
   const addEntry = useCallback(
-    (input: { text: string; type: EntryType; date?: string; collectionId?: string }) => {
+    (input: { text: string; type: EntryType; date?: string; collectionId?: string; time?: string }) => {
       const text = input.text.trim()
       if (!text) return
       setEntries((prev) => {
@@ -34,6 +34,7 @@ export function useJournal() {
           priority: false,
           date: input.date,
           collectionId: input.collectionId,
+          time: input.time,
           order: nextOrder(scope),
           createdAt: Date.now(),
         }
@@ -116,19 +117,24 @@ export function useJournal() {
     setCollections((prev) => prev.map((c) => (c.id === id ? { ...c, name: trimmed } : c)))
   }, [])
 
-  const addHabit = useCallback((input: { name: string; type: HabitType; target?: number }) => {
-    const name = input.name.trim()
-    if (!name) return
-    const habit: Habit = {
-      id: genId(),
-      name,
-      type: input.type,
-      target: input.type === 'count' ? input.target ?? 5 : undefined,
-      createdAt: Date.now(),
-    }
-    setHabits((prev) => [...prev, habit])
-    return habit.id
-  }, [])
+  const addHabit = useCallback(
+    (input: { name: string; type: HabitType; target?: number; days?: number[]; time?: string }) => {
+      const name = input.name.trim()
+      if (!name) return
+      const habit: Habit = {
+        id: genId(),
+        name,
+        type: input.type,
+        target: input.type === 'count' ? input.target ?? 5 : undefined,
+        days: input.days && input.days.length > 0 && input.days.length < 7 ? input.days : undefined,
+        time: input.time || undefined,
+        createdAt: Date.now(),
+      }
+      setHabits((prev) => [...prev, habit])
+      return habit.id
+    },
+    [],
+  )
 
   const deleteHabit = useCallback((id: string) => {
     setHabits((prev) => prev.filter((h) => h.id !== id))

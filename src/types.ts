@@ -16,6 +16,8 @@ export interface Entry {
   migratedFromId?: string
   /** manual sort position within its scope (date or collection); falls back to createdAt for legacy entries */
   order?: number
+  /** optional time of day (HH:MM, 24h) */
+  time?: string
   createdAt: number
 }
 
@@ -33,6 +35,10 @@ export interface Habit {
   type: HabitType
   /** for 'count' habits: the daily goal, used both as the color-intensity ceiling and a sensible default target */
   target?: number
+  /** weekdays this habit is scheduled on (0=Sun..6=Sat); undefined or all 7 means every day */
+  days?: number[]
+  /** optional reminder time of day (HH:MM, 24h) */
+  time?: string
   createdAt: number
 }
 
