@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Journal } from '../../hooks/useJournal'
+import { SUGGESTED_PROMPTS } from '../../lib/prompts'
 import { PromptCard } from './PromptCard'
 
 interface DailyPromptsProps {
@@ -12,6 +13,8 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
   const [promptDraft, setPromptDraft] = useState('')
 
   const sortedPrompts = [...journal.prompts].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+  const existingTexts = new Set(journal.prompts.map((p) => p.text))
+  const suggestions = SUGGESTED_PROMPTS.filter((s) => !existingTexts.has(s))
 
   const commitPrompt = () => {
     const trimmed = promptDraft.trim()
@@ -35,7 +38,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
         ))}
 
         {addingPrompt ? (
-          <div className="rounded-lg border border-dashed border-ink/20 p-3 dark:border-inkdark/20">
+          <div className="rounded-lg border border-dashed border-ink/20 p-3 sm:col-span-2 dark:border-inkdark/20">
             <input
               autoFocus
               value={promptDraft}
@@ -48,9 +51,24 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
                   setAddingPrompt(false)
                 }
               }}
-              placeholder="שאלה חדשה"
+              placeholder="שאלה חדשה, או בחירה מההצעות למטה"
               className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
             />
+            {suggestions.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5 border-t border-ink/10 pt-3 dark:border-inkdark/10">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => journal.addPrompt(suggestion)}
+                    className="rounded-full bg-ink/[0.05] px-2.5 py-1 text-xs text-ink/60 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.06] dark:text-inkdark/60 dark:hover:bg-inkdark/10 dark:hover:text-inkdark"
+                  >
+                    + {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <button

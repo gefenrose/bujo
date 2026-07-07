@@ -8,22 +8,19 @@ import { WeeklyLog } from './components/WeeklyLog'
 import { MonthlyLog } from './components/MonthlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
+import { CollectionsShelf } from './components/CollectionsShelf'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
-import { BellIcon, SearchIcon } from './components/icons/Icons'
+import { BellIcon, ChartIcon, InboxIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
 type View = 'daily' | 'weekly' | 'monthly' | 'inbox' | 'collections' | 'habits' | 'analytics'
 
-const NAV: { view: View; label: string }[] = [
+const TIME_NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומי' },
   { view: 'weekly', label: 'שבועי' },
   { view: 'monthly', label: 'חודשי' },
-  { view: 'inbox', label: 'תיבת קלט' },
-  { view: 'collections', label: 'אוספים' },
-  { view: 'habits', label: 'הרגלים' },
-  { view: 'analytics', label: 'נתונים' },
 ]
 
 function App() {
@@ -43,67 +40,81 @@ function App() {
     setView('daily')
   }
 
+  const goToCollection = (id: string) => {
+    setCollectionId(id)
+    setView('collections')
+  }
+
   const openSearchForTag = (tag: string) => {
     setSearchQuery(tag)
     setSearchOpen(true)
   }
 
+  const iconButton = (active: boolean) =>
+    `flex h-7 w-7 items-center justify-center rounded-full ${
+      active
+        ? 'text-ink dark:text-inkdark'
+        : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+    }`
+
   return (
     <div className="min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
-      <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
+      <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-6">
         <header className="flex flex-col gap-3 border-b border-ink/10 py-4 dark:border-inkdark/10 sm:flex-row sm:items-center sm:justify-between sm:py-5">
           <div className="flex items-center justify-between sm:contents">
             <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
 
             <div className="flex shrink-0 items-center gap-1 sm:order-3">
-            <button
-              onClick={() => {
-                setSearchQuery('')
-                setSearchOpen(true)
-              }}
-              title="חיפוש"
-              className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
-            >
-              <SearchIcon className="h-4 w-4" />
-            </button>
-            <button
-              onClick={reminders.enableReminders}
-              title={
-                reminders.permission === 'granted'
-                  ? 'תזכורות פעילות — פועל כשבujo פתוח בדפדפן זה'
-                  : reminders.permission === 'denied'
-                    ? 'התראות חסומות — יש לאפשר אותן בהגדרות הדפדפן'
-                    : 'הפעלת תזכורות (פועל כשbujo פתוח בדפדפן זה)'
-              }
-              className={`flex h-7 w-7 items-center justify-center rounded-full ${
-                reminders.permission === 'granted'
-                  ? 'text-amber-600 dark:text-amber-500'
-                  : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
-              }`}
-            >
-              <BellIcon filled={reminders.permission === 'granted'} className="h-4 w-4" />
-            </button>
-            <button
-              onClick={toggle}
-              title="החלפת ערכת נושא"
-              className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
-            >
-              {theme === 'dark' ? '☾' : '☼'}
-            </button>
+              <button onClick={() => setView('analytics')} title="נתונים" className={iconButton(view === 'analytics')}>
+                <ChartIcon className="h-4 w-4" />
+              </button>
+              <button onClick={() => setView('inbox')} title="תיבת קלט" className={iconButton(view === 'inbox')}>
+                <InboxIcon className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setSearchOpen(true)
+                }}
+                title="חיפוש"
+                className={iconButton(false)}
+              >
+                <SearchIcon className="h-4 w-4" />
+              </button>
+              <button
+                onClick={reminders.enableReminders}
+                title={
+                  reminders.permission === 'granted'
+                    ? 'תזכורות פעילות — פועל כשבujo פתוח בדפדפן זה'
+                    : reminders.permission === 'denied'
+                      ? 'התראות חסומות — יש לאפשר אותן בהגדרות הדפדפן'
+                      : 'הפעלת תזכורות (פועל כשbujo פתוח בדפדפן זה)'
+                }
+                className={
+                  reminders.permission === 'granted'
+                    ? 'flex h-7 w-7 items-center justify-center rounded-full text-amber-600 dark:text-amber-500'
+                    : iconButton(false)
+                }
+              >
+                <BellIcon filled={reminders.permission === 'granted'} className="h-4 w-4" />
+              </button>
+              <button onClick={toggle} title="החלפת ערכת נושא" className={iconButton(false)}>
+                {theme === 'dark' ? '☾' : '☼'}
+              </button>
             </div>
           </div>
 
-          <nav className="flex flex-wrap items-center gap-1 text-sm sm:min-w-0 sm:flex-1 sm:flex-nowrap sm:justify-center sm:overflow-x-auto">
-            {NAV.map((n) => (
+          <nav className="flex items-center gap-1 self-center rounded-full bg-ink/[0.04] p-1 text-sm dark:bg-inkdark/[0.05]">
+            {TIME_NAV.map((n) => (
               <button
                 key={n.view}
                 onClick={() => {
                   setView(n.view)
                   if (n.view === 'monthly') setMonth(date)
                 }}
-                className={`shrink-0 rounded-full px-3 py-1 transition-colors ${
+                className={`rounded-full px-3 py-1 transition-colors ${
                   view === n.view
-                    ? 'bg-ink/[0.06] text-ink dark:bg-inkdark/[0.08] dark:text-inkdark'
+                    ? 'bg-paper text-ink shadow-sm dark:bg-paperdark dark:text-inkdark'
                     : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
                 }`}
               >
@@ -113,33 +124,45 @@ function App() {
           </nav>
         </header>
 
-        <main className="flex-1 py-8">
-          {view === 'daily' && (
-            <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
-          )}
-          {view === 'weekly' && (
-            <WeeklyLog journal={journal} date={date} onChangeDate={setDate} onSelectDate={goToDate} />
-          )}
-          {view === 'monthly' && (
-            <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
-          )}
-          {view === 'collections' && (
-            <Collections
-              journal={journal}
-              selectedId={collectionId}
-              onSelect={setCollectionId}
-              onTagClick={openSearchForTag}
-            />
-          )}
-          {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
-          {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
-          {view === 'analytics' && <Analytics journal={journal} />}
-        </main>
+        <div className="flex flex-1 flex-col gap-6 py-6 sm:flex-row sm:gap-8 sm:py-8">
+          <CollectionsShelf journal={journal} selectedId={collectionId} onSelect={goToCollection} />
+
+          <main className="min-w-0 flex-1 pb-16">
+            {view === 'daily' && (
+              <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
+            )}
+            {view === 'weekly' && (
+              <WeeklyLog journal={journal} date={date} onChangeDate={setDate} onSelectDate={goToDate} />
+            )}
+            {view === 'monthly' && (
+              <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
+            )}
+            {view === 'collections' && (
+              <Collections journal={journal} selectedId={collectionId} onTagClick={openSearchForTag} />
+            )}
+            {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
+            {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
+            {view === 'analytics' && <Analytics journal={journal} />}
+          </main>
+        </div>
 
         <footer className="border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30">
           נשמר מקומית בדפדפן זה
         </footer>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setView('habits')}
+        title="הרגלים"
+        className={`fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors hover:opacity-90 sm:bottom-6 sm:end-6 ${
+          view === 'habits'
+            ? 'bg-amber-500 text-paper dark:bg-amber-400 dark:text-paperdark'
+            : 'bg-ink text-paper dark:bg-inkdark dark:text-paperdark'
+        }`}
+      >
+        <RepeatIcon className="h-5 w-5" />
+      </button>
 
       <Toasts
         reminders={reminders.toasts}
@@ -155,10 +178,7 @@ function App() {
           initialQuery={searchQuery}
           onClose={() => setSearchOpen(false)}
           onSelectDate={goToDate}
-          onSelectCollection={(id) => {
-            setCollectionId(id)
-            setView('collections')
-          }}
+          onSelectCollection={goToCollection}
         />
       )}
     </div>

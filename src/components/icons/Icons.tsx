@@ -177,6 +177,60 @@ export function CheckIcon({ className }: IconProps) {
   )
 }
 
+export function InboxIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4.2 11.5 5.6 4.8a1 1 0 0 1 1-.8h6.8a1 1 0 0 1 1 .8l1.4 6.7" />
+      <path d="M3.3 11.5h3.9l1 1.7h3.6l1-1.7h3.9" />
+      <rect x="3.3" y="11.5" width="13.4" height="4.2" rx="1" />
+    </svg>
+  )
+}
+
+export function ChartIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4 16.5V9M10 16.5V3.5M16 16.5v-6" />
+    </svg>
+  )
+}
+
+export function RepeatIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4.2 8a5.8 5.8 0 0 1 10.1-3.8M14.5 2.7v3.8h-3.8" />
+      <path d="M15.8 12a5.8 5.8 0 0 1-10.1 3.8M5.5 17.3v-3.8h3.8" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg
