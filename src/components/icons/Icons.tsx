@@ -150,6 +150,16 @@ export function SubtaskIcon({ className }: IconProps) {
   )
 }
 
+export function MoreIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+      {[4, 10, 16].map((x) => (
+        <circle key={x} cx={x} cy="10" r="1.3" />
+      ))}
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

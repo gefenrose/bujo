@@ -4,7 +4,17 @@ import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
 import { formatTime } from '../lib/date'
 import { Bullet } from './Bullet'
-import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon, ClockIcon, ChevronIcon, TagIcon, SubtaskIcon } from './icons/Icons'
+import {
+  GripIcon,
+  StarIcon,
+  ArrowRightIcon,
+  CloseIcon,
+  ClockIcon,
+  ChevronIcon,
+  TagIcon,
+  SubtaskIcon,
+  MoreIcon,
+} from './icons/Icons'
 
 interface EntryRowProps {
   entry: Entry
@@ -65,6 +75,7 @@ export function EntryRow({
   const [addingTag, setAddingTag] = useState(false)
   const [tagDraft, setTagDraft] = useState('')
   const tagInputRef = useRef<HTMLInputElement>(null)
+  const [mobileActionsOpen, setMobileActionsOpen] = useState(false)
 
   useEffect(() => {
     if (addingTag) tagInputRef.current?.focus()
@@ -150,6 +161,55 @@ export function EntryRow({
   const priorityRevealOpacity = Math.max(0, Math.min(1, dragX / SWIPE_THRESHOLD))
   const typeRevealOpacity = Math.max(0, Math.min(1, -dragX / SWIPE_THRESHOLD))
 
+  const actionButtons = (
+    <>
+      {entry.type === 'task' && (
+        <button
+          type="button"
+          onClick={() => setSubtasksOpen((v) => !v)}
+          title="תת-משימות"
+          className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+        >
+          <SubtaskIcon className="h-3.5 w-3.5" />
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={() => setAddingTag(true)}
+        title="הוספת תגית"
+        className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+      >
+        <TagIcon className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        onClick={onTogglePriority}
+        title="סימון עדיפות"
+        className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
+      >
+        <StarIcon className="h-3.5 w-3.5" />
+      </button>
+      {entry.status === 'open' && (
+        <button
+          type="button"
+          onClick={onMigrate}
+          title="העברה ליום הבא"
+          className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+        >
+          <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={onDelete}
+        title="מחיקה"
+        className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
+      >
+        <CloseIcon className="h-3.5 w-3.5" />
+      </button>
+    </>
+  )
+
   return (
     <>
       <div className="relative -mx-1.5 overflow-hidden rounded">
@@ -228,7 +288,10 @@ export function EntryRow({
               />
             </div>
           ) : (
-            <p onClick={startEditing} className="flex min-w-0 flex-1 cursor-text items-baseline gap-2 py-0.5">
+            <p
+              onClick={startEditing}
+              className="flex min-w-0 flex-1 flex-wrap cursor-text items-baseline gap-x-2 gap-y-1 py-0.5"
+            >
               {entry.time && (
                 <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
                   <ClockIcon className="h-3 w-3" />
@@ -318,54 +381,27 @@ export function EntryRow({
             />
           )}
 
-          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            {entry.type === 'task' && (
-              <button
-                type="button"
-                onClick={() => setSubtasksOpen((v) => !v)}
-                title="תת-משימות"
-                className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
-              >
-                <SubtaskIcon className="h-3.5 w-3.5" />
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setAddingTag(true)}
-              title="הוספת תגית"
-              className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
-            >
-              <TagIcon className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={onTogglePriority}
-              title="סימון עדיפות"
-              className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
-            >
-              <StarIcon className="h-3.5 w-3.5" />
-            </button>
-            {entry.status === 'open' && (
-              <button
-                type="button"
-                onClick={onMigrate}
-                title="העברה ליום הבא"
-                className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
-              >
-                <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={onDelete}
-              title="מחיקה"
-              className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
-            >
-              <CloseIcon className="h-3.5 w-3.5" />
-            </button>
+          {/* Hover-reveal actions: only worthwhile on hover-capable (desktop) pointers — on
+              touch there's no hover, so this stays hidden there instead of permanently
+              reserving row width and crushing the entry text. */}
+          <div className="hidden shrink-0 items-center gap-1 opacity-0 transition-opacity sm:flex sm:group-hover:opacity-100">
+            {actionButtons}
           </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileActionsOpen((v) => !v)}
+            title="פעולות נוספות"
+            className="rounded p-1 text-ink/30 dark:text-inkdark/30 sm:hidden"
+          >
+            <MoreIcon className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
+
+      {mobileActionsOpen && (
+        <div className="me-10 flex items-center gap-3 py-1 sm:hidden">{actionButtons}</div>
+      )}
 
       {entry.type === 'task' && subtasksOpen && (
         <div className="ms-10 flex flex-col gap-0.5 py-1">

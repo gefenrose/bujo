@@ -49,29 +49,11 @@ function App() {
   return (
     <div className="min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
       <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
-        <header className="flex items-center justify-between gap-3 border-b border-ink/10 py-5 dark:border-inkdark/10">
-          <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
+        <header className="flex flex-col gap-3 border-b border-ink/10 py-4 dark:border-inkdark/10 sm:flex-row sm:items-center sm:justify-between sm:py-5">
+          <div className="flex items-center justify-between sm:contents">
+            <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
 
-          <nav className="flex min-w-0 items-center gap-1 overflow-x-auto text-sm">
-            {NAV.map((n) => (
-              <button
-                key={n.view}
-                onClick={() => {
-                  setView(n.view)
-                  if (n.view === 'monthly' || n.view === 'habits') setMonth(date)
-                }}
-                className={`shrink-0 rounded-full px-3 py-1 transition-colors ${
-                  view === n.view
-                    ? 'bg-ink/[0.06] text-ink dark:bg-inkdark/[0.08] dark:text-inkdark'
-                    : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
-                }`}
-              >
-                {n.label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="flex shrink-0 items-center gap-1">
+            <div className="flex shrink-0 items-center gap-1 sm:order-3">
             <button
               onClick={() => {
                 setSearchQuery('')
@@ -106,7 +88,27 @@ function App() {
             >
               {theme === 'dark' ? '☾' : '☼'}
             </button>
+            </div>
           </div>
+
+          <nav className="flex flex-wrap items-center gap-1 text-sm sm:min-w-0 sm:flex-1 sm:flex-nowrap sm:justify-center sm:overflow-x-auto">
+            {NAV.map((n) => (
+              <button
+                key={n.view}
+                onClick={() => {
+                  setView(n.view)
+                  if (n.view === 'monthly' || n.view === 'habits') setMonth(date)
+                }}
+                className={`shrink-0 rounded-full px-3 py-1 transition-colors ${
+                  view === n.view
+                    ? 'bg-ink/[0.06] text-ink dark:bg-inkdark/[0.08] dark:text-inkdark'
+                    : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+                }`}
+              >
+                {n.label}
+              </button>
+            ))}
+          </nav>
         </header>
 
         <main className="flex-1 py-8">
