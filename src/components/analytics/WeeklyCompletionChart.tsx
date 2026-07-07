@@ -10,7 +10,6 @@ export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
   return (
     <div>
       <div
-        dir="ltr"
         className="flex items-end gap-3 border-b border-ink/10 pb-0 dark:border-inkdark/10"
         style={{ height: CHART_HEIGHT }}
       >
@@ -45,7 +44,7 @@ export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
           )
         })}
       </div>
-      <div dir="ltr" className="mt-1.5 flex gap-3">
+      <div className="mt-1.5 flex gap-3">
         {buckets.map((b) => (
           <span key={b.label} className="flex-1 text-center text-[0.65rem] text-ink/35 dark:text-inkdark/35">
             {b.label}
