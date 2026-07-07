@@ -20,15 +20,13 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
 
   return (
     <div>
-      {/* Kept left-to-right (oldest → newest) regardless of the app's RTL direction, matching the
-          usual convention for chronological data visualizations. */}
-      <div dir="ltr" className="flex gap-[3px]">
+      <div className="flex gap-[3px]">
         {columns.map((col, i) => {
           const label = monthLabelForColumn(col, columns[i - 1])
           return (
             <div key={col[0]?.date ?? i} className="relative flex flex-col gap-[3px]">
               {label && (
-                <span className="absolute -top-4 left-0 text-[0.65rem] text-ink/35 dark:text-inkdark/35">
+                <span className="absolute -top-4 start-0 text-[0.65rem] text-ink/35 dark:text-inkdark/35">
                   {label}
                 </span>
               )}
