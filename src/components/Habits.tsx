@@ -5,6 +5,7 @@ import { daysInWeek, isToday, parseTimeInput, weekdayShort } from '../lib/date'
 import { habitValue, isHabitScheduledOn } from '../lib/habits'
 import { HabitManageRow } from './habits/HabitManageRow'
 import { HabitRow } from './habits/HabitRow'
+import { HabitWeekDots } from './habits/HabitWeekDots'
 import { WeekdayPicker } from './habits/WeekdayPicker'
 import { TimeField } from './TimeField'
 
@@ -86,16 +87,24 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
           עדיין אין הרגלים — אפשר להוסיף אחד דרך "ניהול" כדי להתחיל לעקוב (מים, צעדים, שינה...).
         </p>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {scheduledHabits.map((habit) => (
-            <HabitRow
-              key={habit.id}
-              habit={habit}
-              value={habitValue(journal.habitLogs, habit.id, date)}
-              onToggle={() => journal.toggleHabitCheck(habit.id, date)}
-              onIncrement={() => journal.incrementHabit(habit.id, date, 1)}
-              onDecrement={() => journal.incrementHabit(habit.id, date, -1)}
-            />
+            <div key={habit.id} className="flex flex-col gap-1.5">
+              <HabitRow
+                habit={habit}
+                value={habitValue(journal.habitLogs, habit.id, date)}
+                onToggle={() => journal.toggleHabitCheck(habit.id, date)}
+                onIncrement={() => journal.incrementHabit(habit.id, date, 1)}
+                onDecrement={() => journal.incrementHabit(habit.id, date, -1)}
+              />
+              <HabitWeekDots
+                habit={habit}
+                week={week}
+                habitLogs={journal.habitLogs}
+                selectedDate={date}
+                onSelectDate={onChangeDate}
+              />
+            </div>
           ))}
         </div>
       )}

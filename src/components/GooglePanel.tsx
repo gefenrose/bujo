@@ -44,61 +44,98 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
           <div className="flex flex-col gap-4">
             {account.error && <p className="text-sm text-red-600 dark:text-red-400">{account.error}</p>}
 
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-ink/50 dark:text-inkdark/50">אילו תכונות להפעיל:</p>
+              <label className="flex items-center gap-2 text-sm text-ink/80 dark:text-inkdark/80">
+                <input
+                  type="checkbox"
+                  checked={account.calendarEnabled}
+                  onChange={(e) => account.setCalendarEnabled(e.target.checked)}
+                  className="h-4 w-4 accent-ink dark:accent-inkdark"
+                />
+                סנכרון Google Calendar
+              </label>
+              <label className="flex items-center gap-2 text-sm text-ink/80 dark:text-inkdark/80">
+                <input
+                  type="checkbox"
+                  checked={account.driveEnabled}
+                  onChange={(e) => account.setDriveEnabled(e.target.checked)}
+                  className="h-4 w-4 accent-ink dark:accent-inkdark"
+                />
+                גיבוי ל-Google Drive
+              </label>
+            </div>
+
             {!isConnected ? (
-              <>
-                <p className="text-sm text-ink/50 dark:text-inkdark/50">
-                  חיבור אחד מפעיל גם סנכרון יומן וגם גיבוי ל-Drive.
-                </p>
-                <button
-                  type="button"
-                  onClick={account.connect}
-                  disabled={account.status === 'connecting'}
-                  className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
-                >
-                  {account.status === 'connecting' ? 'מתחבר…' : 'התחברות לחשבון Google'}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={account.connect}
+                disabled={account.status === 'connecting'}
+                className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
+              >
+                {account.status === 'connecting' ? 'מתחבר…' : 'התחברות לחשבון Google'}
+              </button>
             ) : (
               <>
-                <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
-                  <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Calendar</h3>
-                  <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
-                    {calendar.lastSyncedAt ? `סונכרן לאחרונה בשעה ${formatTime(calendar.lastSyncedAt)}` : 'טרם בוצע סנכרון'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={calendar.syncNow}
-                    disabled={calendar.syncing}
-                    className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
-                  >
-                    {calendar.syncing ? 'מסנכרן…' : 'סנכרון עכשיו'}
-                  </button>
-                </div>
-
-                <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
-                  <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Drive</h3>
-                  <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
-                    {drive.lastBackedUpAt ? `נשמר לאחרונה בשעה ${formatTime(drive.lastBackedUpAt)}` : 'טרם נשמר גיבוי בסשן הזה'}
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={drive.backupNow}
-                      disabled={drive.backingUp}
-                      className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
-                    >
-                      {drive.backingUp ? 'שומר…' : 'שמירה ל-Drive'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={drive.restoreNow}
-                      disabled={drive.restoring}
-                      className="text-sm text-ink/40 hover:text-ink disabled:opacity-50 dark:text-inkdark/40 dark:hover:text-inkdark"
-                    >
-                      {drive.restoring ? 'משחזר…' : 'שחזור מ-Drive'}
-                    </button>
+                {account.calendarEnabled && (
+                  <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
+                    <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Calendar</h3>
+                    {!account.hasCalendarScope ? (
+                      <GrantHint onReconnect={account.connect} />
+                    ) : (
+                      <>
+                        <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
+                          {calendar.lastSyncedAt
+                            ? `סונכרן לאחרונה בשעה ${formatTime(calendar.lastSyncedAt)}`
+                            : 'טרם בוצע סנכרון'}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={calendar.syncNow}
+                          disabled={calendar.syncing}
+                          className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
+                        >
+                          {calendar.syncing ? 'מסנכרן…' : 'סנכרון עכשיו'}
+                        </button>
+                      </>
+                    )}
                   </div>
-                </div>
+                )}
+
+                {account.driveEnabled && (
+                  <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
+                    <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Drive</h3>
+                    {!account.hasDriveScope ? (
+                      <GrantHint onReconnect={account.connect} />
+                    ) : (
+                      <>
+                        <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
+                          {drive.lastBackedUpAt
+                            ? `נשמר לאחרונה בשעה ${formatTime(drive.lastBackedUpAt)}`
+                            : 'טרם נשמר גיבוי'}
+                        </p>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={drive.backupNow}
+                            disabled={drive.backingUp}
+                            className="rounded-full bg-ink px-3 py-1.5 text-sm text-paper hover:opacity-90 disabled:opacity-50 dark:bg-inkdark dark:text-paperdark"
+                          >
+                            {drive.backingUp ? 'שומר…' : 'שמירה ל-Drive'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={drive.restoreNow}
+                            disabled={drive.restoring}
+                            className="text-sm text-ink/40 hover:text-ink disabled:opacity-50 dark:text-inkdark/40 dark:hover:text-inkdark"
+                          >
+                            {drive.restoring ? 'משחזר…' : 'שחזור מ-Drive'}
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -112,6 +149,21 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function GrantHint({ onReconnect }: { onReconnect: () => void }) {
+  return (
+    <div className="flex items-center gap-2">
+      <p className="text-xs text-ink/40 dark:text-inkdark/40">ההרשאה הזו טרם ניתנה.</p>
+      <button
+        type="button"
+        onClick={onReconnect}
+        className="text-xs text-ink/60 underline hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
+      >
+        התחברות מחדש
+      </button>
     </div>
   )
 }

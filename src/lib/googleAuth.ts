@@ -9,7 +9,7 @@ interface GoogleAccountsOAuth2 {
   initTokenClient: (config: {
     client_id: string
     scope: string
-    callback: (response: { access_token?: string; expires_in?: number; error?: string }) => void
+    callback: (response: { access_token?: string; expires_in?: number; scope?: string; error?: string }) => void
   }) => GoogleTokenClient
   revoke: (token: string, done: () => void) => void
 }
@@ -44,6 +44,8 @@ export function loadGoogleIdentityScript(): Promise<void> {
 export interface GoogleTokenResult {
   accessToken: string
   expiresAt: number
+  /** Space-separated scopes actually granted (may be narrower than what was requested). */
+  grantedScope: string
 }
 
 /** Requests an OAuth access token via Google Identity Services' token client, for the given scope(s). */
@@ -77,7 +79,11 @@ export function requestGoogleAccessToken(
           reject(new Error(response.error || 'ההתחברות ל-Google נכשלה'))
           return
         }
-        resolve({ accessToken: response.access_token, expiresAt: Date.now() + (response.expires_in ?? 3600) * 1000 })
+        resolve({
+          accessToken: response.access_token,
+          expiresAt: Date.now() + (response.expires_in ?? 3600) * 1000,
+          grantedScope: response.scope ?? '',
+        })
       },
     })
     tokenClient.requestAccessToken({ prompt: opts?.silent ? '' : 'consent' })

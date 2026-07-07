@@ -5,11 +5,23 @@ import { findDriveBackupFile, loadDriveBackup, saveDriveBackup } from '../lib/go
 import { normalizeJournalData } from '../lib/storage'
 import type { JournalData } from '../types'
 
+const LAST_BACKED_UP_STORAGE_KEY = 'bujo:google:lastBackedUpAt'
+
+function loadLastBackedUpAt(): number | null {
+  const stored = localStorage.getItem(LAST_BACKED_UP_STORAGE_KEY)
+  return stored ? Number(stored) : null
+}
+
 export function useGoogleDriveBackup(account: ReturnType<typeof useGoogleAccount>, journal: Journal) {
   const [backingUp, setBackingUp] = useState(false)
   const [restoring, setRestoring] = useState(false)
-  const [lastBackedUpAt, setLastBackedUpAt] = useState<number | null>(null)
+  const [lastBackedUpAt, setLastBackedUpAtState] = useState<number | null>(loadLastBackedUpAt)
   const fileIdRef = useRef<string | null>(null)
+
+  const setLastBackedUpAt = useCallback((ts: number) => {
+    setLastBackedUpAtState(ts)
+    localStorage.setItem(LAST_BACKED_UP_STORAGE_KEY, String(ts))
+  }, [])
 
   const backupNow = useCallback(async () => {
     if (!account.configured) return
@@ -38,7 +50,7 @@ export function useGoogleDriveBackup(account: ReturnType<typeof useGoogleAccount
     } finally {
       setBackingUp(false)
     }
-  }, [account, journal])
+  }, [account, journal, setLastBackedUpAt])
 
   const restoreNow = useCallback(async () => {
     if (!account.configured) return
@@ -55,13 +67,14 @@ export function useGoogleDriveBackup(account: ReturnType<typeof useGoogleAccount
       fileIdRef.current = existing.id
       const raw = await loadDriveBackup(accessToken, existing.id)
       journal.replaceAll(normalizeJournalData(raw))
+      setLastBackedUpAt(new Date(existing.modifiedTime).getTime())
     } catch (err) {
       account.setStatus('error')
       account.setError(err instanceof Error ? err.message : 'שחזור מ-Google Drive נכשל')
     } finally {
       setRestoring(false)
     }
-  }, [account, journal])
+  }, [account, journal, setLastBackedUpAt])
 
   return { backingUp, restoring, lastBackedUpAt, backupNow, restoreNow }
 }

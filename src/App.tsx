@@ -166,7 +166,9 @@ function App() {
         </div>
 
         <footer className="border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30">
-          נשמר מקומית בדפדפן זה
+          {googleDrive.lastBackedUpAt
+            ? `נשמר מקומית ומגובה ל-Google Drive · עודכן לאחרונה בשעה ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
+            : 'נשמר מקומית בדפדפן זה'}
         </footer>
       </div>
 
