@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import type { Journal } from './useJournal'
+import type { useGoogleAccount } from './useGoogleAccount'
 import { addDays, todayISO } from '../lib/date'
 import {
   deleteGoogleEvent,
@@ -7,70 +8,24 @@ import {
   googleEventToEntryFields,
   insertGoogleEvent,
   listGoogleEvents,
-  loadGoogleIdentityScript,
-  requestGoogleAccessToken,
-  revokeGoogleAccessToken,
   updateGoogleEvent,
-  type GoogleTokenResult,
 } from '../lib/googleCalendar'
 
 const SYNC_WINDOW_PAST_DAYS = 30
 const SYNC_WINDOW_FUTURE_DAYS = 180
-const TOKEN_EXPIRY_BUFFER_MS = 60_000
 
-export type GoogleCalendarStatus = 'unconfigured' | 'disconnected' | 'connecting' | 'connected' | 'error'
-
-export function useGoogleCalendar(journal: Journal) {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  const [status, setStatus] = useState<GoogleCalendarStatus>(clientId ? 'disconnected' : 'unconfigured')
-  const [error, setError] = useState<string | null>(null)
+export function useGoogleCalendar(account: ReturnType<typeof useGoogleAccount>, journal: Journal) {
   const [syncing, setSyncing] = useState(false)
   const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(null)
-  const tokenRef = useRef<GoogleTokenResult | null>(null)
   /** entryId -> googleEventId, as of the last successful sync. */
   const knownRef = useRef<Map<string, string>>(new Map())
 
-  const ensureAccessToken = useCallback(async (): Promise<string> => {
-    if (!clientId) throw new Error('Google Client ID אינו מוגדר')
-    const existing = tokenRef.current
-    if (existing && existing.expiresAt - TOKEN_EXPIRY_BUFFER_MS > Date.now()) return existing.accessToken
-    const result = await requestGoogleAccessToken(clientId, { silent: !!existing })
-    tokenRef.current = result
-    return result.accessToken
-  }, [clientId])
-
-  const connect = useCallback(async () => {
-    if (!clientId) return
-    setStatus('connecting')
-    setError(null)
-    try {
-      await loadGoogleIdentityScript()
-      const result = await requestGoogleAccessToken(clientId)
-      tokenRef.current = result
-      setStatus('connected')
-    } catch (err) {
-      setStatus('error')
-      setError(err instanceof Error ? err.message : 'ההתחברות נכשלה')
-    }
-  }, [clientId])
-
-  const disconnect = useCallback(async () => {
-    const token = tokenRef.current
-    tokenRef.current = null
-    knownRef.current = new Map()
-    setLastSyncedAt(null)
-    setStatus('disconnected')
-    if (token) await revokeGoogleAccessToken(token.accessToken)
-  }, [])
-
   const syncNow = useCallback(async () => {
-    if (!clientId) return
+    if (!account.configured) return
     setSyncing(true)
-    setError(null)
+    account.setError(null)
     try {
-      await loadGoogleIdentityScript()
-      const accessToken = await ensureAccessToken()
-      setStatus('connected')
+      const accessToken = await account.ensureAccessToken()
 
       const windowStart = addDays(todayISO(), -SYNC_WINDOW_PAST_DAYS)
       const windowEnd = addDays(todayISO(), SYNC_WINDOW_FUTURE_DAYS)
@@ -143,12 +98,12 @@ export function useGoogleCalendar(journal: Journal) {
 
       setLastSyncedAt(Date.now())
     } catch (err) {
-      setStatus('error')
-      setError(err instanceof Error ? err.message : 'הסנכרון נכשל')
+      account.setStatus('error')
+      account.setError(err instanceof Error ? err.message : 'הסנכרון נכשל')
     } finally {
       setSyncing(false)
     }
-  }, [clientId, ensureAccessToken, journal])
+  }, [account, journal])
 
-  return { configured: !!clientId, status, error, syncing, lastSyncedAt, connect, disconnect, syncNow }
+  return { syncing, lastSyncedAt, syncNow }
 }

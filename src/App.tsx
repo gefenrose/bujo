@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useJournal } from './hooks/useJournal'
 import { useTheme } from './hooks/useTheme'
 import { useReminders } from './hooks/useReminders'
+import { useGoogleAccount } from './hooks/useGoogleAccount'
 import { useGoogleCalendar } from './hooks/useGoogleCalendar'
+import { useGoogleDriveBackup } from './hooks/useGoogleDriveBackup'
 import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
@@ -14,7 +16,7 @@ import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
-import { GoogleCalendarPanel } from './components/GoogleCalendarPanel'
+import { GooglePanel } from './components/GooglePanel'
 import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
 type View = 'daily' | 'weekly' | 'monthly' | 'inbox' | 'collections' | 'habits' | 'analytics'
@@ -29,7 +31,9 @@ function App() {
   const journal = useJournal()
   const { theme, toggle } = useTheme()
   const reminders = useReminders(journal)
-  const googleCalendar = useGoogleCalendar(journal)
+  const googleAccount = useGoogleAccount()
+  const googleCalendar = useGoogleCalendar(googleAccount, journal)
+  const googleDrive = useGoogleDriveBackup(googleAccount, journal)
 
   const [view, setView] = useState<View>('daily')
   const [date, setDate] = useState(todayISO())
@@ -77,9 +81,9 @@ function App() {
               </button>
               <button
                 onClick={() => setGooglePanelOpen(true)}
-                title="Google Calendar"
+                title="Google"
                 className={
-                  googleCalendar.status === 'connected'
+                  googleAccount.status === 'connected'
                     ? 'flex h-7 w-7 items-center justify-center rounded-full text-amber-600 dark:text-amber-500'
                     : iconButton(false)
                 }
@@ -198,7 +202,12 @@ function App() {
       )}
 
       {googlePanelOpen && (
-        <GoogleCalendarPanel google={googleCalendar} onClose={() => setGooglePanelOpen(false)} />
+        <GooglePanel
+          account={googleAccount}
+          calendar={googleCalendar}
+          drive={googleDrive}
+          onClose={() => setGooglePanelOpen(false)}
+        />
       )}
     </div>
   )

@@ -18,20 +18,25 @@ const EMPTY: JournalData = {
   promptResponses: [],
 }
 
+/** Tolerantly coerces arbitrary parsed JSON (localStorage, or a restored backup) into JournalData. */
+export function normalizeJournalData(parsed: unknown): JournalData {
+  const p = (parsed && typeof parsed === 'object' ? parsed : {}) as Record<string, unknown>
+  return {
+    entries: Array.isArray(p.entries) ? (p.entries as JournalData['entries']) : [],
+    collections: Array.isArray(p.collections) ? (p.collections as JournalData['collections']) : [],
+    habits: Array.isArray(p.habits) ? (p.habits as JournalData['habits']) : [],
+    habitLogs: Array.isArray(p.habitLogs) ? (p.habitLogs as JournalData['habitLogs']) : [],
+    moodLogs: Array.isArray(p.moodLogs) ? (p.moodLogs as JournalData['moodLogs']) : [],
+    prompts: Array.isArray(p.prompts) ? (p.prompts as JournalData['prompts']) : [],
+    promptResponses: Array.isArray(p.promptResponses) ? (p.promptResponses as JournalData['promptResponses']) : [],
+  }
+}
+
 export function loadJournal(): JournalData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return { ...EMPTY, prompts: defaultPrompts() }
-    const parsed = JSON.parse(raw)
-    return {
-      entries: Array.isArray(parsed.entries) ? parsed.entries : [],
-      collections: Array.isArray(parsed.collections) ? parsed.collections : [],
-      habits: Array.isArray(parsed.habits) ? parsed.habits : [],
-      habitLogs: Array.isArray(parsed.habitLogs) ? parsed.habitLogs : [],
-      moodLogs: Array.isArray(parsed.moodLogs) ? parsed.moodLogs : [],
-      prompts: Array.isArray(parsed.prompts) ? parsed.prompts : [],
-      promptResponses: Array.isArray(parsed.promptResponses) ? parsed.promptResponses : [],
-    }
+    return normalizeJournalData(JSON.parse(raw))
   } catch {
     return EMPTY
   }

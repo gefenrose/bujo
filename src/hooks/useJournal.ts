@@ -6,6 +6,7 @@ import type {
   Habit,
   HabitLog,
   HabitType,
+  JournalData,
   MoodLog,
   Prompt,
   PromptResponse,
@@ -396,6 +397,30 @@ export function useJournal() {
     })
   }, [])
 
+  /** Wholesale-replaces all data (e.g. restoring a backup), with an undo snapshot of the prior state. */
+  const replaceAll = useCallback(
+    (data: JournalData) => {
+      const snapshot: JournalData = { entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses }
+      setEntries(data.entries)
+      setCollections(data.collections)
+      setHabits(data.habits)
+      setHabitLogs(data.habitLogs)
+      setMoodLogs(data.moodLogs)
+      setPrompts(data.prompts)
+      setPromptResponses(data.promptResponses)
+      pushUndo('שוחזרו נתונים מגיבוי', () => {
+        setEntries(snapshot.entries)
+        setCollections(snapshot.collections)
+        setHabits(snapshot.habits)
+        setHabitLogs(snapshot.habitLogs)
+        setMoodLogs(snapshot.moodLogs)
+        setPrompts(snapshot.prompts)
+        setPromptResponses(snapshot.promptResponses)
+      })
+    },
+    [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses, pushUndo],
+  )
+
   return {
     entries,
     collections,
@@ -434,6 +459,7 @@ export function useJournal() {
     renamePrompt,
     deletePrompt,
     setPromptAnswer,
+    replaceAll,
   }
 }
 
