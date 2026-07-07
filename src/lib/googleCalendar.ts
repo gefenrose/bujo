@@ -53,6 +53,8 @@ export interface GoogleTokenResult {
   expiresAt: number
 }
 
+const AUTH_TIMEOUT_MS = 60_000
+
 /** Requests an OAuth access token via Google Identity Services' token client. */
 export function requestGoogleAccessToken(clientId: string, opts?: { silent?: boolean }): Promise<GoogleTokenResult> {
   return new Promise((resolve, reject) => {
@@ -61,10 +63,21 @@ export function requestGoogleAccessToken(clientId: string, opts?: { silent?: boo
       reject(new Error('ספריית ההזדהות של Google לא נטענה'))
       return
     }
+
+    let settled = false
+    const timer = setTimeout(() => {
+      if (settled) return
+      settled = true
+      reject(new Error('ההתחברות פגה — ייתכן שחוסם חלונות קופצים מנע את תהליך ההתחברות'))
+    }, AUTH_TIMEOUT_MS)
+
     const tokenClient = oauth2.initTokenClient({
       client_id: clientId,
       scope: CALENDAR_SCOPE,
       callback: (response) => {
+        if (settled) return
+        settled = true
+        clearTimeout(timer)
         if (response.error || !response.access_token) {
           reject(new Error(response.error || 'ההתחברות ל-Google נכשלה'))
           return
