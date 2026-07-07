@@ -168,6 +168,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                     תזכורת
                     <input
                       type="time"
+                      dir="ltr"
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
                       className="rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"

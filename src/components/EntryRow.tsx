@@ -279,6 +279,7 @@ export function EntryRow({
               />
               <input
                 type="time"
+                dir="ltr"
                 value={timeDraft}
                 onChange={(e) => setTimeDraft(e.target.value)}
                 onKeyDown={(e) => {

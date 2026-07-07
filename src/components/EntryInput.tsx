@@ -68,6 +68,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' 
         <div className="flex shrink-0 items-center gap-1">
           <input
             type="time"
+            dir="ltr"
             autoFocus={showTime && !time}
             value={time}
             onChange={(e) => setTime(e.target.value)}
