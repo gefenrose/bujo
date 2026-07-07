@@ -6,13 +6,15 @@ import { DailyLog } from './components/DailyLog'
 import { MonthlyLog } from './components/MonthlyLog'
 import { Collections } from './components/Collections'
 import { Analytics } from './components/Analytics'
+import { Habits } from './components/Habits'
 
-type View = 'daily' | 'monthly' | 'collections' | 'analytics'
+type View = 'daily' | 'monthly' | 'collections' | 'habits' | 'analytics'
 
 const NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'Daily' },
   { view: 'monthly', label: 'Monthly' },
   { view: 'collections', label: 'Collections' },
+  { view: 'habits', label: 'Habits' },
   { view: 'analytics', label: 'Analytics' },
 ]
 
@@ -33,18 +35,18 @@ function App() {
   return (
     <div className="min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
       <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-6">
-        <header className="flex items-center justify-between border-b border-ink/10 py-5 dark:border-inkdark/10">
-          <span className="text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
+        <header className="flex items-center justify-between gap-3 border-b border-ink/10 py-5 dark:border-inkdark/10">
+          <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
 
-          <nav className="flex items-center gap-1 text-sm">
+          <nav className="flex min-w-0 items-center gap-1 overflow-x-auto text-sm">
             {NAV.map((n) => (
               <button
                 key={n.view}
                 onClick={() => {
                   setView(n.view)
-                  if (n.view === 'monthly') setMonth(date)
+                  if (n.view === 'monthly' || n.view === 'habits') setMonth(date)
                 }}
-                className={`rounded-full px-3 py-1 transition-colors ${
+                className={`shrink-0 rounded-full px-3 py-1 transition-colors ${
                   view === n.view
                     ? 'bg-ink/[0.06] text-ink dark:bg-inkdark/[0.08] dark:text-inkdark'
                     : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
@@ -72,6 +74,7 @@ function App() {
           {view === 'collections' && (
             <Collections journal={journal} selectedId={collectionId} onSelect={setCollectionId} />
           )}
+          {view === 'habits' && <Habits journal={journal} month={month} onChangeMonth={setMonth} />}
           {view === 'analytics' && <Analytics journal={journal} />}
         </main>
 

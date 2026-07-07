@@ -23,7 +23,28 @@ export interface Collection {
   createdAt: number
 }
 
+export type HabitType = 'check' | 'count'
+
+export interface Habit {
+  id: string
+  name: string
+  type: HabitType
+  /** for 'count' habits: the daily goal, used both as the color-intensity ceiling and a sensible default target */
+  target?: number
+  createdAt: number
+}
+
+export interface HabitLog {
+  id: string
+  habitId: string
+  /** ISO date (YYYY-MM-DD) */
+  date: string
+  value: number
+}
+
 export interface JournalData {
   entries: Entry[]
   collections: Collection[]
+  habits: Habit[]
+  habitLogs: HabitLog[]
 }

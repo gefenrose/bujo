@@ -2,7 +2,7 @@ import type { JournalData } from '../types'
 
 const STORAGE_KEY = 'bujo:data:v1'
 
-const EMPTY: JournalData = { entries: [], collections: [] }
+const EMPTY: JournalData = { entries: [], collections: [], habits: [], habitLogs: [] }
 
 export function loadJournal(): JournalData {
   try {
@@ -12,6 +12,8 @@ export function loadJournal(): JournalData {
     return {
       entries: Array.isArray(parsed.entries) ? parsed.entries : [],
       collections: Array.isArray(parsed.collections) ? parsed.collections : [],
+      habits: Array.isArray(parsed.habits) ? parsed.habits : [],
+      habitLogs: Array.isArray(parsed.habitLogs) ? parsed.habitLogs : [],
     }
   } catch {
     return EMPTY

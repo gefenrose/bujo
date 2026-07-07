@@ -10,6 +10,8 @@ import {
   weekdayActivity,
   weeklyCompletionTrend,
 } from '../lib/analytics'
+import { habitMonthStats } from '../lib/habits'
+import { todayISO } from '../lib/date'
 import { StatTile } from './analytics/StatTile'
 import { ActivityHeatmap } from './analytics/ActivityHeatmap'
 import { WeeklyCompletionChart } from './analytics/WeeklyCompletionChart'
@@ -36,6 +38,12 @@ export function Analytics({ journal }: AnalyticsProps) {
 
   const dailyEntryCount = entries.filter((e) => e.date).length
 
+  const currentMonth = todayISO()
+  const habitStats = useMemo(
+    () => journal.habits.map((h) => ({ habit: h, stats: habitMonthStats(h, journal.habitLogs, currentMonth) })),
+    [journal.habits, journal.habitLogs, currentMonth],
+  )
+
   return (
     <div>
       <h1 className="mb-6 text-lg font-medium tracking-tight text-ink dark:text-inkdark">Analytics</h1>
@@ -57,6 +65,29 @@ export function Analytics({ journal }: AnalyticsProps) {
           <WeekdayBar counts={weekdayCounts} />
         </div>
       </section>
+
+      {habitStats.length > 0 && (
+        <section className="mt-9">
+          <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Habits this month</h2>
+          <ul className="flex flex-col gap-1.5">
+            {habitStats.map(({ habit, stats }) => (
+              <li
+                key={habit.id}
+                className="flex items-baseline justify-between gap-4 rounded px-1.5 py-1 -mx-1.5 hover:bg-ink/[0.03] dark:hover:bg-inkdark/[0.04]"
+              >
+                <span className="min-w-0 truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
+                <span className="shrink-0 text-xs tabular-nums text-amber-600 dark:text-amber-400">
+                  {habit.type === 'check'
+                    ? `${pct(stats.rate)} of days`
+                    : stats.average === null
+                      ? 'no data yet'
+                      : `avg ${stats.average.toFixed(1)}${habit.target ? ` / ${habit.target}` : ''}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="mt-9">
         <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Completion rate over time</h2>

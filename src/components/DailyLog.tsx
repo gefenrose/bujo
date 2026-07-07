@@ -1,7 +1,9 @@
 import type { Journal } from '../hooks/useJournal'
 import { addDays, formatDayHeading, isToday, todayISO } from '../lib/date'
+import { habitValue } from '../lib/habits'
 import { EntryInput } from './EntryInput'
 import { EntryRow } from './EntryRow'
+import { HabitStripChip } from './habits/HabitStripChip'
 
 interface DailyLogProps {
   journal: Journal
@@ -34,6 +36,21 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
           </button>
         </div>
       </div>
+
+      {journal.habits.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {journal.habits.map((habit) => (
+            <HabitStripChip
+              key={habit.id}
+              habit={habit}
+              value={habitValue(journal.habitLogs, habit.id, date)}
+              onToggle={() => journal.toggleHabitCheck(habit.id, date)}
+              onIncrement={() => journal.incrementHabit(habit.id, date, 1)}
+              onDecrement={() => journal.incrementHabit(habit.id, date, -1)}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col">
         {entries.map((entry) => (

@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Collection, Entry, EntryType, TaskStatus } from '../types'
+import type { Collection, Entry, EntryType, Habit, HabitLog, HabitType, TaskStatus } from '../types'
 import { genId, loadJournal, saveJournal } from '../lib/storage'
 import { todayISO } from '../lib/date'
 
 export function useJournal() {
   const [entries, setEntries] = useState<Entry[]>(() => loadJournal().entries)
   const [collections, setCollections] = useState<Collection[]>(() => loadJournal().collections)
+  const [habits, setHabits] = useState<Habit[]>(() => loadJournal().habits)
+  const [habitLogs, setHabitLogs] = useState<HabitLog[]>(() => loadJournal().habitLogs)
   const hydrated = useRef(false)
 
   useEffect(() => {
@@ -13,8 +15,8 @@ export function useJournal() {
       hydrated.current = true
       return
     }
-    saveJournal({ entries, collections })
-  }, [entries, collections])
+    saveJournal({ entries, collections, habits, habitLogs })
+  }, [entries, collections, habits, habitLogs])
 
   const addEntry = useCallback(
     (input: { text: string; type: EntryType; date?: string; collectionId?: string }) => {
@@ -96,9 +98,62 @@ export function useJournal() {
     setCollections((prev) => prev.map((c) => (c.id === id ? { ...c, name: trimmed } : c)))
   }, [])
 
+  const addHabit = useCallback((input: { name: string; type: HabitType; target?: number }) => {
+    const name = input.name.trim()
+    if (!name) return
+    const habit: Habit = {
+      id: genId(),
+      name,
+      type: input.type,
+      target: input.type === 'count' ? input.target ?? 5 : undefined,
+      createdAt: Date.now(),
+    }
+    setHabits((prev) => [...prev, habit])
+    return habit.id
+  }, [])
+
+  const deleteHabit = useCallback((id: string) => {
+    setHabits((prev) => prev.filter((h) => h.id !== id))
+    setHabitLogs((prev) => prev.filter((l) => l.habitId !== id))
+  }, [])
+
+  const renameHabit = useCallback((id: string, name: string) => {
+    const trimmed = name.trim()
+    if (!trimmed) return
+    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, name: trimmed } : h)))
+  }, [])
+
+  const setHabitValue = useCallback((habitId: string, date: string, value: number) => {
+    const clamped = Math.max(0, value)
+    setHabitLogs((prev) => {
+      const existing = prev.find((l) => l.habitId === habitId && l.date === date)
+      if (existing) return prev.map((l) => (l === existing ? { ...l, value: clamped } : l))
+      return [...prev, { id: genId(), habitId, date, value: clamped }]
+    })
+  }, [])
+
+  const incrementHabit = useCallback((habitId: string, date: string, delta: number) => {
+    setHabitLogs((prev) => {
+      const existing = prev.find((l) => l.habitId === habitId && l.date === date)
+      const next = Math.max(0, (existing?.value ?? 0) + delta)
+      if (existing) return prev.map((l) => (l === existing ? { ...l, value: next } : l))
+      return [...prev, { id: genId(), habitId, date, value: next }]
+    })
+  }, [])
+
+  const toggleHabitCheck = useCallback(
+    (habitId: string, date: string) => {
+      const existing = habitLogs.find((l) => l.habitId === habitId && l.date === date)
+      setHabitValue(habitId, date, existing && existing.value > 0 ? 0 : 1)
+    },
+    [habitLogs, setHabitValue],
+  )
+
   return {
     entries,
     collections,
+    habits,
+    habitLogs,
     addEntry,
     updateEntry,
     deleteEntry,
@@ -108,6 +163,12 @@ export function useJournal() {
     addCollection,
     deleteCollection,
     renameCollection,
+    addHabit,
+    deleteHabit,
+    renameHabit,
+    setHabitValue,
+    incrementHabit,
+    toggleHabitCheck,
   }
 }
 

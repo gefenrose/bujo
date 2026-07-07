@@ -1,4 +1,5 @@
 import type { ActivityDay } from '../../lib/analytics'
+import { amberLevelClass } from '../../lib/colorScale'
 import { formatShortDate } from '../../lib/date'
 
 interface ActivityHeatmapProps {
@@ -6,11 +7,7 @@ interface ActivityHeatmapProps {
 }
 
 function levelClass(count: number): string {
-  if (count <= 0) return 'bg-ink/[0.06] dark:bg-inkdark/[0.06]'
-  if (count === 1) return 'bg-amber-200 dark:bg-amber-950'
-  if (count === 2) return 'bg-amber-400 dark:bg-amber-800'
-  if (count === 3) return 'bg-amber-500 dark:bg-amber-600'
-  return 'bg-amber-700 dark:bg-amber-400'
+  return amberLevelClass(count)
 }
 
 export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
