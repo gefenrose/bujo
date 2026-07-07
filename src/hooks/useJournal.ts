@@ -1,5 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Collection, Entry, EntryType, Habit, HabitLog, HabitType, MoodLog, TaskStatus } from '../types'
+import type {
+  Collection,
+  Entry,
+  EntryType,
+  Habit,
+  HabitLog,
+  HabitType,
+  MoodLog,
+  Prompt,
+  PromptResponse,
+  TaskStatus,
+} from '../types'
 import { genId, loadJournal, saveJournal } from '../lib/storage'
 import { todayISO } from '../lib/date'
 import { nextOrder } from '../lib/entries'
@@ -18,6 +29,8 @@ export function useJournal() {
   const [habits, setHabits] = useState<Habit[]>(() => loadJournal().habits)
   const [habitLogs, setHabitLogs] = useState<HabitLog[]>(() => loadJournal().habitLogs)
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>(() => loadJournal().moodLogs)
+  const [prompts, setPrompts] = useState<Prompt[]>(() => loadJournal().prompts)
+  const [promptResponses, setPromptResponses] = useState<PromptResponse[]>(() => loadJournal().promptResponses)
   const [undoActions, setUndoActions] = useState<UndoAction[]>([])
   const hydrated = useRef(false)
 
@@ -26,8 +39,8 @@ export function useJournal() {
       hydrated.current = true
       return
     }
-    saveJournal({ entries, collections, habits, habitLogs, moodLogs })
-  }, [entries, collections, habits, habitLogs, moodLogs])
+    saveJournal({ entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses })
+  }, [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses])
 
   const dismissUndo = useCallback((id: string) => {
     setUndoActions((prev) => prev.filter((a) => a.id !== id))
@@ -317,6 +330,48 @@ export function useJournal() {
     })
   }, [])
 
+  const addPrompt = useCallback(
+    (text: string) => {
+      const trimmed = text.trim()
+      if (!trimmed) return
+      const nextPromptOrder = prompts.length === 0 ? 0 : Math.max(...prompts.map((p) => p.order ?? 0)) + 1
+      const prompt: Prompt = { id: genId(), text: trimmed, order: nextPromptOrder, createdAt: Date.now() }
+      setPrompts((prev) => [...prev, prompt])
+    },
+    [prompts],
+  )
+
+  const renamePrompt = useCallback((id: string, text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    setPrompts((prev) => prev.map((p) => (p.id === id ? { ...p, text: trimmed } : p)))
+  }, [])
+
+  const deletePrompt = useCallback(
+    (id: string) => {
+      const target = prompts.find((p) => p.id === id)
+      const removedResponses = promptResponses.filter((r) => r.promptId === id)
+      setPrompts((prev) => prev.filter((p) => p.id !== id))
+      setPromptResponses((prev) => prev.filter((r) => r.promptId !== id))
+      if (!target) return
+      pushUndo(`השאלה "${target.text}" נמחקה`, () => {
+        setPrompts((prev) => (prev.some((p) => p.id === target.id) ? prev : [...prev, target]))
+        setPromptResponses((prev) => [...prev, ...removedResponses])
+      })
+    },
+    [prompts, promptResponses, pushUndo],
+  )
+
+  /** Sets (or clears, with an empty string) a prompt's answer for a date. */
+  const setPromptAnswer = useCallback((promptId: string, date: string, answer: string) => {
+    setPromptResponses((prev) => {
+      const existing = prev.find((r) => r.promptId === promptId && r.date === date)
+      if (!answer) return existing ? prev.filter((r) => r !== existing) : prev
+      if (existing) return prev.map((r) => (r === existing ? { ...r, answer } : r))
+      return [...prev, { id: genId(), promptId, date, answer }]
+    })
+  }, [])
+
   return {
     entries,
     collections,
@@ -349,6 +404,12 @@ export function useJournal() {
     incrementHabit,
     toggleHabitCheck,
     setMood,
+    prompts,
+    promptResponses,
+    addPrompt,
+    renamePrompt,
+    deletePrompt,
+    setPromptAnswer,
   }
 }
 

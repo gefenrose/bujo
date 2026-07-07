@@ -6,6 +6,7 @@ import { moodValue } from '../lib/mood'
 import { EntryList } from './EntryList'
 import { HabitStripChip } from './habits/HabitStripChip'
 import { MoodPicker } from './mood/MoodPicker'
+import { DailyPrompts } from './prompts/DailyPrompts'
 
 interface DailyLogProps {
   journal: Journal
@@ -64,6 +65,8 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         onTagClick={onTagClick}
         emptyMessage="עדיין לא נרשם כלום — אפשר להתחיל לכתוב למעלה."
       />
+
+      <DailyPrompts journal={journal} date={date} />
     </div>
   )
 }

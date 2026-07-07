@@ -160,6 +160,23 @@ export function MoreIcon({ className }: IconProps) {
   )
 }
 
+export function CheckIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4.5 10.5l3.5 3.5 7.5-8" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

@@ -68,10 +68,28 @@ export interface MoodLog {
   value: number
 }
 
+export interface Prompt {
+  id: string
+  /** the question text, e.g. "מה גרם לי אושר היום?" */
+  text: string
+  order?: number
+  createdAt: number
+}
+
+export interface PromptResponse {
+  id: string
+  promptId: string
+  /** ISO date (YYYY-MM-DD) this answer belongs to */
+  date: string
+  answer: string
+}
+
 export interface JournalData {
   entries: Entry[]
   collections: Collection[]
   habits: Habit[]
   habitLogs: HabitLog[]
   moodLogs: MoodLog[]
+  prompts: Prompt[]
+  promptResponses: PromptResponse[]
 }

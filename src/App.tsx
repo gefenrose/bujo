@@ -6,6 +6,7 @@ import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
 import { MonthlyLog } from './components/MonthlyLog'
+import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
@@ -13,12 +14,13 @@ import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
 import { BellIcon, SearchIcon } from './components/icons/Icons'
 
-type View = 'daily' | 'weekly' | 'monthly' | 'collections' | 'habits' | 'analytics'
+type View = 'daily' | 'weekly' | 'monthly' | 'inbox' | 'collections' | 'habits' | 'analytics'
 
 const NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומי' },
   { view: 'weekly', label: 'שבועי' },
   { view: 'monthly', label: 'חודשי' },
+  { view: 'inbox', label: 'תיבת קלט' },
   { view: 'collections', label: 'אוספים' },
   { view: 'habits', label: 'הרגלים' },
   { view: 'analytics', label: 'נתונים' },
@@ -97,7 +99,7 @@ function App() {
                 key={n.view}
                 onClick={() => {
                   setView(n.view)
-                  if (n.view === 'monthly' || n.view === 'habits') setMonth(date)
+                  if (n.view === 'monthly') setMonth(date)
                 }}
                 className={`shrink-0 rounded-full px-3 py-1 transition-colors ${
                   view === n.view
@@ -129,7 +131,8 @@ function App() {
               onTagClick={openSearchForTag}
             />
           )}
-          {view === 'habits' && <Habits journal={journal} month={month} onChangeMonth={setMonth} />}
+          {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
+          {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
           {view === 'analytics' && <Analytics journal={journal} />}
         </main>
 
