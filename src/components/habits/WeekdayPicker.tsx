@@ -1,4 +1,5 @@
-const LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+const LABELS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
+const FULL_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת']
 
 interface WeekdayPickerProps {
   value: number[]
@@ -25,7 +26,7 @@ export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
             key={day}
             type="button"
             onClick={() => toggle(day)}
-            title={['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day]}
+            title={FULL_NAMES[day]}
             className={`flex h-6 w-6 items-center justify-center rounded-full text-[0.7rem] transition-colors ${
               active
                 ? 'bg-ink/[0.1] text-ink dark:bg-inkdark/[0.12] dark:text-inkdark'

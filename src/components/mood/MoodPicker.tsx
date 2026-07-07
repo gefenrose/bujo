@@ -9,7 +9,7 @@ interface MoodPickerProps {
 export function MoodPicker({ value, onChange }: MoodPickerProps) {
   return (
     <div className="mb-6 flex items-center gap-1.5">
-      <span className="mr-1 text-xs text-ink/40 dark:text-inkdark/40">Mood</span>
+      <span className="me-1 text-xs text-ink/40 dark:text-inkdark/40">מצב רוח</span>
       {MOOD_LEVELS.map((level) => {
         const selected = value === level.value
         return (

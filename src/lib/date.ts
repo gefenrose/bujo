@@ -25,16 +25,17 @@ export function addMonths(iso: string, delta: number): string {
   return toISODate(d)
 }
 
-const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-const WEEKDAYS_SHORT = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+const WEEKDAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת']
+const WEEKDAYS_SHORT = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+  'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר',
 ]
+const MONTHS_SHORT = ['ינו', 'פבר', 'מרץ', 'אפר', 'מאי', 'יונ', 'יול', 'אוג', 'ספט', 'אוק', 'נוב', 'דצמ']
 
 export function formatDayHeading(iso: string): string {
   const d = fromISODate(iso)
-  return `${WEEKDAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`
+  return `יום ${WEEKDAYS[d.getDay()]}, ${d.getDate()} ב${MONTHS[d.getMonth()]}`
 }
 
 export function formatMonthHeading(iso: string): string {
@@ -44,7 +45,11 @@ export function formatMonthHeading(iso: string): string {
 
 export function formatShortDate(iso: string): string {
   const d = fromISODate(iso)
-  return `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}`
+  return `${d.getDate()} ב${MONTHS_SHORT[d.getMonth()]}`
+}
+
+export function monthShortLabel(iso: string): string {
+  return MONTHS_SHORT[fromISODate(iso).getMonth()]
 }
 
 export const WEEKDAY_LABELS = WEEKDAYS_SHORT
@@ -57,15 +62,9 @@ export function isToday(iso: string): boolean {
   return iso === todayISO()
 }
 
-/** Formats a "HH:MM" 24h time string as "h:MM AM/PM". Returns the input unchanged if malformed. */
-export function formatTime12h(time: string): string {
-  const match = /^(\d{1,2}):(\d{2})$/.exec(time)
-  if (!match) return time
-  const hour24 = Number(match[1])
-  const minute = match[2]
-  const period = hour24 >= 12 ? 'PM' : 'AM'
-  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12
-  return `${hour12}:${minute} ${period}`
+/** Formats a "HH:MM" 24h time string using Israeli convention (24h clock). */
+export function formatTime(time: string): string {
+  return time
 }
 
 export function daysInMonth(iso: string): string[] {

@@ -9,7 +9,11 @@ const CHART_HEIGHT = 88
 export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
   return (
     <div>
-      <div className="flex items-end gap-3 border-b border-ink/10 pb-0 dark:border-inkdark/10" style={{ height: CHART_HEIGHT }}>
+      <div
+        dir="ltr"
+        className="flex items-end gap-3 border-b border-ink/10 pb-0 dark:border-inkdark/10"
+        style={{ height: CHART_HEIGHT }}
+      >
         {buckets.map((b, i) => {
           const pct = b.rate === null ? 0 : Math.round(b.rate * 100)
           const barHeight = b.rate === null ? 2 : Math.max(3, Math.round(b.rate * (CHART_HEIGHT - 20)))
@@ -31,14 +35,17 @@ export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
                 }`}
                 style={{ height: barHeight }}
               />
-              <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-1.5 py-0.5 text-[0.7rem] text-paper opacity-0 shadow-sm transition-opacity group-hover/bar:opacity-100 dark:bg-inkdark dark:text-paperdark">
-                {b.total === 0 ? 'No tasks logged' : `${pct}% of ${b.total} task${b.total === 1 ? '' : 's'}`}
+              <div
+                dir="rtl"
+                className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-1.5 py-0.5 text-[0.7rem] text-paper opacity-0 shadow-sm transition-opacity group-hover/bar:opacity-100 dark:bg-inkdark dark:text-paperdark"
+              >
+                {b.total === 0 ? 'לא נרשמו משימות' : `${pct}% מתוך ${b.total} משימות`}
               </div>
             </div>
           )
         })}
       </div>
-      <div className="mt-1.5 flex gap-3">
+      <div dir="ltr" className="mt-1.5 flex gap-3">
         {buckets.map((b) => (
           <span key={b.label} className="flex-1 text-center text-[0.65rem] text-ink/35 dark:text-inkdark/35">
             {b.label}

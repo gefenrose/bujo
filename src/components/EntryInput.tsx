@@ -8,12 +8,12 @@ interface EntryInputProps {
 }
 
 const TYPES: { type: EntryType; glyph: string; label: string }[] = [
-  { type: 'task', glyph: '•', label: 'Task' },
-  { type: 'event', glyph: '○', label: 'Event' },
-  { type: 'note', glyph: '–', label: 'Note' },
+  { type: 'task', glyph: '•', label: 'משימה' },
+  { type: 'event', glyph: '○', label: 'אירוע' },
+  { type: 'note', glyph: '–', label: 'הערה' },
 ]
 
-export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryInputProps) {
+export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' }: EntryInputProps) {
   const [type, setType] = useState<EntryType>('task')
   const [value, setValue] = useState('')
   const [time, setTime] = useState('')
@@ -51,7 +51,7 @@ export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryI
         <button
           type="button"
           onClick={() => setType(TYPES[(TYPES.findIndex((t) => t.type === type) + 1) % TYPES.length].type)}
-          title="Cycle entry type (task / event / note)"
+          title="החלפת סוג הרשומה (משימה / אירוע / הערה)"
           className="text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
         >
           {TYPES.find((t) => t.type === type)?.glyph}
@@ -79,7 +79,7 @@ export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryI
               setTime('')
               setShowTime(false)
             }}
-            title="Remove time"
+            title="הסרת שעה"
             className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
           >
             <CloseIcon className="h-3 w-3" />
@@ -89,7 +89,7 @@ export function EntryInput({ onSubmit, placeholder = 'Add an entry…' }: EntryI
         <button
           type="button"
           onClick={() => setShowTime(true)}
-          title="Add a time"
+          title="הוספת שעה"
           className="shrink-0 text-ink/25 hover:text-ink dark:text-inkdark/25 dark:hover:text-inkdark"
         >
           <ClockIcon className="h-3.5 w-3.5" />

@@ -37,7 +37,7 @@ export function HabitStripChip({ habit, value, onToggle, onIncrement, onDecremen
     >
       <button type="button" onClick={onIncrement} className="hover:text-ink dark:hover:text-inkdark">
         {habit.name}
-        {active && <span className="ml-1.5 tabular-nums">{value}</span>}
+        {active && <span className="ms-1.5 tabular-nums">{value}</span>}
       </button>
       {active && (
         <button

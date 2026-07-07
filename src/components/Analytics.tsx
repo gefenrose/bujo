@@ -53,31 +53,31 @@ export function Analytics({ journal }: AnalyticsProps) {
 
   return (
     <div>
-      <h1 className="mb-6 text-lg font-medium tracking-tight text-ink dark:text-inkdark">Analytics</h1>
+      <h1 className="mb-6 text-lg font-medium tracking-tight text-ink dark:text-inkdark">נתונים</h1>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="Current streak" value={`${streaks.current}d`} caption="consecutive days journaled" />
-        <StatTile label="Longest streak" value={`${streaks.longest}d`} caption="best run so far" />
-        <StatTile label="Completion rate" value={pct(rate)} caption={`${outcomes.done} of ${chains.length} tasks`} />
-        <StatTile label="Entries logged" value={String(dailyEntryCount)} caption="in the daily log" />
+        <StatTile label="רצף נוכחי" value={`${streaks.current} ימים`} caption="ימים רצופים של תיעוד" />
+        <StatTile label="הרצף הארוך ביותר" value={`${streaks.longest} ימים`} caption="השיא עד כה" />
+        <StatTile label="אחוז השלמה" value={pct(rate)} caption={`${outcomes.done} מתוך ${chains.length} משימות`} />
+        <StatTile label="רשומות שנרשמו" value={String(dailyEntryCount)} caption="ביומן היומי" />
       </div>
 
       <section className="mt-9">
-        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Consistency</h2>
+        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">עקביות</h2>
         <div className="overflow-x-auto pb-1 pt-4">
           <ActivityHeatmap columns={heatmapColumns} />
         </div>
         <div className="mt-6 max-w-xs">
-          <p className="mb-2 text-xs text-ink/50 dark:text-inkdark/50">Most active days</p>
+          <p className="mb-2 text-xs text-ink/50 dark:text-inkdark/50">הימים הפעילים ביותר</p>
           <WeekdayBar counts={weekdayCounts} />
         </div>
       </section>
 
       <section className="mt-9">
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-sm font-medium text-ink/70 dark:text-inkdark/70">Mood</h2>
+          <h2 className="text-sm font-medium text-ink/70 dark:text-inkdark/70">מצב רוח</h2>
           <span className="text-xs text-ink/40 dark:text-inkdark/40">
-            {moodAverage === null ? 'no data this month' : `avg ${moodAverage.toFixed(1)} / 5 this month`}
+            {moodAverage === null ? 'אין נתונים החודש' : `ממוצע ${moodAverage.toFixed(1)} / 5 החודש`}
           </span>
         </div>
         <MoodTrendChart buckets={moodTrend} />
@@ -85,7 +85,7 @@ export function Analytics({ journal }: AnalyticsProps) {
 
       {habitStats.length > 0 && (
         <section className="mt-9">
-          <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Habits this month</h2>
+          <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">הרגלים החודש</h2>
           <ul className="flex flex-col gap-1.5">
             {habitStats.map(({ habit, stats }) => (
               <li
@@ -95,10 +95,10 @@ export function Analytics({ journal }: AnalyticsProps) {
                 <span className="min-w-0 truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
                 <span className="shrink-0 text-xs tabular-nums text-amber-600 dark:text-amber-400">
                   {habit.type === 'check'
-                    ? `${pct(stats.rate)} of days`
+                    ? `${pct(stats.rate)} מהימים`
                     : stats.average === null
-                      ? 'no data yet'
-                      : `avg ${stats.average.toFixed(1)}${habit.target ? ` / ${habit.target}` : ''}`}
+                      ? 'אין נתונים עדיין'
+                      : `ממוצע ${stats.average.toFixed(1)}${habit.target ? ` / ${habit.target}` : ''}`}
                 </span>
               </li>
             ))}
@@ -107,21 +107,21 @@ export function Analytics({ journal }: AnalyticsProps) {
       )}
 
       <section className="mt-9">
-        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Completion rate over time</h2>
+        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">אחוז השלמה לאורך זמן</h2>
         <WeeklyCompletionChart buckets={trend} />
       </section>
 
       <section className="mt-9">
-        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Task outcomes</h2>
+        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">תוצאות המשימות</h2>
         <TaskOutcomeBar counts={outcomes} />
       </section>
 
       <section className="mt-9">
-        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">Migration patterns</h2>
+        <h2 className="mb-3 text-sm font-medium text-ink/70 dark:text-inkdark/70">דפוסי העברה</h2>
         <p className="text-sm text-ink/60 dark:text-inkdark/60">
           {migration.totalCount === 0
-            ? 'No tasks logged yet.'
-            : `${pct(migration.percentMigrated)} of tasks (${migration.migratedCount} of ${migration.totalCount}) were migrated at least once before being resolved.`}
+            ? 'עדיין לא נרשמו משימות.'
+            : `${pct(migration.percentMigrated)} מהמשימות (${migration.migratedCount} מתוך ${migration.totalCount}) הועברו לפחות פעם אחת לפני שהושלמו.`}
         </p>
         {migration.top.length > 0 && (
           <ul className="mt-3 flex flex-col gap-1.5">
@@ -132,7 +132,7 @@ export function Analytics({ journal }: AnalyticsProps) {
               >
                 <span className="min-w-0 truncate text-sm text-ink/80 dark:text-inkdark/80">{chain.text}</span>
                 <span className="shrink-0 text-xs text-orange-600 dark:text-orange-400">
-                  moved {chain.hops}×
+                  הועבר {chain.hops} פעמים
                 </span>
               </li>
             ))}

@@ -57,7 +57,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
                 setNewName('')
               }
             }}
-            placeholder="Collection name"
+            placeholder="שם האוסף"
             className="rounded-full border border-ink/20 bg-transparent px-3 py-1 text-sm text-ink outline-none dark:border-inkdark/20 dark:text-inkdark"
           />
         ) : (
@@ -65,7 +65,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
             onClick={() => setCreating(true)}
             className="rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/40 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/40 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
           >
-            + new
+            + חדש
           </button>
         )}
       </div>
@@ -81,7 +81,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
               }}
               className="text-sm text-ink/30 hover:text-red-600 dark:text-inkdark/30 dark:hover:text-red-400"
             >
-              delete collection
+              מחיקת האוסף
             </button>
           </div>
 
@@ -90,12 +90,12 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
             entries={entries}
             onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: todayISO() })}
             onAdd={(text, type, time) => journal.addEntry({ text, type, collectionId: selected.id, time })}
-            emptyMessage="No entries yet — add one above."
+            emptyMessage="עדיין אין רשומות — אפשר להוסיף אחת למעלה."
           />
         </>
       ) : (
         <p className="text-sm text-ink/40 dark:text-inkdark/40">
-          Create a collection to track books, ideas, goals, or anything else outside the daily grind.
+          כדאי ליצור אוסף למעקב אחר ספרים, רעיונות, מטרות, או כל דבר אחר מחוץ לשגרת היומיום.
         </p>
       )}
     </div>

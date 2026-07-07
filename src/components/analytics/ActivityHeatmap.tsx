@@ -1,6 +1,6 @@
 import type { ActivityDay } from '../../lib/analytics'
 import { amberLevelClass } from '../../lib/colorScale'
-import { formatShortDate } from '../../lib/date'
+import { formatShortDate, monthShortLabel } from '../../lib/date'
 
 interface ActivityHeatmapProps {
   columns: ActivityDay[][]
@@ -15,12 +15,14 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
     const firstOfMonth = col.find((d) => d.date.endsWith('-01'))
     if (!firstOfMonth) return null
     if (prevCol?.some((d) => d.date === firstOfMonth.date)) return null
-    return formatShortDate(firstOfMonth.date).split(' ')[0]
+    return monthShortLabel(firstOfMonth.date)
   }
 
   return (
     <div>
-      <div className="flex gap-[3px]">
+      {/* Kept left-to-right (oldest → newest) regardless of the app's RTL direction, matching the
+          usual convention for chronological data visualizations. */}
+      <div dir="ltr" className="flex gap-[3px]">
         {columns.map((col, i) => {
           const label = monthLabelForColumn(col, columns[i - 1])
           return (
@@ -38,8 +40,11 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
                     }`}
                   />
                   {!day.future && (
-                    <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-1.5 py-0.5 text-[0.7rem] text-paper opacity-0 shadow-sm transition-opacity group-hover/cell:opacity-100 dark:bg-inkdark dark:text-paperdark">
-                      {day.count} {day.count === 1 ? 'entry' : 'entries'} · {formatShortDate(day.date)}
+                    <div
+                      dir="rtl"
+                      className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-1.5 py-0.5 text-[0.7rem] text-paper opacity-0 shadow-sm transition-opacity group-hover/cell:opacity-100 dark:bg-inkdark dark:text-paperdark"
+                    >
+                      {day.count} {day.count === 1 ? 'רשומה' : 'רשומות'} · {formatShortDate(day.date)}
                     </div>
                   )}
                 </div>
@@ -49,11 +54,11 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
         })}
       </div>
       <div className="mt-3 flex items-center gap-1.5 text-[0.7rem] text-ink/40 dark:text-inkdark/40">
-        <span>Less</span>
+        <span>פחות</span>
         {[0, 1, 2, 3, 4].map((n) => (
           <div key={n} className={`h-[11px] w-[11px] rounded-[2px] ${levelClass(n)}`} />
         ))}
-        <span>More</span>
+        <span>יותר</span>
       </div>
     </div>
   )

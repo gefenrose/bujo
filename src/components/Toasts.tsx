@@ -48,7 +48,7 @@ export function Toasts({ reminders, onDismissReminder, undoActions, onUndo, onDi
             onClick={() => onUndo(action.id)}
             className="shrink-0 text-sm font-medium text-amber-400 hover:text-amber-300 dark:text-amber-700 dark:hover:text-amber-800"
           >
-            Undo
+            בטל
           </button>
           <button
             type="button"

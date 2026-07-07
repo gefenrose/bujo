@@ -14,11 +14,11 @@ import { BellIcon } from './components/icons/Icons'
 type View = 'daily' | 'monthly' | 'collections' | 'habits' | 'analytics'
 
 const NAV: { view: View; label: string }[] = [
-  { view: 'daily', label: 'Daily' },
-  { view: 'monthly', label: 'Monthly' },
-  { view: 'collections', label: 'Collections' },
-  { view: 'habits', label: 'Habits' },
-  { view: 'analytics', label: 'Analytics' },
+  { view: 'daily', label: 'יומי' },
+  { view: 'monthly', label: 'חודשי' },
+  { view: 'collections', label: 'אוספים' },
+  { view: 'habits', label: 'הרגלים' },
+  { view: 'analytics', label: 'נתונים' },
 ]
 
 function App() {
@@ -66,10 +66,10 @@ function App() {
               onClick={reminders.enableReminders}
               title={
                 reminders.permission === 'granted'
-                  ? 'Reminders on — fires while bujo is open in this browser'
+                  ? 'תזכורות פעילות — פועל כשבujo פתוח בדפדפן זה'
                   : reminders.permission === 'denied'
-                    ? 'Notifications blocked — allow them in your browser settings'
-                    : 'Enable reminders (fires while bujo is open in this browser)'
+                    ? 'התראות חסומות — יש לאפשר אותן בהגדרות הדפדפן'
+                    : 'הפעלת תזכורות (פועל כשbujo פתוח בדפדפן זה)'
               }
               className={`flex h-7 w-7 items-center justify-center rounded-full ${
                 reminders.permission === 'granted'
@@ -81,7 +81,7 @@ function App() {
             </button>
             <button
               onClick={toggle}
-              title="Toggle theme"
+              title="החלפת ערכת נושא"
               className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
             >
               {theme === 'dark' ? '☾' : '☼'}
@@ -102,7 +102,7 @@ function App() {
         </main>
 
         <footer className="border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30">
-          saved locally in this browser
+          נשמר מקומית בדפדפן זה
         </footer>
       </div>
 

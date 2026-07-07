@@ -1,5 +1,5 @@
 import type { Journal } from '../hooks/useJournal'
-import { addMonths, daysInMonth, formatMonthHeading, formatTime12h, isToday, weekdayShort } from '../lib/date'
+import { addMonths, daysInMonth, formatMonthHeading, formatTime, isToday, weekdayShort } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
 import { moodLevel, moodValue } from '../lib/mood'
 import { Bullet } from './Bullet'
@@ -23,10 +23,10 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
         </h1>
         <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
           <button onClick={() => onChangeMonth(addMonths(month, -1))} className="hover:text-ink dark:hover:text-inkdark">
-            ← prev
+            הקודם
           </button>
           <button onClick={() => onChangeMonth(addMonths(month, 1))} className="hover:text-ink dark:hover:text-inkdark">
-            next →
+            הבא
           </button>
         </div>
       </div>
@@ -46,7 +46,7 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
             >
               <button
                 onClick={() => onSelectDate(date)}
-                className="flex w-12 shrink-0 items-baseline gap-1.5 text-left"
+                className="flex w-12 shrink-0 items-baseline gap-1.5 text-start"
               >
                 <span className="text-sm tabular-nums text-ink/70 dark:text-inkdark/70">{day}</span>
                 <span className="text-[0.7rem] uppercase text-ink/30 dark:text-inkdark/30">
@@ -71,8 +71,8 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
                         }`}
                       >
                         {entry.time && (
-                          <span className="mr-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
-                            {formatTime12h(entry.time)}
+                          <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                            {formatTime(entry.time)}
                           </span>
                         )}
                         {entry.text}
@@ -83,7 +83,7 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
               ) : (
                 <button
                   onClick={() => onSelectDate(date)}
-                  className="flex-1 py-0.5 text-left text-sm text-ink/15 dark:text-inkdark/15"
+                  className="flex-1 py-0.5 text-start text-sm text-ink/15 dark:text-inkdark/15"
                 >
                   —
                 </button>

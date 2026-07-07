@@ -25,15 +25,15 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
         </h1>
         <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
           <button onClick={() => onChangeDate(addDays(date, -1))} className="hover:text-ink dark:hover:text-inkdark">
-            ← prev
+            הקודם
           </button>
           {!isToday(date) && (
             <button onClick={() => onChangeDate(todayISO())} className="hover:text-ink dark:hover:text-inkdark">
-              today
+              היום
             </button>
           )}
           <button onClick={() => onChangeDate(addDays(date, 1))} className="hover:text-ink dark:hover:text-inkdark">
-            next →
+            הבא
           </button>
         </div>
       </div>
@@ -60,7 +60,7 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
         entries={entries}
         onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: addDays(date, 1) })}
         onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
-        emptyMessage="Nothing logged yet — start writing above."
+        emptyMessage="עדיין לא נרשם כלום — אפשר להתחיל לכתוב למעלה."
       />
     </div>
   )

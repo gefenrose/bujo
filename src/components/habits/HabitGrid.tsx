@@ -1,5 +1,5 @@
 import type { Journal } from '../../hooks/useJournal'
-import { daysInMonth, formatTime12h, todayISO } from '../../lib/date'
+import { daysInMonth, formatTime, todayISO } from '../../lib/date'
 import { habitMonthStats, habitValue, isHabitScheduledOn } from '../../lib/habits'
 import { monthlyMoodAverage, moodValue } from '../../lib/mood'
 import { ClockIcon, CloseIcon } from '../icons/Icons'
@@ -20,9 +20,9 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
     <div className="overflow-x-auto pb-1">
       <div className="inline-flex flex-col gap-1">
         <div className="flex items-center gap-1">
-          <div className="sticky left-0 z-10 w-28 shrink-0 bg-paper dark:bg-paperdark" />
-          <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper dark:bg-paperdark" />
-          <div className="flex gap-[3px] pl-1">
+          <div className="sticky start-0 z-10 w-28 shrink-0 bg-paper dark:bg-paperdark" />
+          <div className="sticky start-28 z-10 w-14 shrink-0 bg-paper dark:bg-paperdark" />
+          <div className="flex gap-[3px] ps-1">
             {days.map((d) => (
               <span
                 key={d}
@@ -37,13 +37,13 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
         </div>
 
         <div className="flex items-center gap-1">
-          <div className="sticky left-0 z-10 w-28 shrink-0 bg-paper pr-1 dark:bg-paperdark">
-            <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">Mood</span>
+          <div className="sticky start-0 z-10 w-28 shrink-0 bg-paper pe-1 dark:bg-paperdark">
+            <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">מצב רוח</span>
           </div>
-          <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
+          <div className="sticky start-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
             {moodAverage === null ? '—' : moodAverage.toFixed(1)}
           </div>
-          <div className="flex gap-[3px] pl-1">
+          <div className="flex gap-[3px] ps-1">
             {days.map((d) => (
               <MoodGridCell
                 key={d}
@@ -57,7 +57,7 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
 
         {journal.habits.length === 0 ? (
           <p className="pt-2 text-sm text-ink/40 dark:text-inkdark/40">
-            No habits yet — add one below to start tracking (water, steps, sleep…).
+            עדיין אין הרגלים — אפשר להוסיף אחד למטה כדי להתחיל לעקוב (מים, צעדים, שינה...).
           </p>
         ) : (
           journal.habits.map((habit) => {
@@ -71,13 +71,13 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
 
             return (
               <div key={habit.id} className="group/hrow flex items-center gap-1">
-                <div className="sticky left-0 z-10 flex w-28 shrink-0 items-center justify-between bg-paper pr-1 dark:bg-paperdark">
+                <div className="sticky start-0 z-10 flex w-28 shrink-0 items-center justify-between bg-paper pe-1 dark:bg-paperdark">
                   <span className="flex min-w-0 items-center gap-1">
                     <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
                     {habit.time && (
                       <span
                         className="shrink-0 text-ink/30 dark:text-inkdark/30"
-                        title={`Reminder at ${formatTime12h(habit.time)}`}
+                        title={`תזכורת בשעה ${formatTime(habit.time)}`}
                       >
                         <ClockIcon className="h-3 w-3" />
                       </span>
@@ -87,15 +87,15 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
                     type="button"
                     onClick={() => journal.deleteHabit(habit.id)}
                     className="shrink-0 text-ink/25 opacity-0 hover:text-red-600 group-hover/hrow:opacity-100 dark:text-inkdark/25 dark:hover:text-red-400"
-                    title="Delete habit"
+                    title="מחיקת הרגל"
                   >
                     <CloseIcon className="h-3 w-3" />
                   </button>
                 </div>
-                <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
+                <div className="sticky start-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
                   {summary}
                 </div>
-                <div className="flex gap-[3px] pl-1">
+                <div className="flex gap-[3px] ps-1">
                   {days.map((d) =>
                     isHabitScheduledOn(habit, d) ? (
                       <HabitCell
@@ -111,7 +111,7 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
                       <div
                         key={d}
                         className="h-5 w-5 shrink-0 rounded-[4px] bg-[repeating-linear-gradient(135deg,transparent,transparent_2px,currentColor_2px,currentColor_3px)] text-ink/[0.05] dark:text-inkdark/[0.06]"
-                        title="Not scheduled"
+                        title="לא מתוזמן"
                       />
                     ),
                   )}

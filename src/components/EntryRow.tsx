@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
-import { formatTime12h } from '../lib/date'
+import { formatTime } from '../lib/date'
 import { Bullet } from './Bullet'
 import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon, ClockIcon } from './icons/Icons'
 
@@ -113,15 +113,17 @@ export function EntryRow({
 
   return (
     <div className="relative -mx-1.5 overflow-hidden rounded">
-      <div className="absolute inset-0 flex items-center justify-between px-3">
+      <div className="absolute inset-0">
+        {/* Physical left/right (not logical start/end): these track the pointer's physical drag
+            direction, which is independent of reading direction, so they must not flip under RTL. */}
         <span
-          className="flex items-center gap-1.5 text-amber-600 dark:text-amber-500"
+          className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-amber-600 dark:text-amber-500"
           style={{ opacity: priorityRevealOpacity }}
         >
           <StarIcon filled className="h-4 w-4" />
         </span>
         <span
-          className="flex items-center gap-1.5 text-ink/50 dark:text-inkdark/50"
+          className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-ink/50 dark:text-inkdark/50"
           style={{ opacity: typeRevealOpacity }}
         >
           <span className="text-base leading-none">{TYPE_GLYPH[nextEntryType(entry.type)]}</span>
@@ -190,14 +192,14 @@ export function EntryRow({
             {entry.time && (
               <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
                 <ClockIcon className="h-3 w-3" />
-                {formatTime12h(entry.time)}
+                {formatTime(entry.time)}
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation()
                     onRemoveTime()
                   }}
-                  title="Remove time"
+                  title="הסרת שעה"
                   className="opacity-0 hover:text-red-600 group-hover/time:opacity-100 dark:hover:text-red-400"
                 >
                   <CloseIcon className="h-2.5 w-2.5" />
@@ -215,7 +217,7 @@ export function EntryRow({
         )}
 
         {entry.priority && (
-          <span className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" title="priority">
+          <span className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" title="עדיפות">
             <StarIcon filled className="h-3.5 w-3.5" />
           </span>
         )}
@@ -224,7 +226,7 @@ export function EntryRow({
           <button
             type="button"
             onClick={onTogglePriority}
-            title="Toggle priority"
+            title="סימון עדיפות"
             className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
           >
             <StarIcon className="h-3.5 w-3.5" />
@@ -233,16 +235,16 @@ export function EntryRow({
             <button
               type="button"
               onClick={onMigrate}
-              title="Migrate"
+              title="העברה ליום הבא"
               className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
             >
-              <ArrowRightIcon className="h-3.5 w-3.5" />
+              <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
             </button>
           )}
           <button
             type="button"
             onClick={onDelete}
-            title="Delete"
+            title="מחיקה"
             className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
           >
             <CloseIcon className="h-3.5 w-3.5" />

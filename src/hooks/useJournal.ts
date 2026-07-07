@@ -92,7 +92,7 @@ export function useJournal() {
       const target = entries.find((e) => e.id === id)
       setEntries((prev) => prev.filter((e) => e.id !== id))
       if (!target) return
-      pushUndo(`Deleted "${target.text}"`, () => {
+      pushUndo(`"${target.text}" נמחק`, () => {
         setEntries((prev) => (prev.some((e) => e.id === target.id) ? prev : [...prev, target]))
       })
     },
@@ -106,7 +106,7 @@ export function useJournal() {
       if (!target?.time) return
       const previousTime = target.time
       setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, time: undefined } : e)))
-      pushUndo(`Removed time from "${target.text}"`, () => {
+      pushUndo(`הוסרה השעה מ-"${target.text}"`, () => {
         setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, time: previousTime } : e)))
       })
     },
@@ -166,7 +166,7 @@ export function useJournal() {
       setCollections((prev) => prev.filter((c) => c.id !== id))
       setEntries((prev) => prev.filter((e) => e.collectionId !== id))
       if (!target) return
-      pushUndo(`Deleted collection "${target.name}"`, () => {
+      pushUndo(`האוסף "${target.name}" נמחק`, () => {
         setCollections((prev) => (prev.some((c) => c.id === target.id) ? prev : [...prev, target]))
         setEntries((prev) => [...prev, ...removedEntries])
       })
@@ -206,7 +206,7 @@ export function useJournal() {
       setHabits((prev) => prev.filter((h) => h.id !== id))
       setHabitLogs((prev) => prev.filter((l) => l.habitId !== id))
       if (!target) return
-      pushUndo(`Deleted habit "${target.name}"`, () => {
+      pushUndo(`ההרגל "${target.name}" נמחק`, () => {
         setHabits((prev) => (prev.some((h) => h.id === target.id) ? prev : [...prev, target]))
         setHabitLogs((prev) => [...prev, ...removedLogs])
       })

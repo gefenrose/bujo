@@ -21,9 +21,9 @@ export function HabitCell({ habit, value, isToday, onToggle, onIncrement, onDecr
         title={
           habit.type === 'check'
             ? value > 0
-              ? 'Checked — click to uncheck'
-              : 'Click to check'
-            : `${value}${habit.target ? ` / ${habit.target}` : ''} — click to +1`
+              ? 'מסומן — לחיצה לביטול הסימון'
+              : 'לחיצה לסימון'
+            : `${value}${habit.target ? ` / ${habit.target}` : ''} — לחיצה להוספת 1`
         }
         className={`flex h-full w-full items-center justify-center rounded-[4px] text-[0.6rem] leading-none text-ink/70 transition-colors dark:text-inkdark/70 ${amberLevelClass(level)}`}
       >
@@ -34,7 +34,7 @@ export function HabitCell({ habit, value, isToday, onToggle, onIncrement, onDecr
           type="button"
           onClick={onDecrement}
           title="−1"
-          className="absolute -right-1 -top-1 hidden h-3 w-3 items-center justify-center rounded-full bg-ink text-[0.55rem] leading-none text-paper opacity-80 hover:opacity-100 group-hover/hcell:flex dark:bg-inkdark dark:text-paperdark"
+          className="absolute -end-1 -top-1 hidden h-3 w-3 items-center justify-center rounded-full bg-ink text-[0.55rem] leading-none text-paper opacity-80 hover:opacity-100 group-hover/hcell:flex dark:bg-inkdark dark:text-paperdark"
         >
           −
         </button>

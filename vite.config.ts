@@ -12,9 +12,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'bujo — bullet journal',
+        name: 'bujo — יומן בולט',
         short_name: 'bujo',
-        description: 'A minimalistic, elegant bullet journal for daily use.',
+        description: 'יומן בולט מינימליסטי ואלגנטי לשימוש יומיומי.',
+        lang: 'he',
+        dir: 'rtl',
         theme_color: '#2b2a27',
         background_color: '#faf8f4',
         display: 'standalone',

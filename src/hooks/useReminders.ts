@@ -73,7 +73,7 @@ export function useReminders(journal: Journal) {
         if (entry.time > nowTime) continue
         const fireId = `entry:${entry.id}:${today}`
         if (firedRef.current.ids.includes(fireId)) continue
-        due.push({ id: fireId, title: entry.text, body: `Scheduled for ${entry.time}` })
+        due.push({ id: fireId, title: entry.text, body: `מתוזמן לשעה ${entry.time}` })
       }
 
       for (const habit of journal.habits) {
@@ -83,7 +83,7 @@ export function useReminders(journal: Journal) {
         if (done) continue
         const fireId = `habit:${habit.id}:${today}`
         if (firedRef.current.ids.includes(fireId)) continue
-        due.push({ id: fireId, title: habit.name, body: `Habit reminder — ${habit.time}` })
+        due.push({ id: fireId, title: habit.name, body: `תזכורת הרגל — ${habit.time}` })
       }
 
       if (due.length === 0) return

@@ -5,6 +5,14 @@ interface BulletProps {
   onClick?: () => void
 }
 
+const TYPE_LABEL: Record<Entry['type'], string> = { task: 'משימה', event: 'אירוע', note: 'הערה' }
+const STATUS_LABEL: Record<Entry['status'], string> = {
+  open: 'פתוחה',
+  done: 'הושלמה',
+  migrated: 'הועברה',
+  cancelled: 'בוטלה',
+}
+
 export function Bullet({ entry, onClick }: BulletProps) {
   const clickable = entry.type === 'task' && (entry.status === 'open' || entry.status === 'done')
 
@@ -12,7 +20,7 @@ export function Bullet({ entry, onClick }: BulletProps) {
     <button
       type="button"
       onClick={clickable ? onClick : undefined}
-      aria-label={`${entry.type} ${entry.status}`}
+      aria-label={`${TYPE_LABEL[entry.type]} ${STATUS_LABEL[entry.status]}`}
       className={`mt-[0.5em] flex h-3.5 w-3.5 shrink-0 items-center justify-center ${
         clickable ? 'cursor-pointer' : 'cursor-default'
       }`}

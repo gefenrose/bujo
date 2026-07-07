@@ -35,14 +35,14 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
     <div>
       <div className="mb-6 flex items-baseline justify-between">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
-          Habits · {formatMonthHeading(month)}
+          הרגלים · {formatMonthHeading(month)}
         </h1>
         <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
           <button onClick={() => onChangeMonth(addMonths(month, -1))} className="hover:text-ink dark:hover:text-inkdark">
-            ← prev
+            הקודם
           </button>
           <button onClick={() => onChangeMonth(addMonths(month, 1))} className="hover:text-ink dark:hover:text-inkdark">
-            next →
+            הבא
           </button>
         </div>
       </div>
@@ -57,7 +57,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Habit name (e.g. Water, Steps, Sleep)"
+                placeholder="שם ההרגל (למשל מים, צעדים, שינה)"
                 className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
               />
               <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
@@ -70,7 +70,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
                       : 'text-ink/50 dark:text-inkdark/50'
                   }`}
                 >
-                  Check
+                  סימון
                 </button>
                 <button
                   type="button"
@@ -81,12 +81,12 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
                       : 'text-ink/50 dark:text-inkdark/50'
                   }`}
                 >
-                  Count
+                  ספירה
                 </button>
               </div>
               {type === 'count' && (
                 <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
-                  Goal
+                  יעד
                   <input
                     type="number"
                     min={1}
@@ -100,11 +100,11 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
 
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-ink/50 dark:text-inkdark/50">Repeat</span>
+                <span className="text-xs text-ink/50 dark:text-inkdark/50">חזרה</span>
                 <WeekdayPicker value={days} onChange={setDays} />
               </div>
               <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
-                Reminder
+                תזכורת
                 <input
                   type="time"
                   value={time}
@@ -120,7 +120,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
                 onClick={commitCreate}
                 className="rounded-full bg-ink px-3 py-1 text-xs text-paper hover:opacity-90 dark:bg-inkdark dark:text-paperdark"
               >
-                Add
+                הוספה
               </button>
               <button
                 type="button"
@@ -130,7 +130,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
                 }}
                 className="text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
               >
-                Cancel
+                ביטול
               </button>
             </div>
           </div>
@@ -139,7 +139,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
             onClick={() => setCreating(true)}
             className="rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/40 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/40 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
           >
-            + new habit
+            + הרגל חדש
           </button>
         )}
       </div>
