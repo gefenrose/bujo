@@ -4,12 +4,21 @@ import { genId, loadJournal, saveJournal } from '../lib/storage'
 import { todayISO } from '../lib/date'
 import { nextOrder } from '../lib/entries'
 
+export interface UndoAction {
+  id: string
+  label: string
+  undo: () => void
+}
+
+const UNDO_LIFETIME_MS = 7_000
+
 export function useJournal() {
   const [entries, setEntries] = useState<Entry[]>(() => loadJournal().entries)
   const [collections, setCollections] = useState<Collection[]>(() => loadJournal().collections)
   const [habits, setHabits] = useState<Habit[]>(() => loadJournal().habits)
   const [habitLogs, setHabitLogs] = useState<HabitLog[]>(() => loadJournal().habitLogs)
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>(() => loadJournal().moodLogs)
+  const [undoActions, setUndoActions] = useState<UndoAction[]>([])
   const hydrated = useRef(false)
 
   useEffect(() => {
@@ -19,6 +28,28 @@ export function useJournal() {
     }
     saveJournal({ entries, collections, habits, habitLogs, moodLogs })
   }, [entries, collections, habits, habitLogs, moodLogs])
+
+  const dismissUndo = useCallback((id: string) => {
+    setUndoActions((prev) => prev.filter((a) => a.id !== id))
+  }, [])
+
+  const pushUndo = useCallback((label: string, undo: () => void) => {
+    const id = genId()
+    setUndoActions((prev) => [...prev, { id, label, undo }])
+  }, [])
+
+  const performUndo = useCallback((id: string) => {
+    setUndoActions((prev) => {
+      prev.find((a) => a.id === id)?.undo()
+      return prev.filter((a) => a.id !== id)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (undoActions.length === 0) return
+    const timers = undoActions.map((a) => setTimeout(() => dismissUndo(a.id), UNDO_LIFETIME_MS))
+    return () => timers.forEach(clearTimeout)
+  }, [undoActions, dismissUndo])
 
   const addEntry = useCallback(
     (input: { text: string; type: EntryType; date?: string; collectionId?: string; time?: string }) => {
@@ -56,9 +87,31 @@ export function useJournal() {
     })
   }, [])
 
-  const deleteEntry = useCallback((id: string) => {
-    setEntries((prev) => prev.filter((e) => e.id !== id))
-  }, [])
+  const deleteEntry = useCallback(
+    (id: string) => {
+      const target = entries.find((e) => e.id === id)
+      setEntries((prev) => prev.filter((e) => e.id !== id))
+      if (!target) return
+      pushUndo(`Deleted "${target.text}"`, () => {
+        setEntries((prev) => (prev.some((e) => e.id === target.id) ? prev : [...prev, target]))
+      })
+    },
+    [entries, pushUndo],
+  )
+
+  /** Clears an entry's time (undo-able), for the small × next to the time badge. */
+  const clearEntryTime = useCallback(
+    (id: string) => {
+      const target = entries.find((e) => e.id === id)
+      if (!target?.time) return
+      const previousTime = target.time
+      setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, time: undefined } : e)))
+      pushUndo(`Removed time from "${target.text}"`, () => {
+        setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, time: previousTime } : e)))
+      })
+    },
+    [entries, pushUndo],
+  )
 
   const cycleStatus = useCallback((id: string) => {
     setEntries((prev) =>
@@ -106,10 +159,20 @@ export function useJournal() {
     return collection.id
   }, [])
 
-  const deleteCollection = useCallback((id: string) => {
-    setCollections((prev) => prev.filter((c) => c.id !== id))
-    setEntries((prev) => prev.filter((e) => e.collectionId !== id))
-  }, [])
+  const deleteCollection = useCallback(
+    (id: string) => {
+      const target = collections.find((c) => c.id === id)
+      const removedEntries = entries.filter((e) => e.collectionId === id)
+      setCollections((prev) => prev.filter((c) => c.id !== id))
+      setEntries((prev) => prev.filter((e) => e.collectionId !== id))
+      if (!target) return
+      pushUndo(`Deleted collection "${target.name}"`, () => {
+        setCollections((prev) => (prev.some((c) => c.id === target.id) ? prev : [...prev, target]))
+        setEntries((prev) => [...prev, ...removedEntries])
+      })
+    },
+    [collections, entries, pushUndo],
+  )
 
   const renameCollection = useCallback((id: string, name: string) => {
     const trimmed = name.trim()
@@ -136,10 +199,20 @@ export function useJournal() {
     [],
   )
 
-  const deleteHabit = useCallback((id: string) => {
-    setHabits((prev) => prev.filter((h) => h.id !== id))
-    setHabitLogs((prev) => prev.filter((l) => l.habitId !== id))
-  }, [])
+  const deleteHabit = useCallback(
+    (id: string) => {
+      const target = habits.find((h) => h.id === id)
+      const removedLogs = habitLogs.filter((l) => l.habitId === id)
+      setHabits((prev) => prev.filter((h) => h.id !== id))
+      setHabitLogs((prev) => prev.filter((l) => l.habitId !== id))
+      if (!target) return
+      pushUndo(`Deleted habit "${target.name}"`, () => {
+        setHabits((prev) => (prev.some((h) => h.id === target.id) ? prev : [...prev, target]))
+        setHabitLogs((prev) => [...prev, ...removedLogs])
+      })
+    },
+    [habits, habitLogs, pushUndo],
+  )
 
   const renameHabit = useCallback((id: string, name: string) => {
     const trimmed = name.trim()
@@ -189,10 +262,14 @@ export function useJournal() {
     habits,
     habitLogs,
     moodLogs,
+    undoActions,
+    performUndo,
+    dismissUndo,
     addEntry,
     updateEntry,
     reorderEntries,
     deleteEntry,
+    clearEntryTime,
     cycleStatus,
     togglePriority,
     migrateEntry,

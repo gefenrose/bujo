@@ -11,6 +11,7 @@ interface EntryRowProps {
   onToggle: () => void
   onEdit: (text: string) => void
   onEditTime: (time: string | undefined) => void
+  onRemoveTime: () => void
   onDelete: () => void
   onMigrate: () => void
   onTogglePriority: () => void
@@ -31,6 +32,7 @@ export function EntryRow({
   onToggle,
   onEdit,
   onEditTime,
+  onRemoveTime,
   onDelete,
   onMigrate,
   onTogglePriority,
@@ -186,9 +188,20 @@ export function EntryRow({
         ) : (
           <p onClick={startEditing} className="flex min-w-0 flex-1 cursor-text items-baseline gap-2 py-0.5">
             {entry.time && (
-              <span className="flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+              <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
                 <ClockIcon className="h-3 w-3" />
                 {formatTime12h(entry.time)}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onRemoveTime()
+                  }}
+                  title="Remove time"
+                  className="opacity-0 hover:text-red-600 group-hover/time:opacity-100 dark:hover:text-red-400"
+                >
+                  <CloseIcon className="h-2.5 w-2.5" />
+                </button>
               </span>
             )}
             <span

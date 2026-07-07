@@ -2,7 +2,7 @@ import type { Journal } from '../../hooks/useJournal'
 import { daysInMonth, formatTime12h, todayISO } from '../../lib/date'
 import { habitMonthStats, habitValue, isHabitScheduledOn } from '../../lib/habits'
 import { monthlyMoodAverage, moodValue } from '../../lib/mood'
-import { ClockIcon } from '../icons/Icons'
+import { ClockIcon, CloseIcon } from '../icons/Icons'
 import { HabitCell } from './HabitCell'
 import { MoodGridCell } from './MoodGridCell'
 
@@ -86,10 +86,10 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
                   <button
                     type="button"
                     onClick={() => journal.deleteHabit(habit.id)}
-                    className="shrink-0 text-xs text-ink/25 opacity-0 hover:text-red-600 group-hover/hrow:opacity-100 dark:text-inkdark/25 dark:hover:text-red-400"
+                    className="shrink-0 text-ink/25 opacity-0 hover:text-red-600 group-hover/hrow:opacity-100 dark:text-inkdark/25 dark:hover:text-red-400"
                     title="Delete habit"
                   >
-                    ✕
+                    <CloseIcon className="h-3 w-3" />
                   </button>
                 </div>
                 <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">

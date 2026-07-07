@@ -8,7 +8,7 @@ import { MonthlyLog } from './components/MonthlyLog'
 import { Collections } from './components/Collections'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
-import { ReminderToasts } from './components/ReminderToasts'
+import { Toasts } from './components/Toasts'
 import { BellIcon } from './components/icons/Icons'
 
 type View = 'daily' | 'monthly' | 'collections' | 'habits' | 'analytics'
@@ -106,7 +106,13 @@ function App() {
         </footer>
       </div>
 
-      <ReminderToasts toasts={reminders.toasts} onDismiss={reminders.dismissToast} />
+      <Toasts
+        reminders={reminders.toasts}
+        onDismissReminder={reminders.dismissToast}
+        undoActions={journal.undoActions}
+        onUndo={journal.performUndo}
+        onDismissUndo={journal.dismissUndo}
+      />
     </div>
   )
 }
