@@ -14,8 +14,23 @@ interface CollectionsProps {
 export function Collections({ journal, selectedId, onSelect, onTagClick }: CollectionsProps) {
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState('')
+  const [editingName, setEditingName] = useState(false)
+  const [renameDraft, setRenameDraft] = useState('')
 
   const selected = journal.collections.find((c) => c.id === selectedId) ?? journal.collections[0] ?? null
+
+  const startRename = () => {
+    if (!selected) return
+    setRenameDraft(selected.name)
+    setEditingName(true)
+  }
+
+  const commitRename = () => {
+    setEditingName(false)
+    if (!selected) return
+    const trimmed = renameDraft.trim()
+    if (trimmed && trimmed !== selected.name) journal.renameCollection(selected.id, trimmed)
+  }
 
   const commitCreate = () => {
     const name = newName.trim()
@@ -74,7 +89,27 @@ export function Collections({ journal, selectedId, onSelect, onTagClick }: Colle
       {selected ? (
         <>
           <div className="mb-4 flex items-baseline justify-between">
-            <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">{selected.name}</h1>
+            {editingName ? (
+              <input
+                autoFocus
+                value={renameDraft}
+                onChange={(e) => setRenameDraft(e.target.value)}
+                onBlur={commitRename}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commitRename()
+                  if (e.key === 'Escape') setEditingName(false)
+                }}
+                className="min-w-0 flex-1 bg-transparent text-lg font-medium tracking-tight text-ink outline-none dark:text-inkdark"
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={startRename}
+                className="min-w-0 flex-1 truncate text-start text-lg font-medium tracking-tight text-ink hover:opacity-70 dark:text-inkdark"
+              >
+                {selected.name}
+              </button>
+            )}
             <button
               onClick={() => {
                 journal.deleteCollection(selected.id)

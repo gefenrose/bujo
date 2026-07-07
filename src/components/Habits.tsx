@@ -105,7 +105,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
             <HabitManageRow
               key={habit.id}
               habit={habit}
-              onRename={(newName) => journal.renameHabit(habit.id, newName)}
+              onSave={(patch) => journal.updateHabit(habit.id, patch)}
               onDelete={() => journal.deleteHabit(habit.id)}
             />
           ))}

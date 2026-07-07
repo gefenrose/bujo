@@ -288,11 +288,27 @@ export function useJournal() {
     [habits, habitLogs, pushUndo],
   )
 
-  const renameHabit = useCallback((id: string, name: string) => {
-    const trimmed = name.trim()
-    if (!trimmed) return
-    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, name: trimmed } : h)))
-  }, [])
+  const updateHabit = useCallback(
+    (id: string, patch: { name: string; type: HabitType; target?: number; days?: number[]; time?: string }) => {
+      const name = patch.name.trim()
+      if (!name) return
+      setHabits((prev) =>
+        prev.map((h) =>
+          h.id === id
+            ? {
+                ...h,
+                name,
+                type: patch.type,
+                target: patch.type === 'count' ? patch.target ?? 5 : undefined,
+                days: patch.days && patch.days.length > 0 && patch.days.length < 7 ? patch.days : undefined,
+                time: patch.time || undefined,
+              }
+            : h,
+        ),
+      )
+    },
+    [],
+  )
 
   const setHabitValue = useCallback((habitId: string, date: string, value: number) => {
     const clamped = Math.max(0, value)
@@ -399,7 +415,7 @@ export function useJournal() {
     renameCollection,
     addHabit,
     deleteHabit,
-    renameHabit,
+    updateHabit,
     setHabitValue,
     incrementHabit,
     toggleHabitCheck,

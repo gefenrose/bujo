@@ -6,11 +6,21 @@ interface PromptCardProps {
   prompt: Prompt
   answer: string
   onChangeAnswer: (text: string) => void
+  onRenameQuestion: (text: string) => void
   onDelete: () => void
 }
 
-export function PromptCard({ prompt, answer, onChangeAnswer, onDelete }: PromptCardProps) {
+export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, onDelete }: PromptCardProps) {
   const [draft, setDraft] = useState(answer)
+  const [editingQuestion, setEditingQuestion] = useState(false)
+  const [questionDraft, setQuestionDraft] = useState(prompt.text)
+
+  const commitQuestion = () => {
+    setEditingQuestion(false)
+    const trimmed = questionDraft.trim()
+    if (trimmed && trimmed !== prompt.text) onRenameQuestion(trimmed)
+    else setQuestionDraft(prompt.text)
+  }
 
   return (
     <div className="relative rounded-lg bg-ink/[0.03] p-3 dark:bg-inkdark/[0.04]">
@@ -22,7 +32,32 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onDelete }: PromptC
       >
         <CloseIcon className="h-3 w-3" />
       </button>
-      <p className="pe-4 text-xs text-ink/50 dark:text-inkdark/50">{prompt.text}</p>
+
+      {editingQuestion ? (
+        <input
+          autoFocus
+          value={questionDraft}
+          onChange={(e) => setQuestionDraft(e.target.value)}
+          onBlur={commitQuestion}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commitQuestion()
+            if (e.key === 'Escape') {
+              setQuestionDraft(prompt.text)
+              setEditingQuestion(false)
+            }
+          }}
+          className="w-full pe-4 bg-transparent text-xs text-ink/70 outline-none dark:text-inkdark/70"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setEditingQuestion(true)}
+          className="w-full pe-4 text-start text-xs text-ink/50 hover:text-ink/70 dark:text-inkdark/50 dark:hover:text-inkdark/70"
+        >
+          {prompt.text}
+        </button>
+      )}
+
       <textarea
         value={draft}
         onChange={(e) => setDraft(e.target.value)}

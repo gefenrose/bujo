@@ -29,6 +29,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
             prompt={prompt}
             answer={journal.promptResponses.find((r) => r.promptId === prompt.id && r.date === date)?.answer ?? ''}
             onChangeAnswer={(text) => journal.setPromptAnswer(prompt.id, date, text)}
+            onRenameQuestion={(text) => journal.renamePrompt(prompt.id, text)}
             onDelete={() => journal.deletePrompt(prompt.id)}
           />
         ))}
