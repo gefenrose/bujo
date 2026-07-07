@@ -1,6 +1,8 @@
 import { useState, type KeyboardEvent } from 'react'
 import type { EntryType } from '../types'
+import { parseTimeInput } from '../lib/date'
 import { ClockIcon, CloseIcon } from './icons/Icons'
+import { TimeField } from './TimeField'
 
 interface EntryInputProps {
   onSubmit: (text: string, type: EntryType, time?: string) => void
@@ -22,7 +24,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' 
   const submit = () => {
     const text = value.trim()
     if (!text) return
-    onSubmit(text, type, time || undefined)
+    onSubmit(text, type, parseTimeInput(time) || undefined)
     setValue('')
     setTime('')
     setShowTime(false)
@@ -66,13 +68,12 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' 
       />
       {showTime || time ? (
         <div className="flex shrink-0 items-center gap-1">
-          <input
-            type="time"
-            dir="ltr"
+          <TimeField
             autoFocus={showTime && !time}
             value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+            onChange={setTime}
+            onEnter={submit}
+            className="w-12 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
           />
           <button
             type="button"

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { Habit, HabitType } from '../../types'
+import { parseTimeInput } from '../../lib/date'
 import { CloseIcon } from '../icons/Icons'
+import { TimeField } from '../TimeField'
 import { WeekdayPicker } from './WeekdayPicker'
 
 interface HabitManageRowProps {
@@ -32,7 +34,7 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
       setEditing(false)
       return
     }
-    onSave({ name: trimmed, type, target, days, time })
+    onSave({ name: trimmed, type, target, days, time: parseTimeInput(time) })
     setEditing(false)
   }
 
@@ -118,12 +120,10 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
         </div>
         <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
           תזכורת
-          <input
-            type="time"
-            dir="ltr"
+          <TimeField
             value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+            onChange={setTime}
+            className="w-12 rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
           />
         </label>
       </div>

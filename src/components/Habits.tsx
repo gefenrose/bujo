@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import type { Journal } from '../hooks/useJournal'
 import type { HabitType } from '../types'
-import { daysInWeek, isToday, weekdayShort } from '../lib/date'
+import { daysInWeek, isToday, parseTimeInput, weekdayShort } from '../lib/date'
 import { habitValue, isHabitScheduledOn } from '../lib/habits'
 import { HabitManageRow } from './habits/HabitManageRow'
 import { HabitRow } from './habits/HabitRow'
 import { WeekdayPicker } from './habits/WeekdayPicker'
+import { TimeField } from './TimeField'
 
 interface HabitsProps {
   journal: Journal
@@ -31,7 +32,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
     setDays([])
     setTime('')
     if (!trimmed) return
-    journal.addHabit({ name: trimmed, type, target, days, time })
+    journal.addHabit({ name: trimmed, type, target, days, time: parseTimeInput(time) })
   }
 
   const week = daysInWeek(date)
@@ -166,12 +167,10 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                   </div>
                   <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
                     תזכורת
-                    <input
-                      type="time"
-                      dir="ltr"
+                    <TimeField
                       value={time}
-                      onChange={(e) => setTime(e.target.value)}
-                      className="rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+                      onChange={setTime}
+                      className="w-12 rounded border border-ink/15 bg-transparent px-1.5 py-0.5 text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
                     />
                   </label>
                 </div>

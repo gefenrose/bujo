@@ -67,6 +67,30 @@ export function formatTime(time: string): string {
   return time
 }
 
+/**
+ * Leniently parses free-typed digits into a "HH:MM" 24h time string.
+ * "9" -> "09:00", "930"/"9:30" -> "09:30", "1430" -> "14:30". Empty input -> "".
+ */
+export function parseTimeInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '')
+  if (!digits) return ''
+  let hours: number
+  let minutes: number
+  if (digits.length <= 2) {
+    hours = Number(digits)
+    minutes = 0
+  } else if (digits.length === 3) {
+    hours = Number(digits.slice(0, 1))
+    minutes = Number(digits.slice(1))
+  } else {
+    hours = Number(digits.slice(0, 2))
+    minutes = Number(digits.slice(2, 4))
+  }
+  hours = Math.min(23, Math.max(0, hours))
+  minutes = Math.min(59, Math.max(0, minutes))
+  return `${pad(hours)}:${pad(minutes)}`
+}
+
 export function daysInMonth(iso: string): string[] {
   const d = fromISODate(iso)
   const year = d.getFullYear()

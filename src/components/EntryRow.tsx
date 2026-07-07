@@ -2,8 +2,9 @@ import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } f
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
-import { formatTime } from '../lib/date'
+import { formatTime, parseTimeInput } from '../lib/date'
 import { Bullet } from './Bullet'
+import { TimeField } from './TimeField'
 import {
   GripIcon,
   StarIcon,
@@ -113,7 +114,8 @@ export function EntryRow({
     const trimmed = draft.trim()
     if (trimmed && trimmed !== entry.text) onEdit(trimmed)
     else setDraft(entry.text)
-    if (timeDraft !== (entry.time ?? '')) onEditTime(timeDraft || undefined)
+    const parsedTime = parseTimeInput(timeDraft)
+    if (parsedTime !== (entry.time ?? '')) onEditTime(parsedTime || undefined)
   }
 
   const struck = entry.status === 'done' || entry.status === 'cancelled'
@@ -277,15 +279,11 @@ export function EntryRow({
                 }}
                 className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none dark:text-inkdark"
               />
-              <input
-                type="time"
-                dir="ltr"
+              <TimeField
                 value={timeDraft}
-                onChange={(e) => setTimeDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') commit()
-                }}
-                className="shrink-0 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+                onChange={setTimeDraft}
+                onEnter={commit}
+                className="w-12 shrink-0 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
               />
             </div>
           ) : (
