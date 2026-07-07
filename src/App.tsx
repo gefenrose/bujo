@@ -4,17 +4,20 @@ import { useTheme } from './hooks/useTheme'
 import { useReminders } from './hooks/useReminders'
 import { todayISO } from './lib/date'
 import { DailyLog } from './components/DailyLog'
+import { WeeklyLog } from './components/WeeklyLog'
 import { MonthlyLog } from './components/MonthlyLog'
 import { Collections } from './components/Collections'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
-import { BellIcon } from './components/icons/Icons'
+import { Search } from './components/Search'
+import { BellIcon, SearchIcon } from './components/icons/Icons'
 
-type View = 'daily' | 'monthly' | 'collections' | 'habits' | 'analytics'
+type View = 'daily' | 'weekly' | 'monthly' | 'collections' | 'habits' | 'analytics'
 
 const NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומי' },
+  { view: 'weekly', label: 'שבועי' },
   { view: 'monthly', label: 'חודשי' },
   { view: 'collections', label: 'אוספים' },
   { view: 'habits', label: 'הרגלים' },
@@ -30,10 +33,17 @@ function App() {
   const [date, setDate] = useState(todayISO())
   const [month, setMonth] = useState(todayISO())
   const [collectionId, setCollectionId] = useState<string | null>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const goToDate = (d: string) => {
     setDate(d)
     setView('daily')
+  }
+
+  const openSearchForTag = (tag: string) => {
+    setSearchQuery(tag)
+    setSearchOpen(true)
   }
 
   return (
@@ -63,6 +73,16 @@ function App() {
 
           <div className="flex shrink-0 items-center gap-1">
             <button
+              onClick={() => {
+                setSearchQuery('')
+                setSearchOpen(true)
+              }}
+              title="חיפוש"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
+            >
+              <SearchIcon className="h-4 w-4" />
+            </button>
+            <button
               onClick={reminders.enableReminders}
               title={
                 reminders.permission === 'granted'
@@ -90,12 +110,22 @@ function App() {
         </header>
 
         <main className="flex-1 py-8">
-          {view === 'daily' && <DailyLog journal={journal} date={date} onChangeDate={setDate} />}
+          {view === 'daily' && (
+            <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
+          )}
+          {view === 'weekly' && (
+            <WeeklyLog journal={journal} date={date} onChangeDate={setDate} onSelectDate={goToDate} />
+          )}
           {view === 'monthly' && (
             <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
           )}
           {view === 'collections' && (
-            <Collections journal={journal} selectedId={collectionId} onSelect={setCollectionId} />
+            <Collections
+              journal={journal}
+              selectedId={collectionId}
+              onSelect={setCollectionId}
+              onTagClick={openSearchForTag}
+            />
           )}
           {view === 'habits' && <Habits journal={journal} month={month} onChangeMonth={setMonth} />}
           {view === 'analytics' && <Analytics journal={journal} />}
@@ -113,6 +143,19 @@ function App() {
         onUndo={journal.performUndo}
         onDismissUndo={journal.dismissUndo}
       />
+
+      {searchOpen && (
+        <Search
+          journal={journal}
+          initialQuery={searchQuery}
+          onClose={() => setSearchOpen(false)}
+          onSelectDate={goToDate}
+          onSelectCollection={(id) => {
+            setCollectionId(id)
+            setView('collections')
+          }}
+        />
+      )}
     </div>
   )
 }

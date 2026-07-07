@@ -74,3 +74,26 @@ export function daysInMonth(iso: string): string[] {
   const count = new Date(year, month + 1, 0).getDate()
   return Array.from({ length: count }, (_, i) => toISODate(new Date(year, month, i + 1)))
 }
+
+/** Sunday of the week containing this date. */
+export function startOfWeek(iso: string): string {
+  return addDays(iso, -fromISODate(iso).getDay())
+}
+
+export function daysInWeek(iso: string): string[] {
+  const start = startOfWeek(iso)
+  return Array.from({ length: 7 }, (_, i) => addDays(start, i))
+}
+
+export function addWeeks(iso: string, delta: number): string {
+  return addDays(iso, delta * 7)
+}
+
+export function formatWeekHeading(iso: string): string {
+  const start = fromISODate(startOfWeek(iso))
+  const end = fromISODate(addDays(startOfWeek(iso), 6))
+  if (start.getMonth() === end.getMonth()) {
+    return `${start.getDate()}–${end.getDate()} ב${MONTHS[start.getMonth()]} ${start.getFullYear()}`
+  }
+  return `${start.getDate()} ב${MONTHS_SHORT[start.getMonth()]} – ${end.getDate()} ב${MONTHS_SHORT[end.getMonth()]}`
+}

@@ -19,10 +19,11 @@ interface EntryListProps {
   entries: Entry[]
   onMigrate: (entry: Entry) => void
   onAdd: (text: string, type: EntryType, time?: string) => void
+  onTagClick: (tag: string) => void
   emptyMessage: string
 }
 
-export function EntryList({ journal, entries, onMigrate, onAdd, emptyMessage }: EntryListProps) {
+export function EntryList({ journal, entries, onMigrate, onAdd, onTagClick, emptyMessage }: EntryListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
@@ -53,6 +54,12 @@ export function EntryList({ journal, entries, onMigrate, onAdd, emptyMessage }: 
               onMigrate={() => onMigrate(entry)}
               onTogglePriority={() => journal.togglePriority(entry.id)}
               onCycleType={() => journal.updateEntry(entry.id, { type: nextEntryType(entry.type) })}
+              onAddSubtask={(text) => journal.addSubtask(entry.id, text)}
+              onToggleSubtask={(subtaskId) => journal.toggleSubtask(entry.id, subtaskId)}
+              onDeleteSubtask={(subtaskId) => journal.deleteSubtask(entry.id, subtaskId)}
+              onAddTag={(tag) => journal.addTag(entry.id, tag)}
+              onRemoveTag={(tag) => journal.removeTag(entry.id, tag)}
+              onTagClick={onTagClick}
             />
           ))}
         </SortableContext>

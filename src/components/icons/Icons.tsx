@@ -79,6 +79,77 @@ export function ClockIcon({ className }: IconProps) {
   )
 }
 
+export function SearchIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="8.5" cy="8.5" r="5.5" />
+      <path d="M16.5 16.5l-4-4" />
+    </svg>
+  )
+}
+
+export function ChevronIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M6 8l4 4 4-4" />
+    </svg>
+  )
+}
+
+export function TagIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M10.5 3.5H5A1.5 1.5 0 0 0 3.5 5v5.5a1.5 1.5 0 0 0 .44 1.06l6 6a1.5 1.5 0 0 0 2.12 0l5.5-5.5a1.5 1.5 0 0 0 0-2.12l-6-6a1.5 1.5 0 0 0-1.06-.44Z" />
+      <circle cx="7.25" cy="7.25" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function SubtaskIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M7.5 5.5h9M7.5 10h9M7.5 14.5h9" />
+      <path d="M3.8 5.5l.6.6 1-1.2M3.8 10l.6.6 1-1.2M3.8 14.5l.6.6 1-1.2" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

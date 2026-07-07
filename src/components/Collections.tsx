@@ -8,9 +8,10 @@ interface CollectionsProps {
   journal: Journal
   selectedId: string | null
   onSelect: (id: string | null) => void
+  onTagClick: (tag: string) => void
 }
 
-export function Collections({ journal, selectedId, onSelect }: CollectionsProps) {
+export function Collections({ journal, selectedId, onSelect, onTagClick }: CollectionsProps) {
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState('')
 
@@ -90,6 +91,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
             entries={entries}
             onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: todayISO() })}
             onAdd={(text, type, time) => journal.addEntry({ text, type, collectionId: selected.id, time })}
+            onTagClick={onTagClick}
             emptyMessage="עדיין אין רשומות — אפשר להוסיף אחת למעלה."
           />
         </>

@@ -13,6 +13,12 @@ interface SortableEntryRowProps {
   onMigrate: () => void
   onTogglePriority: () => void
   onCycleType: () => void
+  onAddSubtask: (text: string) => void
+  onToggleSubtask: (subtaskId: string) => void
+  onDeleteSubtask: (subtaskId: string) => void
+  onAddTag: (tag: string) => void
+  onRemoveTag: (tag: string) => void
+  onTagClick: (tag: string) => void
 }
 
 export function SortableEntryRow(props: SortableEntryRowProps) {

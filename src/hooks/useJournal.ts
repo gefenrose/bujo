@@ -113,6 +113,67 @@ export function useJournal() {
     [entries, pushUndo],
   )
 
+  const addSubtask = useCallback((entryId: string, text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    setEntries((prev) =>
+      prev.map((e) =>
+        e.id === entryId
+          ? { ...e, subtasks: [...(e.subtasks ?? []), { id: genId(), text: trimmed, done: false }] }
+          : e,
+      ),
+    )
+  }, [])
+
+  const toggleSubtask = useCallback((entryId: string, subtaskId: string) => {
+    setEntries((prev) =>
+      prev.map((e) =>
+        e.id === entryId
+          ? { ...e, subtasks: e.subtasks?.map((s) => (s.id === subtaskId ? { ...s, done: !s.done } : s)) }
+          : e,
+      ),
+    )
+  }, [])
+
+  const deleteSubtask = useCallback(
+    (entryId: string, subtaskId: string) => {
+      const entry = entries.find((e) => e.id === entryId)
+      const target = entry?.subtasks?.find((s) => s.id === subtaskId)
+      setEntries((prev) =>
+        prev.map((e) => (e.id === entryId ? { ...e, subtasks: e.subtasks?.filter((s) => s.id !== subtaskId) } : e)),
+      )
+      if (!target) return
+      pushUndo(`"${target.text}" נמחק`, () => {
+        setEntries((prev) =>
+          prev.map((e) =>
+            e.id === entryId
+              ? {
+                  ...e,
+                  subtasks: e.subtasks?.some((s) => s.id === target.id) ? e.subtasks : [...(e.subtasks ?? []), target],
+                }
+              : e,
+          ),
+        )
+      })
+    },
+    [entries, pushUndo],
+  )
+
+  const addTag = useCallback((entryId: string, tag: string) => {
+    const normalized = tag.trim().toLowerCase()
+    if (!normalized) return
+    setEntries((prev) =>
+      prev.map((e) => {
+        if (e.id !== entryId || e.tags?.includes(normalized)) return e
+        return { ...e, tags: [...(e.tags ?? []), normalized] }
+      }),
+    )
+  }, [])
+
+  const removeTag = useCallback((entryId: string, tag: string) => {
+    setEntries((prev) => prev.map((e) => (e.id === entryId ? { ...e, tags: e.tags?.filter((t) => t !== tag) } : e)))
+  }, [])
+
   const cycleStatus = useCallback((id: string) => {
     setEntries((prev) =>
       prev.map((e) => {
@@ -270,6 +331,11 @@ export function useJournal() {
     reorderEntries,
     deleteEntry,
     clearEntryTime,
+    addSubtask,
+    toggleSubtask,
+    deleteSubtask,
+    addTag,
+    removeTag,
     cycleStatus,
     togglePriority,
     migrateEntry,

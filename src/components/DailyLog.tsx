@@ -11,9 +11,10 @@ interface DailyLogProps {
   journal: Journal
   date: string
   onChangeDate: (date: string) => void
+  onTagClick: (tag: string) => void
 }
 
-export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
+export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogProps) {
   const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
   const scheduledHabits = journal.habits.filter((h) => isHabitScheduledOn(h, date))
 
@@ -60,6 +61,7 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
         entries={entries}
         onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: addDays(date, 1) })}
         onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
+        onTagClick={onTagClick}
         emptyMessage="עדיין לא נרשם כלום — אפשר להתחיל לכתוב למעלה."
       />
     </div>

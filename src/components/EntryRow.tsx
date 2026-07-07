@@ -4,7 +4,7 @@ import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
 import { formatTime } from '../lib/date'
 import { Bullet } from './Bullet'
-import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon, ClockIcon } from './icons/Icons'
+import { GripIcon, StarIcon, ArrowRightIcon, CloseIcon, ClockIcon, ChevronIcon, TagIcon, SubtaskIcon } from './icons/Icons'
 
 interface EntryRowProps {
   entry: Entry
@@ -16,6 +16,12 @@ interface EntryRowProps {
   onMigrate: () => void
   onTogglePriority: () => void
   onCycleType: () => void
+  onAddSubtask: (text: string) => void
+  onToggleSubtask: (subtaskId: string) => void
+  onDeleteSubtask: (subtaskId: string) => void
+  onAddTag: (tag: string) => void
+  onRemoveTag: (tag: string) => void
+  onTagClick: (tag: string) => void
   dragHandleProps?: {
     attributes: DraggableAttributes
     listeners: DraggableSyntheticListeners
@@ -37,6 +43,12 @@ export function EntryRow({
   onMigrate,
   onTogglePriority,
   onCycleType,
+  onAddSubtask,
+  onToggleSubtask,
+  onDeleteSubtask,
+  onAddTag,
+  onRemoveTag,
+  onTagClick,
   dragHandleProps,
 }: EntryRowProps) {
   const [editing, setEditing] = useState(false)
@@ -47,6 +59,33 @@ export function EntryRow({
   const [dragX, setDragX] = useState(0)
   const [swiping, setSwiping] = useState(false)
   const gestureRef = useRef<{ x: number; y: number; active: boolean } | null>(null)
+
+  const [subtasksOpen, setSubtasksOpen] = useState(false)
+  const [subtaskDraft, setSubtaskDraft] = useState('')
+  const [addingTag, setAddingTag] = useState(false)
+  const [tagDraft, setTagDraft] = useState('')
+  const tagInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (addingTag) tagInputRef.current?.focus()
+  }, [addingTag])
+
+  const subtasks = entry.subtasks ?? []
+  const tags = entry.tags ?? []
+  const doneCount = subtasks.filter((s) => s.done).length
+
+  const commitSubtask = () => {
+    const trimmed = subtaskDraft.trim()
+    if (trimmed) onAddSubtask(trimmed)
+    setSubtaskDraft('')
+  }
+
+  const commitTag = () => {
+    const trimmed = tagDraft.trim()
+    if (trimmed) onAddTag(trimmed)
+    setTagDraft('')
+    setAddingTag(false)
+  }
 
   useEffect(() => {
     if (editing) inputRef.current?.select()
@@ -112,145 +151,266 @@ export function EntryRow({
   const typeRevealOpacity = Math.max(0, Math.min(1, -dragX / SWIPE_THRESHOLD))
 
   return (
-    <div className="relative -mx-1.5 overflow-hidden rounded">
-      <div className="absolute inset-0">
-        {/* Physical left/right (not logical start/end): these track the pointer's physical drag
-            direction, which is independent of reading direction, so they must not flip under RTL. */}
-        <span
-          className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-amber-600 dark:text-amber-500"
-          style={{ opacity: priorityRevealOpacity }}
-        >
-          <StarIcon filled className="h-4 w-4" />
-        </span>
-        <span
-          className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-ink/50 dark:text-inkdark/50"
-          style={{ opacity: typeRevealOpacity }}
-        >
-          <span className="text-base leading-none">{TYPE_GLYPH[nextEntryType(entry.type)]}</span>
-        </span>
-      </div>
-
-      <div
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={endGesture}
-        onPointerCancel={endGesture}
-        style={{
-          transform: dragX ? `translateX(${dragX}px)` : undefined,
-          transition: swiping ? 'none' : 'transform 200ms ease-out',
-          touchAction: 'pan-y',
-        }}
-        className="group relative flex items-start gap-1.5 rounded bg-paper px-1.5 py-1 hover:bg-ink/[0.03] dark:bg-paperdark dark:hover:bg-inkdark/[0.04]"
-      >
-        {dragHandleProps && (
-          <button
-            type="button"
-            data-drag-handle
-            className="mt-[0.4em] shrink-0 cursor-grab touch-none text-ink/20 opacity-0 transition-opacity active:cursor-grabbing group-hover:opacity-100 dark:text-inkdark/20"
-            {...dragHandleProps.attributes}
-            {...dragHandleProps.listeners}
+    <>
+      <div className="relative -mx-1.5 overflow-hidden rounded">
+        <div className="absolute inset-0">
+          {/* Physical left/right (not logical start/end): these track the pointer's physical drag
+              direction, which is independent of reading direction, so they must not flip under RTL. */}
+          <span
+            className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-amber-600 dark:text-amber-500"
+            style={{ opacity: priorityRevealOpacity }}
           >
-            <GripIcon className="h-3.5 w-3.5" />
-          </button>
-        )}
-
-        <Bullet entry={entry} onClick={onToggle} />
-
-        {editing ? (
-          <div
-            className="flex min-w-0 flex-1 items-center gap-2"
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) commit()
-            }}
-          >
-            <input
-              ref={inputRef}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') commit()
-                if (e.key === 'Escape') {
-                  setDraft(entry.text)
-                  setTimeDraft(entry.time ?? '')
-                  setEditing(false)
-                }
-              }}
-              className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none dark:text-inkdark"
-            />
-            <input
-              type="time"
-              value={timeDraft}
-              onChange={(e) => setTimeDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') commit()
-              }}
-              className="shrink-0 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
-            />
-          </div>
-        ) : (
-          <p onClick={startEditing} className="flex min-w-0 flex-1 cursor-text items-baseline gap-2 py-0.5">
-            {entry.time && (
-              <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
-                <ClockIcon className="h-3 w-3" />
-                {formatTime(entry.time)}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onRemoveTime()
-                  }}
-                  title="הסרת שעה"
-                  className="opacity-0 hover:text-red-600 group-hover/time:opacity-100 dark:hover:text-red-400"
-                >
-                  <CloseIcon className="h-2.5 w-2.5" />
-                </button>
-              </span>
-            )}
-            <span
-              className={`min-w-0 text-[0.95rem] leading-snug ${struck ? 'line-through decoration-1' : ''} ${
-                dimmed ? 'text-ink/40 dark:text-inkdark/40' : 'text-ink dark:text-inkdark'
-              }`}
-            >
-              {entry.text}
-            </span>
-          </p>
-        )}
-
-        {entry.priority && (
-          <span className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" title="עדיפות">
-            <StarIcon filled className="h-3.5 w-3.5" />
+            <StarIcon filled className="h-4 w-4" />
           </span>
-        )}
-
-        <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            type="button"
-            onClick={onTogglePriority}
-            title="סימון עדיפות"
-            className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
+          <span
+            className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-ink/50 dark:text-inkdark/50"
+            style={{ opacity: typeRevealOpacity }}
           >
-            <StarIcon className="h-3.5 w-3.5" />
-          </button>
-          {entry.status === 'open' && (
+            <span className="text-base leading-none">{TYPE_GLYPH[nextEntryType(entry.type)]}</span>
+          </span>
+        </div>
+
+        <div
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={endGesture}
+          onPointerCancel={endGesture}
+          style={{
+            transform: dragX ? `translateX(${dragX}px)` : undefined,
+            transition: swiping ? 'none' : 'transform 200ms ease-out',
+            touchAction: 'pan-y',
+          }}
+          className="group relative flex items-start gap-1.5 rounded bg-paper px-1.5 py-1 hover:bg-ink/[0.03] dark:bg-paperdark dark:hover:bg-inkdark/[0.04]"
+        >
+          {dragHandleProps && (
             <button
               type="button"
-              onClick={onMigrate}
-              title="העברה ליום הבא"
-              className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+              data-drag-handle
+              className="mt-[0.4em] shrink-0 cursor-grab touch-none text-ink/20 opacity-0 transition-opacity active:cursor-grabbing group-hover:opacity-100 dark:text-inkdark/20"
+              {...dragHandleProps.attributes}
+              {...dragHandleProps.listeners}
             >
-              <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
+              <GripIcon className="h-3.5 w-3.5" />
             </button>
           )}
-          <button
-            type="button"
-            onClick={onDelete}
-            title="מחיקה"
-            className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
-          >
-            <CloseIcon className="h-3.5 w-3.5" />
-          </button>
+
+          <Bullet entry={entry} onClick={onToggle} />
+
+          {editing ? (
+            <div
+              className="flex min-w-0 flex-1 items-center gap-2"
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) commit()
+              }}
+            >
+              <input
+                ref={inputRef}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commit()
+                  if (e.key === 'Escape') {
+                    setDraft(entry.text)
+                    setTimeDraft(entry.time ?? '')
+                    setEditing(false)
+                  }
+                }}
+                className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none dark:text-inkdark"
+              />
+              <input
+                type="time"
+                value={timeDraft}
+                onChange={(e) => setTimeDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commit()
+                }}
+                className="shrink-0 rounded border border-ink/15 bg-transparent px-1 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+              />
+            </div>
+          ) : (
+            <p onClick={startEditing} className="flex min-w-0 flex-1 cursor-text items-baseline gap-2 py-0.5">
+              {entry.time && (
+                <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                  <ClockIcon className="h-3 w-3" />
+                  {formatTime(entry.time)}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRemoveTime()
+                    }}
+                    title="הסרת שעה"
+                    className="opacity-0 hover:text-red-600 group-hover/time:opacity-100 dark:hover:text-red-400"
+                  >
+                    <CloseIcon className="h-2.5 w-2.5" />
+                  </button>
+                </span>
+              )}
+              <span
+                className={`min-w-0 text-[0.95rem] leading-snug ${struck ? 'line-through decoration-1' : ''} ${
+                  dimmed ? 'text-ink/40 dark:text-inkdark/40' : 'text-ink dark:text-inkdark'
+                }`}
+              >
+                {entry.text}
+              </span>
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="group/tag flex shrink-0 items-center gap-1 rounded-full bg-ink/[0.06] ps-2 pe-1 py-0.5 text-xs text-ink/50 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.08] dark:text-inkdark/50 dark:hover:bg-inkdark/15 dark:hover:text-inkdark"
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onTagClick(tag)
+                    }}
+                  >
+                    #{tag}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onRemoveTag(tag)
+                    }}
+                    className="opacity-0 hover:text-red-600 group-hover/tag:opacity-100 dark:hover:text-red-400"
+                  >
+                    <CloseIcon className="h-2.5 w-2.5" />
+                  </button>
+                </span>
+              ))}
+            </p>
+          )}
+
+          {entry.type === 'task' && subtasks.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setSubtasksOpen((v) => !v)}
+              title="תת-משימות"
+              className="mt-0.5 flex shrink-0 items-center gap-0.5 rounded px-1 py-0.5 text-xs tabular-nums text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+            >
+              {doneCount}/{subtasks.length}
+              <ChevronIcon className={`h-3 w-3 transition-transform ${subtasksOpen ? 'rotate-180' : ''}`} />
+            </button>
+          )}
+
+          {entry.priority && (
+            <span className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-500" title="עדיפות">
+              <StarIcon filled className="h-3.5 w-3.5" />
+            </span>
+          )}
+
+          {addingTag && (
+            <input
+              ref={tagInputRef}
+              value={tagDraft}
+              onChange={(e) => setTagDraft(e.target.value)}
+              onBlur={commitTag}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitTag()
+                if (e.key === 'Escape') {
+                  setTagDraft('')
+                  setAddingTag(false)
+                }
+              }}
+              placeholder="תגית"
+              className="w-20 shrink-0 rounded-full border border-ink/15 bg-transparent px-2 py-0.5 text-xs text-ink outline-none dark:border-inkdark/15 dark:text-inkdark"
+            />
+          )}
+
+          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+            {entry.type === 'task' && (
+              <button
+                type="button"
+                onClick={() => setSubtasksOpen((v) => !v)}
+                title="תת-משימות"
+                className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+              >
+                <SubtaskIcon className="h-3.5 w-3.5" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setAddingTag(true)}
+              title="הוספת תגית"
+              className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+            >
+              <TagIcon className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={onTogglePriority}
+              title="סימון עדיפות"
+              className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
+            >
+              <StarIcon className="h-3.5 w-3.5" />
+            </button>
+            {entry.status === 'open' && (
+              <button
+                type="button"
+                onClick={onMigrate}
+                title="העברה ליום הבא"
+                className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+              >
+                <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onDelete}
+              title="מחיקה"
+              className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
+            >
+              <CloseIcon className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {entry.type === 'task' && subtasksOpen && (
+        <div className="ms-10 flex flex-col gap-0.5 py-1">
+          {subtasks.map((subtask) => (
+            <div key={subtask.id} className="group/subtask flex items-center gap-1.5 py-0.5">
+              <button
+                type="button"
+                onClick={() => onToggleSubtask(subtask.id)}
+                className={`flex h-3 w-3 shrink-0 items-center justify-center rounded-full border ${
+                  subtask.done
+                    ? 'border-ink/30 bg-ink/30 dark:border-inkdark/30 dark:bg-inkdark/30'
+                    : 'border-ink/30 dark:border-inkdark/30'
+                }`}
+              />
+              <span
+                className={`min-w-0 flex-1 text-sm ${
+                  subtask.done
+                    ? 'text-ink/40 line-through decoration-1 dark:text-inkdark/40'
+                    : 'text-ink/80 dark:text-inkdark/80'
+                }`}
+              >
+                {subtask.text}
+              </span>
+              <button
+                type="button"
+                onClick={() => onDeleteSubtask(subtask.id)}
+                className="shrink-0 text-ink/20 opacity-0 hover:text-red-600 group-hover/subtask:opacity-100 dark:text-inkdark/20 dark:hover:text-red-400"
+              >
+                <CloseIcon className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+          <input
+            value={subtaskDraft}
+            onChange={(e) => setSubtaskDraft(e.target.value)}
+            onBlur={commitSubtask}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commitSubtask()
+              if (e.key === 'Escape') setSubtaskDraft('')
+            }}
+            placeholder="תת-משימה חדשה"
+            className="bg-transparent py-0.5 text-sm text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
+          />
+        </div>
+      )}
+    </>
   )
 }

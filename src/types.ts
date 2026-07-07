@@ -2,6 +2,12 @@ export type EntryType = 'task' | 'event' | 'note'
 
 export type TaskStatus = 'open' | 'done' | 'migrated' | 'cancelled'
 
+export interface SubTask {
+  id: string
+  text: string
+  done: boolean
+}
+
 export interface Entry {
   id: string
   type: EntryType
@@ -18,6 +24,10 @@ export interface Entry {
   order?: number
   /** optional time of day (HH:MM, 24h) */
   time?: string
+  /** checkable sub-items, indented under this entry (tasks only) */
+  subtasks?: SubTask[]
+  /** freeform labels, normalized lowercase/trimmed, cross-cutting across dates and collections */
+  tags?: string[]
   createdAt: number
 }
 
