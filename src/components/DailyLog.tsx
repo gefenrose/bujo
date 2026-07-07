@@ -1,9 +1,11 @@
 import type { Journal } from '../hooks/useJournal'
 import { addDays, formatDayHeading, isToday, todayISO } from '../lib/date'
 import { habitValue } from '../lib/habits'
+import { moodValue } from '../lib/mood'
 import { EntryInput } from './EntryInput'
 import { EntryRow } from './EntryRow'
 import { HabitStripChip } from './habits/HabitStripChip'
+import { MoodPicker } from './mood/MoodPicker'
 
 interface DailyLogProps {
   journal: Journal
@@ -36,6 +38,8 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
           </button>
         </div>
       </div>
+
+      <MoodPicker value={moodValue(journal.moodLogs, date)} onChange={(v) => journal.setMood(date, v)} />
 
       {journal.habits.length > 0 && (
         <div className="mb-6 flex flex-wrap gap-2">

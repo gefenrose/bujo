@@ -11,12 +11,14 @@ import {
   weeklyCompletionTrend,
 } from '../lib/analytics'
 import { habitMonthStats } from '../lib/habits'
+import { monthlyMoodAverage, weeklyMoodTrend } from '../lib/mood'
 import { todayISO } from '../lib/date'
 import { StatTile } from './analytics/StatTile'
 import { ActivityHeatmap } from './analytics/ActivityHeatmap'
 import { WeeklyCompletionChart } from './analytics/WeeklyCompletionChart'
 import { WeekdayBar } from './analytics/WeekdayBar'
 import { TaskOutcomeBar } from './analytics/TaskOutcomeBar'
+import { MoodTrendChart } from './analytics/MoodTrendChart'
 
 interface AnalyticsProps {
   journal: Journal
@@ -43,6 +45,11 @@ export function Analytics({ journal }: AnalyticsProps) {
     () => journal.habits.map((h) => ({ habit: h, stats: habitMonthStats(h, journal.habitLogs, currentMonth) })),
     [journal.habits, journal.habitLogs, currentMonth],
   )
+  const moodAverage = useMemo(
+    () => monthlyMoodAverage(journal.moodLogs, currentMonth),
+    [journal.moodLogs, currentMonth],
+  )
+  const moodTrend = useMemo(() => weeklyMoodTrend(journal.moodLogs), [journal.moodLogs])
 
   return (
     <div>
@@ -64,6 +71,16 @@ export function Analytics({ journal }: AnalyticsProps) {
           <p className="mb-2 text-xs text-ink/50 dark:text-inkdark/50">Most active days</p>
           <WeekdayBar counts={weekdayCounts} />
         </div>
+      </section>
+
+      <section className="mt-9">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-sm font-medium text-ink/70 dark:text-inkdark/70">Mood</h2>
+          <span className="text-xs text-ink/40 dark:text-inkdark/40">
+            {moodAverage === null ? 'no data this month' : `avg ${moodAverage.toFixed(1)} / 5 this month`}
+          </span>
+        </div>
+        <MoodTrendChart buckets={moodTrend} />
       </section>
 
       {habitStats.length > 0 && (

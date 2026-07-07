@@ -1,7 +1,9 @@
 import type { Journal } from '../../hooks/useJournal'
 import { daysInMonth, todayISO } from '../../lib/date'
 import { habitMonthStats, habitValue } from '../../lib/habits'
+import { monthlyMoodAverage, moodValue } from '../../lib/mood'
 import { HabitCell } from './HabitCell'
+import { MoodGridCell } from './MoodGridCell'
 
 interface HabitGridProps {
   journal: Journal
@@ -11,14 +13,7 @@ interface HabitGridProps {
 export function HabitGrid({ journal, month }: HabitGridProps) {
   const days = daysInMonth(month)
   const today = todayISO()
-
-  if (journal.habits.length === 0) {
-    return (
-      <p className="text-sm text-ink/40 dark:text-inkdark/40">
-        No habits yet — add one below to start tracking (water, steps, mood, sleep…).
-      </p>
-    )
-  }
+  const moodAverage = monthlyMoodAverage(journal.moodLogs, month)
 
   return (
     <div className="overflow-x-auto pb-1">
@@ -40,47 +35,72 @@ export function HabitGrid({ journal, month }: HabitGridProps) {
           </div>
         </div>
 
-        {journal.habits.map((habit) => {
-          const stats = habitMonthStats(habit, journal.habitLogs, month)
-          const summary =
-            habit.type === 'check'
-              ? `${stats.loggedDays}/${days.length}`
-              : stats.average === null
-                ? '—'
-                : stats.average.toFixed(1)
+        <div className="flex items-center gap-1">
+          <div className="sticky left-0 z-10 w-28 shrink-0 bg-paper pr-1 dark:bg-paperdark">
+            <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">Mood</span>
+          </div>
+          <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
+            {moodAverage === null ? '—' : moodAverage.toFixed(1)}
+          </div>
+          <div className="flex gap-[3px] pl-1">
+            {days.map((d) => (
+              <MoodGridCell
+                key={d}
+                value={moodValue(journal.moodLogs, d)}
+                isToday={d === today}
+                onChange={(v) => journal.setMood(d, v)}
+              />
+            ))}
+          </div>
+        </div>
 
-          return (
-            <div key={habit.id} className="group/hrow flex items-center gap-1">
-              <div className="sticky left-0 z-10 flex w-28 shrink-0 items-center justify-between bg-paper pr-1 dark:bg-paperdark">
-                <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
-                <button
-                  type="button"
-                  onClick={() => journal.deleteHabit(habit.id)}
-                  className="shrink-0 text-xs text-ink/25 opacity-0 hover:text-red-600 group-hover/hrow:opacity-100 dark:text-inkdark/25 dark:hover:text-red-400"
-                  title="Delete habit"
-                >
-                  ✕
-                </button>
+        {journal.habits.length === 0 ? (
+          <p className="pt-2 text-sm text-ink/40 dark:text-inkdark/40">
+            No habits yet — add one below to start tracking (water, steps, sleep…).
+          </p>
+        ) : (
+          journal.habits.map((habit) => {
+            const stats = habitMonthStats(habit, journal.habitLogs, month)
+            const summary =
+              habit.type === 'check'
+                ? `${stats.loggedDays}/${days.length}`
+                : stats.average === null
+                  ? '—'
+                  : stats.average.toFixed(1)
+
+            return (
+              <div key={habit.id} className="group/hrow flex items-center gap-1">
+                <div className="sticky left-0 z-10 flex w-28 shrink-0 items-center justify-between bg-paper pr-1 dark:bg-paperdark">
+                  <span className="truncate text-sm text-ink/80 dark:text-inkdark/80">{habit.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => journal.deleteHabit(habit.id)}
+                    className="shrink-0 text-xs text-ink/25 opacity-0 hover:text-red-600 group-hover/hrow:opacity-100 dark:text-inkdark/25 dark:hover:text-red-400"
+                    title="Delete habit"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
+                  {summary}
+                </div>
+                <div className="flex gap-[3px] pl-1">
+                  {days.map((d) => (
+                    <HabitCell
+                      key={d}
+                      habit={habit}
+                      value={habitValue(journal.habitLogs, habit.id, d)}
+                      isToday={d === today}
+                      onToggle={() => journal.toggleHabitCheck(habit.id, d)}
+                      onIncrement={() => journal.incrementHabit(habit.id, d, 1)}
+                      onDecrement={() => journal.incrementHabit(habit.id, d, -1)}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="sticky left-28 z-10 w-14 shrink-0 bg-paper text-xs tabular-nums text-ink/40 dark:bg-paperdark dark:text-inkdark/40">
-                {summary}
-              </div>
-              <div className="flex gap-[3px] pl-1">
-                {days.map((d) => (
-                  <HabitCell
-                    key={d}
-                    habit={habit}
-                    value={habitValue(journal.habitLogs, habit.id, d)}
-                    isToday={d === today}
-                    onToggle={() => journal.toggleHabitCheck(habit.id, d)}
-                    onIncrement={() => journal.incrementHabit(habit.id, d, 1)}
-                    onDecrement={() => journal.incrementHabit(habit.id, d, -1)}
-                  />
-                ))}
-              </div>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
       </div>
     </div>
   )

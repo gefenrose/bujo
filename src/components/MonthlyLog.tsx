@@ -1,5 +1,6 @@
 import type { Journal } from '../hooks/useJournal'
 import { addMonths, daysInMonth, formatMonthHeading, isToday, weekdayShort } from '../lib/date'
+import { moodLevel, moodValue } from '../lib/mood'
 import { Bullet } from './Bullet'
 
 interface MonthlyLogProps {
@@ -34,6 +35,7 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
             .filter((e) => e.date === date)
             .sort((a, b) => a.createdAt - b.createdAt)
           const day = Number(date.slice(-2))
+          const mood = moodLevel(moodValue(journal.moodLogs, date))
 
           return (
             <div
@@ -80,6 +82,12 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
                 >
                   —
                 </button>
+              )}
+
+              {mood && (
+                <span className="shrink-0 self-start pt-0.5 text-sm" title={mood.label}>
+                  {mood.emoji}
+                </span>
               )}
             </div>
           )

@@ -51,7 +51,7 @@ export function Habits({ journal, month, onChangeMonth }: HabitsProps) {
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Habit name (e.g. Water, Steps, Mood)"
+              placeholder="Habit name (e.g. Water, Steps, Sleep)"
               className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
             />
             <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">

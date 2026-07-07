@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Collection, Entry, EntryType, Habit, HabitLog, HabitType, TaskStatus } from '../types'
+import type { Collection, Entry, EntryType, Habit, HabitLog, HabitType, MoodLog, TaskStatus } from '../types'
 import { genId, loadJournal, saveJournal } from '../lib/storage'
 import { todayISO } from '../lib/date'
 
@@ -8,6 +8,7 @@ export function useJournal() {
   const [collections, setCollections] = useState<Collection[]>(() => loadJournal().collections)
   const [habits, setHabits] = useState<Habit[]>(() => loadJournal().habits)
   const [habitLogs, setHabitLogs] = useState<HabitLog[]>(() => loadJournal().habitLogs)
+  const [moodLogs, setMoodLogs] = useState<MoodLog[]>(() => loadJournal().moodLogs)
   const hydrated = useRef(false)
 
   useEffect(() => {
@@ -15,8 +16,8 @@ export function useJournal() {
       hydrated.current = true
       return
     }
-    saveJournal({ entries, collections, habits, habitLogs })
-  }, [entries, collections, habits, habitLogs])
+    saveJournal({ entries, collections, habits, habitLogs, moodLogs })
+  }, [entries, collections, habits, habitLogs, moodLogs])
 
   const addEntry = useCallback(
     (input: { text: string; type: EntryType; date?: string; collectionId?: string }) => {
@@ -149,11 +150,22 @@ export function useJournal() {
     [habitLogs, setHabitValue],
   )
 
+  /** Sets (or clears, with 0) the mood for a date. */
+  const setMood = useCallback((date: string, value: number) => {
+    setMoodLogs((prev) => {
+      const existing = prev.find((l) => l.date === date)
+      if (value <= 0) return existing ? prev.filter((l) => l !== existing) : prev
+      if (existing) return prev.map((l) => (l === existing ? { ...l, value } : l))
+      return [...prev, { id: genId(), date, value }]
+    })
+  }, [])
+
   return {
     entries,
     collections,
     habits,
     habitLogs,
+    moodLogs,
     addEntry,
     updateEntry,
     deleteEntry,
@@ -169,6 +181,7 @@ export function useJournal() {
     setHabitValue,
     incrementHabit,
     toggleHabitCheck,
+    setMood,
   }
 }
 

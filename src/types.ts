@@ -42,9 +42,18 @@ export interface HabitLog {
   value: number
 }
 
+export interface MoodLog {
+  id: string
+  /** ISO date (YYYY-MM-DD) */
+  date: string
+  /** 1 (worst) .. 5 (best) */
+  value: number
+}
+
 export interface JournalData {
   entries: Entry[]
   collections: Collection[]
   habits: Habit[]
   habitLogs: HabitLog[]
+  moodLogs: MoodLog[]
 }
