@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Collection, Entry, EntryType, Habit, HabitLog, HabitType, MoodLog, TaskStatus } from '../types'
 import { genId, loadJournal, saveJournal } from '../lib/storage'
 import { todayISO } from '../lib/date'
+import { nextOrder } from '../lib/entries'
 
 export function useJournal() {
   const [entries, setEntries] = useState<Entry[]>(() => loadJournal().entries)
@@ -23,23 +24,35 @@ export function useJournal() {
     (input: { text: string; type: EntryType; date?: string; collectionId?: string }) => {
       const text = input.text.trim()
       if (!text) return
-      const entry: Entry = {
-        id: genId(),
-        type: input.type,
-        text,
-        status: 'open',
-        priority: false,
-        date: input.date,
-        collectionId: input.collectionId,
-        createdAt: Date.now(),
-      }
-      setEntries((prev) => [...prev, entry])
+      setEntries((prev) => {
+        const scope = prev.filter((e) => e.date === input.date && e.collectionId === input.collectionId)
+        const entry: Entry = {
+          id: genId(),
+          type: input.type,
+          text,
+          status: 'open',
+          priority: false,
+          date: input.date,
+          collectionId: input.collectionId,
+          order: nextOrder(scope),
+          createdAt: Date.now(),
+        }
+        return [...prev, entry]
+      })
     },
     [],
   )
 
   const updateEntry = useCallback((id: string, patch: Partial<Entry>) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, ...patch } : e)))
+  }, [])
+
+  /** Reorders entries within one scope (a day or a collection) to match the given id sequence. */
+  const reorderEntries = useCallback((orderedIds: string[]) => {
+    setEntries((prev) => {
+      const position = new Map(orderedIds.map((id, i) => [id, i]))
+      return prev.map((e) => (position.has(e.id) ? { ...e, order: position.get(e.id)! } : e))
+    })
   }, [])
 
   const deleteEntry = useCallback((id: string) => {
@@ -65,15 +78,19 @@ export function useJournal() {
     setEntries((prev) => {
       const source = prev.find((e) => e.id === id)
       if (!source) return prev
+      const targetDate = opts?.toCollectionId ? undefined : opts?.toDate ?? todayISO()
+      const targetCollectionId = opts?.toCollectionId
+      const scope = prev.filter((e) => e.date === targetDate && e.collectionId === targetCollectionId)
       const copy: Entry = {
         id: genId(),
         type: source.type,
         text: source.text,
         status: 'open',
         priority: source.priority,
-        date: opts?.toCollectionId ? undefined : opts?.toDate ?? todayISO(),
-        collectionId: opts?.toCollectionId,
+        date: targetDate,
+        collectionId: targetCollectionId,
         migratedFromId: source.id,
+        order: nextOrder(scope),
         createdAt: Date.now(),
       }
       return prev.map((e) => (e.id === id ? { ...e, status: 'migrated' as TaskStatus } : e)).concat(copy)
@@ -168,6 +185,7 @@ export function useJournal() {
     moodLogs,
     addEntry,
     updateEntry,
+    reorderEntries,
     deleteEntry,
     cycleStatus,
     togglePriority,

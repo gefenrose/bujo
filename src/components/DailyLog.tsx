@@ -1,9 +1,9 @@
 import type { Journal } from '../hooks/useJournal'
 import { addDays, formatDayHeading, isToday, todayISO } from '../lib/date'
+import { sortByOrder } from '../lib/entries'
 import { habitValue } from '../lib/habits'
 import { moodValue } from '../lib/mood'
-import { EntryInput } from './EntryInput'
-import { EntryRow } from './EntryRow'
+import { EntryList } from './EntryList'
 import { HabitStripChip } from './habits/HabitStripChip'
 import { MoodPicker } from './mood/MoodPicker'
 
@@ -14,9 +14,7 @@ interface DailyLogProps {
 }
 
 export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
-  const entries = journal.entries
-    .filter((e) => e.date === date)
-    .sort((a, b) => a.createdAt - b.createdAt)
+  const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
 
   return (
     <div>
@@ -56,24 +54,13 @@ export function DailyLog({ journal, date, onChangeDate }: DailyLogProps) {
         </div>
       )}
 
-      <div className="flex flex-col">
-        {entries.map((entry) => (
-          <EntryRow
-            key={entry.id}
-            entry={entry}
-            onToggle={() => journal.cycleStatus(entry.id)}
-            onEdit={(text) => journal.updateEntry(entry.id, { text })}
-            onDelete={() => journal.deleteEntry(entry.id)}
-            onMigrate={() => journal.migrateEntry(entry.id, { toDate: addDays(date, 1) })}
-            onTogglePriority={() => journal.togglePriority(entry.id)}
-          />
-        ))}
-        <EntryInput onSubmit={(text, type) => journal.addEntry({ text, type, date })} />
-      </div>
-
-      {entries.length === 0 && (
-        <p className="mt-2 text-sm text-ink/30 dark:text-inkdark/30">Nothing logged yet — start writing above.</p>
-      )}
+      <EntryList
+        journal={journal}
+        entries={entries}
+        onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: addDays(date, 1) })}
+        onAdd={(text, type) => journal.addEntry({ text, type, date })}
+        emptyMessage="Nothing logged yet — start writing above."
+      />
     </div>
   )
 }

@@ -14,6 +14,8 @@ export interface Entry {
   collectionId?: string
   /** id of the entry this one was migrated from, forming a migration chain */
   migratedFromId?: string
+  /** manual sort position within its scope (date or collection); falls back to createdAt for legacy entries */
+  order?: number
   createdAt: number
 }
 

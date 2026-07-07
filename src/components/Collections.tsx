@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Journal } from '../hooks/useJournal'
 import { todayISO } from '../lib/date'
-import { EntryInput } from './EntryInput'
-import { EntryRow } from './EntryRow'
+import { sortByOrder } from '../lib/entries'
+import { EntryList } from './EntryList'
 
 interface CollectionsProps {
   journal: Journal
@@ -25,11 +25,7 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
     if (id) onSelect(id)
   }
 
-  const entries = selected
-    ? journal.entries
-        .filter((e) => e.collectionId === selected.id)
-        .sort((a, b) => a.createdAt - b.createdAt)
-    : []
+  const entries = selected ? sortByOrder(journal.entries.filter((e) => e.collectionId === selected.id)) : []
 
   return (
     <div>
@@ -89,20 +85,13 @@ export function Collections({ journal, selectedId, onSelect }: CollectionsProps)
             </button>
           </div>
 
-          <div className="flex flex-col">
-            {entries.map((entry) => (
-              <EntryRow
-                key={entry.id}
-                entry={entry}
-                onToggle={() => journal.cycleStatus(entry.id)}
-                onEdit={(text) => journal.updateEntry(entry.id, { text })}
-                onDelete={() => journal.deleteEntry(entry.id)}
-                onMigrate={() => journal.migrateEntry(entry.id, { toDate: todayISO() })}
-                onTogglePriority={() => journal.togglePriority(entry.id)}
-              />
-            ))}
-            <EntryInput onSubmit={(text, type) => journal.addEntry({ text, type, collectionId: selected.id })} />
-          </div>
+          <EntryList
+            journal={journal}
+            entries={entries}
+            onMigrate={(entry) => journal.migrateEntry(entry.id, { toDate: todayISO() })}
+            onAdd={(text, type) => journal.addEntry({ text, type, collectionId: selected.id })}
+            emptyMessage="No entries yet — add one above."
+          />
         </>
       ) : (
         <p className="text-sm text-ink/40 dark:text-inkdark/40">

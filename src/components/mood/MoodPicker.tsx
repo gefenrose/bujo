@@ -1,4 +1,5 @@
 import { MOOD_LEVELS } from '../../lib/mood'
+import { MoodFaceIcon } from '../icons/MoodFaceIcon'
 
 interface MoodPickerProps {
   value: number
@@ -17,13 +18,13 @@ export function MoodPicker({ value, onChange }: MoodPickerProps) {
             type="button"
             title={level.label}
             onClick={() => onChange(selected ? 0 : level.value)}
-            className={`flex h-7 w-7 items-center justify-center rounded-full text-base transition-all ${
+            className={`flex h-7 w-7 items-center justify-center rounded-full transition-all ${
               selected
-                ? 'scale-110 bg-ink/[0.08] ring-1 ring-ink/20 dark:bg-inkdark/[0.1] dark:ring-inkdark/20'
-                : 'opacity-40 hover:opacity-80'
+                ? `scale-110 bg-ink/[0.08] ring-1 ring-ink/20 dark:bg-inkdark/[0.1] dark:ring-inkdark/20 ${level.text}`
+                : 'text-ink/35 opacity-70 hover:opacity-100 dark:text-inkdark/35'
             }`}
           >
-            {level.emoji}
+            <MoodFaceIcon level={level.value} className="h-5 w-5" />
           </button>
         )
       })}

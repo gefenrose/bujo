@@ -2,6 +2,7 @@ import type { Journal } from '../hooks/useJournal'
 import { addMonths, daysInMonth, formatMonthHeading, isToday, weekdayShort } from '../lib/date'
 import { moodLevel, moodValue } from '../lib/mood'
 import { Bullet } from './Bullet'
+import { MoodFaceIcon } from './icons/MoodFaceIcon'
 
 interface MonthlyLogProps {
   journal: Journal
@@ -85,8 +86,8 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
               )}
 
               {mood && (
-                <span className="shrink-0 self-start pt-0.5 text-sm" title={mood.label}>
-                  {mood.emoji}
+                <span className={`shrink-0 self-start pt-0.5 ${mood.text}`} title={mood.label}>
+                  <MoodFaceIcon level={mood.value} className="h-4 w-4" />
                 </span>
               )}
             </div>
