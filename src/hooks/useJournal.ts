@@ -3,6 +3,7 @@ import type {
   Collection,
   Entry,
   EntryType,
+  Filter,
   Habit,
   HabitLog,
   HabitType,
@@ -32,6 +33,8 @@ export function useJournal() {
   const [moodLogs, setMoodLogs] = useState<MoodLog[]>(() => loadJournal().moodLogs)
   const [prompts, setPrompts] = useState<Prompt[]>(() => loadJournal().prompts)
   const [promptResponses, setPromptResponses] = useState<PromptResponse[]>(() => loadJournal().promptResponses)
+  const [filters, setFilters] = useState<Filter[]>(() => loadJournal().filters)
+  const [pinnedTags, setPinnedTags] = useState<string[]>(() => loadJournal().pinnedTags)
   const [undoActions, setUndoActions] = useState<UndoAction[]>([])
   const hydrated = useRef(false)
 
@@ -40,8 +43,8 @@ export function useJournal() {
       hydrated.current = true
       return
     }
-    saveJournal({ entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses })
-  }, [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses])
+    saveJournal({ entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses, filters, pinnedTags })
+  }, [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses, filters, pinnedTags])
 
   const dismissUndo = useCallback((id: string) => {
     setUndoActions((prev) => prev.filter((a) => a.id !== id))
@@ -73,13 +76,14 @@ export function useJournal() {
       collectionId?: string
       time?: string
       googleEventId?: string
-    }) => {
+    }): string | undefined => {
       const text = input.text.trim()
-      if (!text) return
+      if (!text) return undefined
+      const id = genId()
       setEntries((prev) => {
         const scope = prev.filter((e) => e.date === input.date && e.collectionId === input.collectionId)
         const entry: Entry = {
-          id: genId(),
+          id,
           type: input.type,
           text,
           status: 'open',
@@ -93,6 +97,7 @@ export function useJournal() {
         }
         return [...prev, entry]
       })
+      return id
     },
     [],
   )
@@ -397,10 +402,60 @@ export function useJournal() {
     })
   }, [])
 
+  const addFilter = useCallback(
+    (input: { name: string; type?: EntryType; priorityOnly?: boolean; tag?: string }) => {
+      const name = input.name.trim()
+      if (!name) return
+      const filter: Filter = {
+        id: genId(),
+        name,
+        type: input.type,
+        priorityOnly: input.priorityOnly || undefined,
+        tag: input.tag?.trim().toLowerCase() || undefined,
+        createdAt: Date.now(),
+      }
+      setFilters((prev) => [...prev, filter])
+      return filter.id
+    },
+    [],
+  )
+
+  const deleteFilter = useCallback(
+    (id: string) => {
+      const target = filters.find((f) => f.id === id)
+      setFilters((prev) => prev.filter((f) => f.id !== id))
+      if (!target) return
+      pushUndo(`המסנן "${target.name}" נמחק`, () => {
+        setFilters((prev) => (prev.some((f) => f.id === target.id) ? prev : [...prev, target]))
+      })
+    },
+    [filters, pushUndo],
+  )
+
+  const pinTag = useCallback((tag: string) => {
+    const normalized = tag.trim().toLowerCase()
+    if (!normalized) return
+    setPinnedTags((prev) => (prev.includes(normalized) ? prev : [...prev, normalized]))
+  }, [])
+
+  const unpinTag = useCallback((tag: string) => {
+    setPinnedTags((prev) => prev.filter((t) => t !== tag))
+  }, [])
+
   /** Wholesale-replaces all data (e.g. restoring a backup), with an undo snapshot of the prior state. */
   const replaceAll = useCallback(
     (data: JournalData) => {
-      const snapshot: JournalData = { entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses }
+      const snapshot: JournalData = {
+        entries,
+        collections,
+        habits,
+        habitLogs,
+        moodLogs,
+        prompts,
+        promptResponses,
+        filters,
+        pinnedTags,
+      }
       setEntries(data.entries)
       setCollections(data.collections)
       setHabits(data.habits)
@@ -408,6 +463,8 @@ export function useJournal() {
       setMoodLogs(data.moodLogs)
       setPrompts(data.prompts)
       setPromptResponses(data.promptResponses)
+      setFilters(data.filters)
+      setPinnedTags(data.pinnedTags)
       pushUndo('שוחזרו נתונים מגיבוי', () => {
         setEntries(snapshot.entries)
         setCollections(snapshot.collections)
@@ -416,9 +473,11 @@ export function useJournal() {
         setMoodLogs(snapshot.moodLogs)
         setPrompts(snapshot.prompts)
         setPromptResponses(snapshot.promptResponses)
+        setFilters(snapshot.filters)
+        setPinnedTags(snapshot.pinnedTags)
       })
     },
-    [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses, pushUndo],
+    [entries, collections, habits, habitLogs, moodLogs, prompts, promptResponses, filters, pinnedTags, pushUndo],
   )
 
   return {
@@ -459,6 +518,12 @@ export function useJournal() {
     renamePrompt,
     deletePrompt,
     setPromptAnswer,
+    filters,
+    pinnedTags,
+    addFilter,
+    deleteFilter,
+    pinTag,
+    unpinTag,
     replaceAll,
   }
 }

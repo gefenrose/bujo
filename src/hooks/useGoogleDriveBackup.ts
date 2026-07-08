@@ -41,6 +41,8 @@ export function useGoogleDriveBackup(account: ReturnType<typeof useGoogleAccount
         moodLogs: journal.moodLogs,
         prompts: journal.prompts,
         promptResponses: journal.promptResponses,
+        filters: journal.filters,
+        pinnedTags: journal.pinnedTags,
       }
       fileIdRef.current = await saveDriveBackup(accessToken, fileIdRef.current, data)
       setLastBackedUpAt(Date.now())

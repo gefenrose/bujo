@@ -16,6 +16,8 @@ const EMPTY: JournalData = {
   moodLogs: [],
   prompts: [],
   promptResponses: [],
+  filters: [],
+  pinnedTags: [],
 }
 
 /** Tolerantly coerces arbitrary parsed JSON (localStorage, or a restored backup) into JournalData. */
@@ -29,6 +31,8 @@ export function normalizeJournalData(parsed: unknown): JournalData {
     moodLogs: Array.isArray(p.moodLogs) ? (p.moodLogs as JournalData['moodLogs']) : [],
     prompts: Array.isArray(p.prompts) ? (p.prompts as JournalData['prompts']) : [],
     promptResponses: Array.isArray(p.promptResponses) ? (p.promptResponses as JournalData['promptResponses']) : [],
+    filters: Array.isArray(p.filters) ? (p.filters as JournalData['filters']) : [],
+    pinnedTags: Array.isArray(p.pinnedTags) ? (p.pinnedTags as JournalData['pinnedTags']) : [],
   }
 }
 

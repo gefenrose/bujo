@@ -19,6 +19,7 @@ import {
   yearOf,
 } from './lib/date'
 import { isHabitScheduledOn } from './lib/habits'
+import type { Filter } from './types'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
 import { MonthlyLog } from './components/MonthlyLog'
@@ -26,6 +27,7 @@ import { YearlyLog } from './components/YearlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
 import { CollectionsShelf } from './components/CollectionsShelf'
+import { FilterView } from './components/FilterView'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
@@ -34,11 +36,11 @@ import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
 import { MobileTabBar } from './components/mobile/MobileTabBar'
 import { MobileMoreMenu } from './components/mobile/MobileMoreMenu'
-import { MobileCollectionsDrawer } from './components/mobile/MobileCollectionsDrawer'
+import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
 import { MobileQuickAdd } from './components/mobile/MobileQuickAdd'
 import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, PlusIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
-type View = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'inbox' | 'collections' | 'habits' | 'analytics'
+type View = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'inbox' | 'collections' | 'habits' | 'analytics' | 'filter'
 type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 const TIME_NAV: { view: View; label: string }[] = [
@@ -67,6 +69,7 @@ function App() {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
   const [mobileQuickAddOpen, setMobileQuickAddOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState<Filter | null>(null)
 
   const goToDate = (d: string) => {
     setDate(d)
@@ -76,6 +79,11 @@ function App() {
   const goToCollection = (id: string) => {
     setCollectionId(id)
     setView('collections')
+  }
+
+  const goToFilter = (filter: Filter) => {
+    setActiveFilter(filter)
+    setView('filter')
   }
 
   const openSearchForTag = (tag: string) => {
@@ -143,6 +151,8 @@ function App() {
         return { title: 'תיבת קלט' }
       case 'collections':
         return { title: journal.collections.find((c) => c.id === collectionId)?.name ?? 'אוספים' }
+      case 'filter':
+        return { title: activeFilter?.name ?? 'סינון' }
     }
   }
 
@@ -263,6 +273,9 @@ function App() {
             {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
             {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
             {view === 'analytics' && <Analytics journal={journal} />}
+            {view === 'filter' && activeFilter && (
+              <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
+            )}
           </main>
         </div>
 
@@ -344,10 +357,18 @@ function App() {
       )}
 
       {mobileDrawerOpen && (
-        <MobileCollectionsDrawer
+        <MobileMainDrawer
           journal={journal}
-          selectedId={collectionId}
-          onSelect={goToCollection}
+          selectedCollectionId={collectionId}
+          onSelectCollection={goToCollection}
+          onSelectFilter={goToFilter}
+          onInbox={() => setView('inbox')}
+          onHabits={() => setView('habits')}
+          onSearch={() => {
+            setSearchQuery('')
+            setSearchOpen(true)
+          }}
+          onSettings={() => setMobileMoreOpen(true)}
           onClose={() => setMobileDrawerOpen(false)}
         />
       )}

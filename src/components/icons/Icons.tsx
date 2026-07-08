@@ -281,6 +281,60 @@ export function PlusIcon({ className }: IconProps) {
   )
 }
 
+export function SettingsIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 3v1.6M10 15.4V17M17 10h-1.6M4.6 10H3M14.8 5.2l-1.1 1.1M6.3 13.7l-1.1 1.1M14.8 14.8l-1.1-1.1M6.3 6.3 5.2 5.2" />
+    </svg>
+  )
+}
+
+export function ListIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M7.5 5.5h9M7.5 10h9M7.5 14.5h9" />
+      <circle cx="3.3" cy="5.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="3.3" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="3.3" cy="14.5" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function FilterIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3.5 4.5h13L11.5 10.5v4.3L8.5 16v-5.5z" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

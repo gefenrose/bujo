@@ -86,6 +86,19 @@ export interface PromptResponse {
   answer: string
 }
 
+/** A saved smart-list query, matching entries across all dates/collections. */
+export interface Filter {
+  id: string
+  name: string
+  /** entry type to match; undefined = any type */
+  type?: EntryType
+  /** only match entries marked priority */
+  priorityOnly?: boolean
+  /** only match entries with this tag (normalized lowercase) */
+  tag?: string
+  createdAt: number
+}
+
 export interface JournalData {
   entries: Entry[]
   collections: Collection[]
@@ -94,4 +107,7 @@ export interface JournalData {
   moodLogs: MoodLog[]
   prompts: Prompt[]
   promptResponses: PromptResponse[]
+  filters: Filter[]
+  /** existing entry tags pinned for quick access, e.g. in the mobile drawer */
+  pinnedTags: string[]
 }
