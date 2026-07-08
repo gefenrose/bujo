@@ -37,7 +37,6 @@ import { Search } from './components/Search'
 import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
 import { MobileTabBar } from './components/mobile/MobileTabBar'
-import { MobileMoreMenu } from './components/mobile/MobileMoreMenu'
 import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
 import { MobileQuickAdd } from './components/mobile/MobileQuickAdd'
 import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, PlusIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
@@ -80,7 +79,6 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [googlePanelOpen, setGooglePanelOpen] = useState(false)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
   const [mobileQuickAddOpen, setMobileQuickAddOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState<Filter | null>(null)
   const [previousView, setPreviousView] = useState<View>('daily')
@@ -265,8 +263,6 @@ function App() {
             onNext={header.onNext}
             onTitleClick={header.onTitleClick}
             onMenuClick={() => setMobileDrawerOpen(true)}
-            onMoreClick={() => setMobileMoreOpen(true)}
-            moreActive={googleAccount.status === 'connected' || reminders.permission === 'granted'}
           />
         )}
 
@@ -386,6 +382,7 @@ function App() {
           onSelectFilter={goToFilter}
           onInbox={() => setView('inbox')}
           onHabits={() => setView('habits')}
+          onAnalytics={() => setView('analytics')}
           onSearch={() => {
             setSearchQuery('')
             setSearchOpen(true)
@@ -394,25 +391,11 @@ function App() {
             setPreviousView(view)
             setView('settings')
           }}
-          onClose={() => setMobileDrawerOpen(false)}
-        />
-      )}
-
-      {mobileMoreOpen && (
-        <MobileMoreMenu
-          onClose={() => setMobileMoreOpen(false)}
-          onAnalytics={() => setView('analytics')}
-          onInbox={() => setView('inbox')}
-          onSearch={() => {
-            setSearchQuery('')
-            setSearchOpen(true)
-          }}
           onGoogle={() => setGooglePanelOpen(true)}
           googleConnected={googleAccount.status === 'connected'}
           reminderPermission={reminders.permission}
           onEnableReminders={reminders.enableReminders}
-          theme={theme}
-          onToggleTheme={toggle}
+          onClose={() => setMobileDrawerOpen(false)}
         />
       )}
 

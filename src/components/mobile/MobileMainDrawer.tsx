@@ -1,11 +1,15 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { Journal } from '../../hooks/useJournal'
 import type { Filter } from '../../types'
+import type { NotificationPermissionState } from '../../lib/notifications'
 import { allUsedTags } from '../../lib/filters'
 import { rowColor } from '../../lib/collectionColors'
 import { usePreferences } from '../../hooks/usePreferences'
 import { CollectionsShelf } from '../CollectionsShelf'
 import {
+  BellIcon,
+  CalendarIcon,
+  ChartIcon,
   CloseIcon,
   FilterIcon,
   InboxIcon,
@@ -26,12 +30,17 @@ interface MobileMainDrawerProps {
   onSelectFilter: (filter: Filter) => void
   onInbox: () => void
   onHabits: () => void
+  onAnalytics: () => void
   onSearch: () => void
   onSettings: () => void
+  onGoogle: () => void
+  googleConnected: boolean
+  reminderPermission: NotificationPermissionState
+  onEnableReminders: () => void
   onClose: () => void
 }
 
-/** Mobile-only slide-in drawer (opened via the header hamburger): app nav, collections, saved filters and pinned tags. */
+/** Mobile-only slide-in drawer (opened via the header hamburger): all app nav, collections, saved filters, pinned tags, and quick actions. */
 export function MobileMainDrawer({
   journal,
   selectedCollectionId,
@@ -39,8 +48,13 @@ export function MobileMainDrawer({
   onSelectFilter,
   onInbox,
   onHabits,
+  onAnalytics,
   onSearch,
   onSettings,
+  onGoogle,
+  googleConnected,
+  reminderPermission,
+  onEnableReminders,
   onClose,
 }: MobileMainDrawerProps) {
   const { preferences } = usePreferences()
@@ -98,28 +112,21 @@ export function MobileMainDrawer({
         </div>
 
         <div className="flex flex-col gap-1 px-2 pt-3">
-          <button
-            type="button"
-            onClick={() => {
-              onInbox()
-              onClose()
-            }}
-            className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm text-ink/80 hover:bg-ink/[0.04] dark:text-inkdark/80 dark:hover:bg-inkdark/[0.05]"
-          >
-            <InboxIcon className="h-4 w-4" />
-            תיבת קלט
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              onHabits()
-              onClose()
-            }}
-            className="flex items-center gap-3 rounded-lg px-2 py-2 text-sm text-ink/80 hover:bg-ink/[0.04] dark:text-inkdark/80 dark:hover:bg-inkdark/[0.05]"
-          >
-            <RepeatIcon className="h-4 w-4" />
-            הרגלים
-          </button>
+          <NavRow onClick={() => { onInbox(); onClose() }} icon={<InboxIcon className="h-4 w-4" />} label="תיבת קלט" />
+          <NavRow onClick={() => { onHabits(); onClose() }} icon={<RepeatIcon className="h-4 w-4" />} label="הרגלים" />
+          <NavRow onClick={() => { onAnalytics(); onClose() }} icon={<ChartIcon className="h-4 w-4" />} label="תובנות" />
+          <NavRow
+            onClick={() => { onGoogle(); onClose() }}
+            icon={<CalendarIcon className="h-4 w-4" />}
+            label="Google"
+            active={googleConnected}
+          />
+          <NavRow
+            onClick={() => { onEnableReminders(); onClose() }}
+            icon={<BellIcon filled={reminderPermission === 'granted'} className="h-4 w-4" />}
+            label={reminderPermission === 'granted' ? 'תזכורות פעילות' : 'הפעלת תזכורות'}
+            active={reminderPermission === 'granted'}
+          />
         </div>
 
         <div className="mx-4 my-3 border-t border-ink/10 dark:border-inkdark/10" />
@@ -274,5 +281,32 @@ export function MobileMainDrawer({
         <AddTagModal availableTags={availableTags} onClose={() => setAddTagOpen(false)} onPick={journal.pinTag} />
       )}
     </div>
+  )
+}
+
+function NavRow({
+  onClick,
+  icon,
+  label,
+  active,
+}: {
+  onClick: () => void
+  icon: ReactNode
+  label: string
+  active?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center gap-3 rounded-lg px-2 py-2 text-sm ${
+        active
+          ? 'text-amber-600 dark:text-amber-500'
+          : 'text-ink/80 hover:bg-ink/[0.04] dark:text-inkdark/80 dark:hover:bg-inkdark/[0.05]'
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   )
 }

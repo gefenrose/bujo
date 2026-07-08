@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Prompt } from '../../types'
 import { CloseIcon } from '../icons/Icons'
 
@@ -12,8 +12,19 @@ interface PromptCardProps {
 
 export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, onDelete }: PromptCardProps) {
   const [draft, setDraft] = useState(answer)
+  const [focused, setFocused] = useState(false)
   const [editingQuestion, setEditingQuestion] = useState(false)
   const [questionDraft, setQuestionDraft] = useState(prompt.text)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const active = focused || draft.length > 0
+
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [draft, active])
 
   const commitQuestion = () => {
     setEditingQuestion(false)
@@ -23,12 +34,12 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
   }
 
   return (
-    <div className="relative rounded-lg bg-ink/[0.03] p-3 dark:bg-inkdark/[0.04]">
+    <div className="relative flex flex-col gap-1">
       <button
         type="button"
         onClick={onDelete}
         title="מחיקת השאלה"
-        className="absolute end-1.5 top-1.5 text-ink/20 hover:text-red-600 dark:text-inkdark/20 dark:hover:text-red-400"
+        className="absolute end-0 top-0 text-ink/20 hover:text-red-600 dark:text-inkdark/20 dark:hover:text-red-400"
       >
         <CloseIcon className="h-3 w-3" />
       </button>
@@ -46,29 +57,38 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
               setEditingQuestion(false)
             }
           }}
-          className="w-full pe-4 bg-transparent text-xs text-ink/70 outline-none dark:text-inkdark/70"
+          className={`w-full pe-4 bg-transparent text-ink/70 outline-none transition-all dark:text-inkdark/70 ${
+            active ? 'text-xs' : 'text-sm'
+          }`}
         />
       ) : (
         <button
           type="button"
           onClick={() => setEditingQuestion(true)}
-          className="w-full pe-4 text-start text-xs text-ink/50 hover:text-ink/70 dark:text-inkdark/50 dark:hover:text-inkdark/70"
+          className={`w-full pe-4 text-start text-ink/50 transition-all hover:text-ink/70 dark:text-inkdark/50 dark:hover:text-inkdark/70 ${
+            active ? 'text-xs' : 'text-sm'
+          }`}
         >
           {prompt.text}
         </button>
       )}
 
-      <textarea
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={() => {
-          if (draft !== answer) onChangeAnswer(draft)
-        }}
-        placeholder="כתיבת תשובה…"
-        rows={2}
-        style={{ fontWeight: 'var(--content-font-weight)' }}
-        className="mt-1 w-full resize-none bg-transparent text-sm leading-snug text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
-      />
+      <div className={active ? 'rounded-lg bg-ink/[0.03] p-3 dark:bg-inkdark/[0.04]' : ''}>
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setFocused(false)
+            if (draft !== answer) onChangeAnswer(draft)
+          }}
+          placeholder="כתיבת תשובה…"
+          rows={1}
+          style={{ fontWeight: 'var(--content-font-weight)' }}
+          className="block w-full resize-none overflow-hidden bg-transparent text-sm leading-snug text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
+        />
+      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { ChevronIcon, MenuIcon, MoreIcon } from '../icons/Icons'
+import { ChevronIcon, MenuIcon } from '../icons/Icons'
 
 interface MobileHeaderProps {
   title: string
@@ -7,27 +7,16 @@ interface MobileHeaderProps {
   onNext?: () => void
   onTitleClick?: () => void
   onMenuClick: () => void
-  onMoreClick: () => void
-  moreActive?: boolean
 }
 
-/** Mobile-only header: hamburger (collections drawer), centered title/subtitle with prev/next paging, '...' (more actions). */
-export function MobileHeader({
-  title,
-  subtitle,
-  onPrev,
-  onNext,
-  onTitleClick,
-  onMenuClick,
-  onMoreClick,
-  moreActive,
-}: MobileHeaderProps) {
+/** Mobile-only header: hamburger (main drawer), centered title/subtitle with prev/next paging. */
+export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, onMenuClick }: MobileHeaderProps) {
   return (
     <header className="flex items-center justify-between border-b border-ink/10 px-1 py-3 dark:border-inkdark/10 sm:hidden">
       <button
         type="button"
         onClick={onMenuClick}
-        title="אוספים"
+        title="תפריט"
         className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/60 dark:text-inkdark/60"
       >
         <MenuIcon className="h-5 w-5" />
@@ -65,16 +54,7 @@ export function MobileHeader({
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={onMoreClick}
-        title="עוד"
-        className={`flex h-8 w-8 shrink-0 items-center justify-center ${
-          moreActive ? 'text-amber-600 dark:text-amber-500' : 'text-ink/60 dark:text-inkdark/60'
-        }`}
-      >
-        <MoreIcon className="h-4 w-4" />
-      </button>
+      <div className="h-8 w-8 shrink-0" />
     </header>
   )
 }
