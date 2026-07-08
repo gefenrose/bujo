@@ -19,7 +19,7 @@ export function HabitStripChip({ habit, value, onToggle, onIncrement, onDecremen
         className={`rounded-full border px-3 py-1 text-xs transition-colors ${
           active
             ? 'border-amber-500/40 bg-amber-500/15 text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-400'
-            : 'border-ink/15 text-ink/50 hover:border-ink/30 hover:text-ink dark:border-inkdark/15 dark:text-inkdark/50 dark:hover:border-inkdark/30 dark:hover:text-inkdark'
+            : 'border-ink/15 text-ink/65 hover:border-ink/30 hover:text-ink dark:border-inkdark/15 dark:text-inkdark/65 dark:hover:border-inkdark/30 dark:hover:text-inkdark'
         }`}
       >
         {habit.name}
@@ -32,7 +32,7 @@ export function HabitStripChip({ habit, value, onToggle, onIncrement, onDecremen
       className={`group/chip flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${
         active
           ? 'border-amber-500/40 bg-amber-500/15 text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-400'
-          : 'border-ink/15 text-ink/50 dark:border-inkdark/15 dark:text-inkdark/50'
+          : 'border-ink/15 text-ink/65 dark:border-inkdark/15 dark:text-inkdark/65'
       }`}
     >
       <button type="button" onClick={onIncrement} className="hover:text-ink dark:hover:text-inkdark">
@@ -44,7 +44,7 @@ export function HabitStripChip({ habit, value, onToggle, onIncrement, onDecremen
           type="button"
           onClick={onDecrement}
           title="−1"
-          className="hidden text-ink/30 hover:text-ink group-hover/chip:inline dark:text-inkdark/30 dark:hover:text-inkdark"
+          className="hidden text-ink/50 hover:text-ink group-hover/chip:inline dark:text-inkdark/50 dark:hover:text-inkdark"
         >
           −
         </button>

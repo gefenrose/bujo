@@ -15,13 +15,13 @@ export function AddTagModal({ availableTags, onClose, onPick }: AddTagModalProps
       >
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-medium text-ink dark:text-inkdark">הצמדת תגית</h2>
-          <button type="button" onClick={onClose} className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark">
+          <button type="button" onClick={onClose} className="text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark">
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 
         {availableTags.length === 0 ? (
-          <p className="text-sm text-ink/40 dark:text-inkdark/40">
+          <p className="text-sm text-ink/60 dark:text-inkdark/60">
             אין עדיין תגיות בשימוש — הוספת תגית לרשומה כלשהי תאפשר להצמיד אותה כאן לגישה מהירה.
           </p>
         ) : (
@@ -34,7 +34,7 @@ export function AddTagModal({ availableTags, onClose, onPick }: AddTagModalProps
                   onPick(tag)
                   onClose()
                 }}
-                className="rounded-full bg-ink/[0.05] px-2.5 py-1 text-sm text-ink/70 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.06] dark:text-inkdark/70 dark:hover:bg-inkdark/10 dark:hover:text-inkdark"
+                className="rounded-full bg-ink/[0.05] px-2.5 py-1 text-sm text-ink/75 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.06] dark:text-inkdark/75 dark:hover:bg-inkdark/10 dark:hover:text-inkdark"
               >
                 #{tag}
               </button>

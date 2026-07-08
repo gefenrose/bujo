@@ -57,7 +57,7 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
           type="button"
           onClick={onDelete}
           title="מחיקת הרגל"
-          className="shrink-0 text-ink/30 hover:text-red-600 dark:text-inkdark/30 dark:hover:text-red-400"
+          className="shrink-0 text-ink/50 hover:text-red-600 dark:text-inkdark/50 dark:hover:text-red-400"
         >
           <CloseIcon className="h-3.5 w-3.5" />
         </button>
@@ -73,7 +73,7 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="שם ההרגל"
-          className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+          className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
         />
         <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
           <button
@@ -82,7 +82,7 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
             className={`rounded-full px-2.5 py-1 ${
               type === 'check'
                 ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                : 'text-ink/50 dark:text-inkdark/50'
+                : 'text-ink/65 dark:text-inkdark/65'
             }`}
           >
             סימון
@@ -93,14 +93,14 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
             className={`rounded-full px-2.5 py-1 ${
               type === 'count'
                 ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                : 'text-ink/50 dark:text-inkdark/50'
+                : 'text-ink/65 dark:text-inkdark/65'
             }`}
           >
             ספירה
           </button>
         </div>
         {type === 'count' && (
-          <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
+          <label className="flex items-center gap-1.5 text-xs text-ink/65 dark:text-inkdark/65">
             יעד
             <input
               type="number"
@@ -115,10 +115,10 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
 
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-ink/50 dark:text-inkdark/50">חזרה</span>
+          <span className="text-xs text-ink/65 dark:text-inkdark/65">חזרה</span>
           <WeekdayPicker value={days} onChange={setDays} />
         </div>
-        <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
+        <label className="flex items-center gap-1.5 text-xs text-ink/65 dark:text-inkdark/65">
           תזכורת
           <TimeField
             value={time}
@@ -139,14 +139,14 @@ export function HabitManageRow({ habit, onSave, onDelete }: HabitManageRowProps)
         <button
           type="button"
           onClick={cancel}
-          className="text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+          className="text-xs text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
         >
           ביטול
         </button>
         <button
           type="button"
           onClick={onDelete}
-          className="ms-auto text-xs text-ink/30 hover:text-red-600 dark:text-inkdark/30 dark:hover:text-red-400"
+          className="ms-auto text-xs text-ink/50 hover:text-red-600 dark:text-inkdark/50 dark:hover:text-red-400"
         >
           מחיקת הרגל
         </button>

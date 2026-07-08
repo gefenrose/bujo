@@ -30,14 +30,14 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
           <button
             autoFocus
             onClick={onClose}
-            className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+            className="text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
           >
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 
         {!account.configured ? (
-          <p className="text-sm text-ink/50 dark:text-inkdark/50">
+          <p className="text-sm text-ink/65 dark:text-inkdark/65">
             החיבור ל-Google עדיין לא הוגדר עבור ההתקנה הזו (חסר Client ID).
           </p>
         ) : (
@@ -45,7 +45,7 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
             {account.error && <p className="text-sm text-red-600 dark:text-red-400">{account.error}</p>}
 
             <div className="flex flex-col gap-2">
-              <p className="text-xs text-ink/50 dark:text-inkdark/50">אילו תכונות להפעיל:</p>
+              <p className="text-xs text-ink/65 dark:text-inkdark/65">אילו תכונות להפעיל:</p>
               <label className="flex items-center gap-2 text-sm text-ink/80 dark:text-inkdark/80">
                 <input
                   type="checkbox"
@@ -79,12 +79,12 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
               <>
                 {account.calendarEnabled && (
                   <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
-                    <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Calendar</h3>
+                    <h3 className="mb-1.5 text-xs font-medium text-ink/70 dark:text-inkdark/70">Google Calendar</h3>
                     {!account.hasCalendarScope ? (
                       <GrantHint onReconnect={account.connect} />
                     ) : (
                       <>
-                        <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
+                        <p className="mb-2 text-xs text-ink/60 dark:text-inkdark/60">
                           {calendar.lastSyncedAt
                             ? `סונכרן לאחרונה בשעה ${formatTime(calendar.lastSyncedAt)}`
                             : 'טרם בוצע סנכרון'}
@@ -104,12 +104,12 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
 
                 {account.driveEnabled && (
                   <div className="border-b border-ink/10 pb-4 dark:border-inkdark/10">
-                    <h3 className="mb-1.5 text-xs font-medium text-ink/60 dark:text-inkdark/60">Google Drive</h3>
+                    <h3 className="mb-1.5 text-xs font-medium text-ink/70 dark:text-inkdark/70">Google Drive</h3>
                     {!account.hasDriveScope ? (
                       <GrantHint onReconnect={account.connect} />
                     ) : (
                       <>
-                        <p className="mb-2 text-xs text-ink/40 dark:text-inkdark/40">
+                        <p className="mb-2 text-xs text-ink/60 dark:text-inkdark/60">
                           {drive.lastBackedUpAt
                             ? `נשמר לאחרונה בשעה ${formatTime(drive.lastBackedUpAt)}`
                             : 'טרם נשמר גיבוי'}
@@ -127,7 +127,7 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
                             type="button"
                             onClick={drive.restoreNow}
                             disabled={drive.restoring}
-                            className="text-sm text-ink/40 hover:text-ink disabled:opacity-50 dark:text-inkdark/40 dark:hover:text-inkdark"
+                            className="text-sm text-ink/60 hover:text-ink disabled:opacity-50 dark:text-inkdark/60 dark:hover:text-inkdark"
                           >
                             {drive.restoring ? 'משחזר…' : 'שחזור מ-Drive'}
                           </button>
@@ -140,7 +140,7 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
                 <button
                   type="button"
                   onClick={account.disconnect}
-                  className="text-sm text-ink/30 hover:text-red-600 dark:text-inkdark/30 dark:hover:text-red-400"
+                  className="text-sm text-ink/50 hover:text-red-600 dark:text-inkdark/50 dark:hover:text-red-400"
                 >
                   ניתוק החשבון
                 </button>
@@ -156,11 +156,11 @@ export function GooglePanel({ account, calendar, drive, onClose }: GooglePanelPr
 function GrantHint({ onReconnect }: { onReconnect: () => void }) {
   return (
     <div className="flex items-center gap-2">
-      <p className="text-xs text-ink/40 dark:text-inkdark/40">ההרשאה הזו טרם ניתנה.</p>
+      <p className="text-xs text-ink/60 dark:text-inkdark/60">ההרשאה הזו טרם ניתנה.</p>
       <button
         type="button"
         onClick={onReconnect}
-        className="text-xs text-ink/60 underline hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
+        className="text-xs text-ink/70 underline hover:text-ink dark:text-inkdark/70 dark:hover:text-inkdark"
       >
         התחברות מחדש
       </button>

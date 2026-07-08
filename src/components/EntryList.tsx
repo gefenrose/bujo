@@ -92,7 +92,7 @@ export function EntryList({
         <EntryInput onSubmit={onAdd} />
       </div>
       {entries.length === 0 && (
-        <p className="mt-2 text-sm text-ink/30 dark:text-inkdark/30">{emptyMessage}</p>
+        <p className="mt-2 text-sm text-ink/50 dark:text-inkdark/50">{emptyMessage}</p>
       )}
     </div>
   )

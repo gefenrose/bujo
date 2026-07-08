@@ -37,7 +37,7 @@ export function Bullet({ entry, onClick, colorClass }: BulletProps) {
 }
 
 function BulletGlyph({ entry, shape, colorClass }: { entry: Entry; shape: IconShape; colorClass?: string }) {
-  const ink = colorClass ?? 'text-ink/70 dark:text-inkdark/70'
+  const ink = colorClass ?? 'text-ink/75 dark:text-inkdark/75'
 
   if (entry.type === 'task') {
     if (entry.status === 'done') {
@@ -48,7 +48,7 @@ function BulletGlyph({ entry, shape, colorClass }: { entry: Entry; shape: IconSh
     }
     if (entry.status === 'cancelled') {
       return (
-        <span className={`relative block h-1.5 w-1.5 rounded-full bg-current text-ink/40 dark:text-inkdark/40`}>
+        <span className={`relative block h-1.5 w-1.5 rounded-full bg-current text-ink/60 dark:text-inkdark/60`}>
           <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-current" />
         </span>
       )

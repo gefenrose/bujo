@@ -112,7 +112,7 @@ function App() {
     `flex h-7 w-7 items-center justify-center rounded-full ${
       active
         ? 'text-ink dark:text-inkdark'
-        : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+        : 'text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark'
     }`
 
   const mobileHeaderProps = (): {
@@ -246,7 +246,7 @@ function App() {
                 className={`rounded-full px-3 py-1 transition-colors ${
                   view === n.view
                     ? 'bg-paper text-ink shadow-sm dark:bg-paperdark dark:text-inkdark'
-                    : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+                    : 'text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark'
                 }`}
               >
                 {n.label}
@@ -297,7 +297,7 @@ function App() {
           </main>
         </div>
 
-        <footer className="hidden border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30 sm:block">
+        <footer className="hidden border-t border-ink/10 py-4 text-center text-xs text-ink/50 dark:border-inkdark/10 dark:text-inkdark/50 sm:block">
           {googleDrive.lastBackedUpAt
             ? `נשמר מקומית ומגובה ל-Google Drive · עודכן לאחרונה בשעה ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
             : 'נשמר מקומית בדפדפן זה'}

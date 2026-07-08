@@ -35,7 +35,7 @@ export function AddFilterModal({ onClose, onCreate }: AddFilterModalProps) {
       >
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-medium text-ink dark:text-inkdark">מסנן חדש</h2>
-          <button type="button" onClick={onClose} className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark">
+          <button type="button" onClick={onClose} className="text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark">
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
@@ -47,7 +47,7 @@ export function AddFilterModal({ onClose, onCreate }: AddFilterModalProps) {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
             placeholder="שם המסנן (למשל דחוף)"
-            className="w-full rounded-lg border border-ink/15 bg-transparent px-2.5 py-1.5 text-sm text-ink outline-none placeholder:text-ink/30 dark:border-inkdark/15 dark:text-inkdark dark:placeholder:text-inkdark/30"
+            className="w-full rounded-lg border border-ink/15 bg-transparent px-2.5 py-1.5 text-sm text-ink outline-none placeholder:text-ink/50 dark:border-inkdark/15 dark:text-inkdark dark:placeholder:text-inkdark/50"
           />
 
           <div className="flex flex-wrap items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
@@ -59,7 +59,7 @@ export function AddFilterModal({ onClose, onCreate }: AddFilterModalProps) {
                 className={`rounded-full px-2.5 py-1 ${
                   type === opt.type
                     ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                    : 'text-ink/50 dark:text-inkdark/50'
+                    : 'text-ink/65 dark:text-inkdark/65'
                 }`}
               >
                 {opt.label}
@@ -82,7 +82,7 @@ export function AddFilterModal({ onClose, onCreate }: AddFilterModalProps) {
             onChange={(e) => setTag(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && submit()}
             placeholder="תגית (לא חובה)"
-            className="w-full rounded-lg border border-ink/15 bg-transparent px-2.5 py-1.5 text-sm text-ink outline-none placeholder:text-ink/30 dark:border-inkdark/15 dark:text-inkdark dark:placeholder:text-inkdark/30"
+            className="w-full rounded-lg border border-ink/15 bg-transparent px-2.5 py-1.5 text-sm text-ink outline-none placeholder:text-ink/50 dark:border-inkdark/15 dark:text-inkdark dark:placeholder:text-inkdark/50"
           />
 
           <button

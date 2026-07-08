@@ -21,7 +21,7 @@ export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
             <div key={b.label} className="group/bar relative flex flex-1 flex-col items-center justify-end">
               {b.rate !== null && (
                 <span
-                  className={`mb-1 text-[0.7rem] tabular-nums text-ink/40 opacity-0 transition-opacity group-hover/bar:opacity-100 dark:text-inkdark/40 ${
+                  className={`mb-1 text-[0.7rem] tabular-nums text-ink/60 opacity-0 transition-opacity group-hover/bar:opacity-100 dark:text-inkdark/60 ${
                     isLast ? '!opacity-100' : ''
                   }`}
                 >
@@ -46,7 +46,7 @@ export function WeeklyCompletionChart({ buckets }: WeeklyCompletionChartProps) {
       </div>
       <div className="mt-1.5 flex gap-3">
         {buckets.map((b) => (
-          <span key={b.label} className="flex-1 text-center text-[0.65rem] text-ink/35 dark:text-inkdark/35">
+          <span key={b.label} className="flex-1 text-center text-[0.65rem] text-ink/55 dark:text-inkdark/55">
             {b.label}
           </span>
         ))}

@@ -93,7 +93,7 @@ export function MobileMainDrawer({
                 onSearch()
                 onClose()
               }}
-              className="flex h-8 w-8 items-center justify-center text-ink/60 dark:text-inkdark/60"
+              className="flex h-8 w-8 items-center justify-center text-ink/70 dark:text-inkdark/70"
             >
               <SearchIcon className="h-4 w-4" />
             </button>
@@ -104,7 +104,7 @@ export function MobileMainDrawer({
                 onClose()
               }}
               title="העדפות"
-              className="flex h-8 w-8 items-center justify-center text-ink/60 dark:text-inkdark/60"
+              className="flex h-8 w-8 items-center justify-center text-ink/70 dark:text-inkdark/70"
             >
               <SettingsIcon className="h-4 w-4" />
             </button>
@@ -166,7 +166,7 @@ export function MobileMainDrawer({
               {journal.filters.map((filter, i) => (
                 <div
                   key={filter.id}
-                  className="group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-ink/70 hover:bg-ink/[0.04] dark:text-inkdark/70 dark:hover:bg-inkdark/[0.05]"
+                  className="group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-ink/75 hover:bg-ink/[0.04] dark:text-inkdark/75 dark:hover:bg-inkdark/[0.05]"
                 >
                   <button
                     type="button"
@@ -182,7 +182,7 @@ export function MobileMainDrawer({
                   <button
                     type="button"
                     onClick={() => journal.deleteFilter(filter.id)}
-                    className="shrink-0 text-ink/25 hover:text-red-600 dark:text-inkdark/25 dark:hover:text-red-400"
+                    className="shrink-0 text-ink/45 hover:text-red-600 dark:text-inkdark/45 dark:hover:text-red-400"
                   >
                     <CloseIcon className="h-3 w-3" />
                   </button>
@@ -192,7 +192,7 @@ export function MobileMainDrawer({
               {journal.pinnedTags.map((tag) => (
                 <div
                   key={tag}
-                  className="group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-ink/70 hover:bg-ink/[0.04] dark:text-inkdark/70 dark:hover:bg-inkdark/[0.05]"
+                  className="group flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-ink/75 hover:bg-ink/[0.04] dark:text-inkdark/75 dark:hover:bg-inkdark/[0.05]"
                 >
                   <button
                     type="button"
@@ -202,13 +202,13 @@ export function MobileMainDrawer({
                     }}
                     className="flex min-w-0 flex-1 items-center gap-2 text-start"
                   >
-                    <TagIcon className="h-4 w-4 shrink-0 text-ink/40 dark:text-inkdark/40" />
+                    <TagIcon className="h-4 w-4 shrink-0 text-ink/60 dark:text-inkdark/60" />
                     <span className="truncate">#{tag}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => journal.unpinTag(tag)}
-                    className="shrink-0 text-ink/25 hover:text-red-600 dark:text-inkdark/25 dark:hover:text-red-400"
+                    className="shrink-0 text-ink/45 hover:text-red-600 dark:text-inkdark/45 dark:hover:text-red-400"
                   >
                     <CloseIcon className="h-3 w-3" />
                   </button>

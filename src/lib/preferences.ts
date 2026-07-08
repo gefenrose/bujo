@@ -67,5 +67,5 @@ export function savePreferences(prefs: Preferences): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
 }
 
-export const TEXT_SIZE_PX: Record<TextSize, number> = { small: 14, medium: 16, large: 18 }
+export const TEXT_SIZE_PX: Record<TextSize, number> = { small: 16, medium: 18, large: 20 }
 export const FONT_WEIGHT_VALUE: Record<FontWeight, number> = { light: 300, regular: 400, bold: 600 }

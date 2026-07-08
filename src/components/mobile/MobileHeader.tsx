@@ -17,7 +17,7 @@ export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, on
         type="button"
         onClick={onMenuClick}
         title="תפריט"
-        className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/60 dark:text-inkdark/60"
+        className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/70 dark:text-inkdark/70"
       >
         <MenuIcon className="h-5 w-5" />
       </button>
@@ -27,7 +27,7 @@ export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, on
           <button
             type="button"
             onClick={onPrev}
-            className="flex h-7 w-7 shrink-0 items-center justify-center text-ink/30 dark:text-inkdark/30"
+            className="flex h-7 w-7 shrink-0 items-center justify-center text-ink/50 dark:text-inkdark/50"
           >
             <ChevronIcon className="h-3.5 w-3.5 -rotate-90" />
           </button>
@@ -40,14 +40,14 @@ export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, on
         >
           <span className="truncate text-base font-medium tracking-tight text-ink dark:text-inkdark">{title}</span>
           {subtitle && (
-            <span className="truncate text-xs text-ink/40 dark:text-inkdark/40">{subtitle}</span>
+            <span className="truncate text-xs text-ink/60 dark:text-inkdark/60">{subtitle}</span>
           )}
         </button>
         {onNext && (
           <button
             type="button"
             onClick={onNext}
-            className="flex h-7 w-7 shrink-0 items-center justify-center text-ink/30 dark:text-inkdark/30"
+            className="flex h-7 w-7 shrink-0 items-center justify-center text-ink/50 dark:text-inkdark/50"
           >
             <ChevronIcon className="h-3.5 w-3.5 rotate-90" />
           </button>

@@ -47,7 +47,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">הרגלים</h1>
         <button
           onClick={() => setManaging((v) => !v)}
-          className="text-sm text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
+          className="text-sm text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark"
         >
           {managing ? 'סגירה' : 'ניהול'}
         </button>
@@ -66,7 +66,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
           >
             <span
               className={`text-[0.65rem] uppercase ${
-                d === date ? 'text-ink/50 dark:text-inkdark/50' : 'text-ink/30 dark:text-inkdark/30'
+                d === date ? 'text-ink/65 dark:text-inkdark/65' : 'text-ink/50 dark:text-inkdark/50'
               }`}
             >
               {weekdayShort(d)}
@@ -75,7 +75,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
               className={`text-sm tabular-nums ${
                 isToday(d)
                   ? 'font-medium text-amber-600 dark:text-amber-400'
-                  : 'text-ink/70 dark:text-inkdark/70'
+                  : 'text-ink/75 dark:text-inkdark/75'
               }`}
             >
               {Number(d.slice(-2))}
@@ -85,7 +85,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
       </div>
 
       {scheduledHabits.length === 0 ? (
-        <p className="text-sm text-ink/40 dark:text-inkdark/40">
+        <p className="text-sm text-ink/60 dark:text-inkdark/60">
           עדיין אין הרגלים — אפשר להוסיף אחד דרך "ניהול" כדי להתחיל לעקוב (מים, צעדים, שינה...).
         </p>
       ) : (
@@ -131,7 +131,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="שם ההרגל (למשל מים, צעדים, שינה)"
-                    className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+                    className="min-w-[10rem] flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
                   />
                   <div className="flex items-center gap-1 rounded-full border border-ink/10 p-0.5 text-xs dark:border-inkdark/10">
                     <button
@@ -140,7 +140,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                       className={`rounded-full px-2.5 py-1 ${
                         type === 'check'
                           ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                          : 'text-ink/50 dark:text-inkdark/50'
+                          : 'text-ink/65 dark:text-inkdark/65'
                       }`}
                     >
                       סימון
@@ -151,14 +151,14 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                       className={`rounded-full px-2.5 py-1 ${
                         type === 'count'
                           ? 'bg-ink/[0.08] text-ink dark:bg-inkdark/[0.1] dark:text-inkdark'
-                          : 'text-ink/50 dark:text-inkdark/50'
+                          : 'text-ink/65 dark:text-inkdark/65'
                       }`}
                     >
                       ספירה
                     </button>
                   </div>
                   {type === 'count' && (
-                    <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
+                    <label className="flex items-center gap-1.5 text-xs text-ink/65 dark:text-inkdark/65">
                       יעד
                       <input
                         type="number"
@@ -173,10 +173,10 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
 
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-ink/50 dark:text-inkdark/50">חזרה</span>
+                    <span className="text-xs text-ink/65 dark:text-inkdark/65">חזרה</span>
                     <WeekdayPicker value={days} onChange={setDays} />
                   </div>
-                  <label className="flex items-center gap-1.5 text-xs text-ink/50 dark:text-inkdark/50">
+                  <label className="flex items-center gap-1.5 text-xs text-ink/65 dark:text-inkdark/65">
                     תזכורת
                     <TimeField
                       value={time}
@@ -200,7 +200,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
                       setCreating(false)
                       setName('')
                     }}
-                    className="text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+                    className="text-xs text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
                   >
                     ביטול
                   </button>
@@ -209,7 +209,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
             ) : (
               <button
                 onClick={() => setCreating(true)}
-                className="rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/40 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/40 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
+                className="rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/60 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/60 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
               >
                 + הרגל חדש
               </button>

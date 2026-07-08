@@ -39,7 +39,7 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
         type="button"
         onClick={onDelete}
         title="מחיקת השאלה"
-        className="absolute end-0 top-0 text-ink/20 hover:text-red-600 dark:text-inkdark/20 dark:hover:text-red-400"
+        className="absolute end-0 top-0 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
       >
         <CloseIcon className="h-3 w-3" />
       </button>
@@ -57,7 +57,7 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
               setEditingQuestion(false)
             }
           }}
-          className={`w-full pe-4 bg-transparent text-ink/70 outline-none transition-all dark:text-inkdark/70 ${
+          className={`w-full pe-4 bg-transparent text-ink/75 outline-none transition-all dark:text-inkdark/75 ${
             active ? 'text-xs' : 'text-sm'
           }`}
         />
@@ -65,7 +65,7 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
         <button
           type="button"
           onClick={() => setEditingQuestion(true)}
-          className={`w-full pe-4 text-start text-ink/50 transition-all hover:text-ink/70 dark:text-inkdark/50 dark:hover:text-inkdark/70 ${
+          className={`w-full pe-4 text-start text-ink/65 transition-all hover:text-ink/75 dark:text-inkdark/65 dark:hover:text-inkdark/75 ${
             active ? 'text-xs' : 'text-sm'
           }`}
         >
@@ -86,7 +86,7 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
           placeholder="כתיבת תשובה…"
           rows={1}
           style={{ fontWeight: 'var(--content-font-weight)' }}
-          className="block w-full resize-none overflow-hidden bg-transparent text-sm leading-snug text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
+          className="block w-full resize-none overflow-hidden bg-transparent text-sm leading-snug text-ink outline-none placeholder:text-ink/45 dark:text-inkdark dark:placeholder:text-inkdark/45"
         />
       </div>
     </div>

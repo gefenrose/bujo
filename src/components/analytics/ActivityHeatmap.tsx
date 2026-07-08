@@ -26,7 +26,7 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
           return (
             <div key={col[0]?.date ?? i} className="relative flex flex-col gap-[3px]">
               {label && (
-                <span className="absolute -top-4 start-0 text-[0.65rem] text-ink/35 dark:text-inkdark/35">
+                <span className="absolute -top-4 start-0 text-[0.65rem] text-ink/55 dark:text-inkdark/55">
                   {label}
                 </span>
               )}
@@ -51,7 +51,7 @@ export function ActivityHeatmap({ columns }: ActivityHeatmapProps) {
           )
         })}
       </div>
-      <div className="mt-3 flex items-center gap-1.5 text-[0.7rem] text-ink/40 dark:text-inkdark/40">
+      <div className="mt-3 flex items-center gap-1.5 text-[0.7rem] text-ink/60 dark:text-inkdark/60">
         <span>פחות</span>
         {[0, 1, 2, 3, 4].map((n) => (
           <div key={n} className={`h-[11px] w-[11px] rounded-[2px] ${levelClass(n)}`} />

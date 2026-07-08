@@ -30,7 +30,7 @@ export function WeekdayPicker({ value, onChange }: WeekdayPickerProps) {
             className={`flex h-6 w-6 items-center justify-center rounded-full text-[0.7rem] transition-colors ${
               active
                 ? 'bg-ink/[0.1] text-ink dark:bg-inkdark/[0.12] dark:text-inkdark'
-                : 'text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark'
+                : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
             }`}
           >
             {label}

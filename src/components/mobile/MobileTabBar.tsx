@@ -26,7 +26,7 @@ export function MobileTabBar({ view, onChangeView, incompleteCount = 0 }: Mobile
           className={`relative flex-1 py-3 text-sm transition-colors ${
             view === tab.view
               ? 'font-medium text-ink dark:text-inkdark'
-              : 'text-ink/40 dark:text-inkdark/40'
+              : 'text-ink/60 dark:text-inkdark/60'
           }`}
         >
           {tab.label}

@@ -57,7 +57,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
           type="button"
           onClick={() => setType(TYPES[(TYPES.findIndex((t) => t.type === type) + 1) % TYPES.length].type)}
           title="החלפת סוג הרשומה (משימה / אירוע / הערה)"
-          className="text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+          className="text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
         >
           {TYPES.find((t) => t.type === type)?.glyph}
         </button>
@@ -68,7 +68,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+        className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
       />
       {showTime || time ? (
         <div className="flex shrink-0 items-center gap-1">
@@ -86,7 +86,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
               setShowTime(false)
             }}
             title="הסרת שעה"
-            className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+            className="text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
           >
             <CloseIcon className="h-3 w-3" />
           </button>
@@ -96,7 +96,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
           type="button"
           onClick={() => setShowTime(true)}
           title="הוספת שעה"
-          className="shrink-0 text-ink/25 hover:text-ink dark:text-inkdark/25 dark:hover:text-inkdark"
+          className="shrink-0 text-ink/45 hover:text-ink dark:text-inkdark/45 dark:hover:text-inkdark"
         >
           <ClockIcon className="h-3.5 w-3.5" />
         </button>

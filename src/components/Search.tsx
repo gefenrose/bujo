@@ -54,7 +54,7 @@ export function Search({ journal, initialQuery, onClose, onSelectDate, onSelectC
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 border-b border-ink/10 px-4 py-3 dark:border-inkdark/10">
-          <span className="text-ink/40 dark:text-inkdark/40">
+          <span className="text-ink/60 dark:text-inkdark/60">
             <SearchIcon className="h-4 w-4" />
           </span>
           <input
@@ -63,11 +63,11 @@ export function Search({ journal, initialQuery, onClose, onSelectDate, onSelectC
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Escape' && onClose()}
             placeholder="חיפוש ברשומות, תגיות ותת-משימות"
-            className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+            className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
           />
           <button
             onClick={onClose}
-            className="shrink-0 text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+            className="shrink-0 text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
           >
             <CloseIcon className="h-4 w-4" />
           </button>
@@ -75,7 +75,7 @@ export function Search({ journal, initialQuery, onClose, onSelectDate, onSelectC
 
         <div className="max-h-96 overflow-y-auto p-2">
           {query.trim() && results.length === 0 && (
-            <p className="px-2 py-3 text-sm text-ink/30 dark:text-inkdark/30">לא נמצאו תוצאות.</p>
+            <p className="px-2 py-3 text-sm text-ink/50 dark:text-inkdark/50">לא נמצאו תוצאות.</p>
           )}
           {results.map((entry) => (
             <div
@@ -92,7 +92,7 @@ export function Search({ journal, initialQuery, onClose, onSelectDate, onSelectC
                 <Bullet entry={entry} />
               </span>
               <span className="min-w-0 flex-1 truncate text-sm text-ink/80 dark:text-inkdark/80">{entry.text}</span>
-              <span className="shrink-0 text-xs text-ink/30 dark:text-inkdark/30">{contextLabel(entry.id)}</span>
+              <span className="shrink-0 text-xs text-ink/50 dark:text-inkdark/50">{contextLabel(entry.id)}</span>
             </div>
           ))}
         </div>

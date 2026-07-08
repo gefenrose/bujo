@@ -52,7 +52,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
                 }
               }}
               placeholder="שאלה חדשה, או בחירה מההצעות למטה"
-              className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/30 dark:text-inkdark dark:placeholder:text-inkdark/30"
+              className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
             />
             {suggestions.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5 border-t border-ink/10 pt-3 dark:border-inkdark/10">
@@ -62,7 +62,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => journal.addPrompt(suggestion)}
-                    className="rounded-full bg-ink/[0.05] px-2.5 py-1 text-xs text-ink/60 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.06] dark:text-inkdark/60 dark:hover:bg-inkdark/10 dark:hover:text-inkdark"
+                    className="rounded-full bg-ink/[0.05] px-2.5 py-1 text-xs text-ink/70 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.06] dark:text-inkdark/70 dark:hover:bg-inkdark/10 dark:hover:text-inkdark"
                   >
                     + {suggestion}
                   </button>
@@ -74,7 +74,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
           <button
             type="button"
             onClick={() => setAddingPrompt(true)}
-            className="rounded-lg border border-dashed border-ink/20 p-3 text-start text-sm text-ink/40 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/40 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
+            className="rounded-lg border border-dashed border-ink/20 p-3 text-start text-sm text-ink/60 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/60 dark:hover:border-inkdark/40 dark:hover:text-inkdark"
           >
             + שאלה חדשה
           </button>

@@ -54,7 +54,7 @@ export function CollectionsShelf({
           } ${
             selectedId === c.id
               ? 'bg-ink/[0.06] text-ink dark:bg-inkdark/[0.08] dark:text-inkdark'
-              : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
+              : 'text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark'
           }`}
         >
           {list && <ListIcon className={`h-4 w-4 shrink-0 ${rowColor(i, preferences.autoAssignColors)}`} />}
@@ -85,7 +85,7 @@ export function CollectionsShelf({
           <button
             type="button"
             onClick={() => setCreating(true)}
-            className={`shrink-0 rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/40 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/40 dark:hover:border-inkdark/40 dark:hover:text-inkdark ${
+            className={`shrink-0 rounded-full border border-dashed border-ink/20 px-3 py-1 text-sm text-ink/60 hover:border-ink/40 hover:text-ink dark:border-inkdark/20 dark:text-inkdark/60 dark:hover:border-inkdark/40 dark:hover:text-inkdark ${
               list ? 'w-full rounded-lg text-start' : 'sm:w-full sm:rounded-lg sm:text-start'
             }`}
           >

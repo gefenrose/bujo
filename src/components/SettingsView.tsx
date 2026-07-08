@@ -50,7 +50,7 @@ function ShapePreview({ shape }: { shape: IconShape }) {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-4 border-b border-ink/10 py-5 first:pt-0 dark:border-inkdark/10">
-      <h2 className="text-xs font-medium uppercase tracking-wide text-ink/40 dark:text-inkdark/40">{title}</h2>
+      <h2 className="text-xs font-medium uppercase tracking-wide text-ink/60 dark:text-inkdark/60">{title}</h2>
       {children}
     </div>
   )
@@ -73,7 +73,7 @@ function SelectRow<T extends string>({
     <label className="flex items-center justify-between gap-4">
       <span className="flex flex-col gap-0.5">
         <span className="text-sm text-ink dark:text-inkdark">{label}</span>
-        {description && <span className="text-xs text-ink/40 dark:text-inkdark/40">{description}</span>}
+        {description && <span className="text-xs text-ink/60 dark:text-inkdark/60">{description}</span>}
       </span>
       <select
         value={value}
@@ -105,7 +105,7 @@ function ToggleRow({
     <label className="flex items-center justify-between gap-4">
       <span className="flex flex-col gap-0.5">
         <span className="text-sm text-ink dark:text-inkdark">{label}</span>
-        {description && <span className="text-xs text-ink/40 dark:text-inkdark/40">{description}</span>}
+        {description && <span className="text-xs text-ink/60 dark:text-inkdark/60">{description}</span>}
       </span>
       <button
         type="button"
@@ -149,7 +149,7 @@ export function SettingsView({ onClose }: SettingsViewProps) {
   return (
     <div>
       <div className="mb-6 flex items-center gap-3 sm:hidden">
-        <button type="button" onClick={onClose} title="חזרה" className="text-ink/60 dark:text-inkdark/60">
+        <button type="button" onClick={onClose} title="חזרה" className="text-ink/70 dark:text-inkdark/70">
           <ArrowRightIcon className="h-4 w-4" />
         </button>
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">העדפות</h1>
@@ -294,7 +294,7 @@ export function SettingsView({ onClose }: SettingsViewProps) {
         <div className="flex items-center justify-between gap-4">
           <span className="flex flex-col gap-0.5">
             <span className="text-sm text-ink dark:text-inkdark">תזכורת יומית</span>
-            <span className="text-xs text-ink/40 dark:text-inkdark/40">להשאיר ריק כדי לכבות</span>
+            <span className="text-xs text-ink/60 dark:text-inkdark/60">להשאיר ריק כדי לכבות</span>
           </span>
           <TimeField
             value={dailyReminderDraft}
@@ -306,7 +306,7 @@ export function SettingsView({ onClose }: SettingsViewProps) {
         <div className="flex items-center justify-between gap-4">
           <span className="flex flex-col gap-0.5">
             <span className="text-sm text-ink dark:text-inkdark">דקות לפני מועד</span>
-            <span className="text-xs text-ink/40 dark:text-inkdark/40">להשאיר ריק כדי לקבל תזכורת בשעה המדויקת</span>
+            <span className="text-xs text-ink/60 dark:text-inkdark/60">להשאיר ריק כדי לקבל תזכורת בשעה המדויקת</span>
           </span>
           <input
             type="number"

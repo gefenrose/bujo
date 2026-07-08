@@ -17,13 +17,13 @@ export function HabitRow({ habit, value, onToggle, onIncrement, onDecrement }: H
 
   return (
     <div className="flex items-center gap-3 rounded-xl bg-ink/[0.03] px-4 py-3 dark:bg-inkdark/[0.04]">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink/10 text-sm font-medium text-ink/60 dark:bg-inkdark/10 dark:text-inkdark/60">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink/10 text-sm font-medium text-ink/70 dark:bg-inkdark/10 dark:text-inkdark/70">
         {initial}
       </span>
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm text-ink dark:text-inkdark">{habit.name}</p>
-        <p className="text-xs text-ink/40 dark:text-inkdark/40">
+        <p className="text-xs text-ink/60 dark:text-inkdark/60">
           {effectiveValue} / {target} פעמים
         </p>
       </div>
@@ -33,7 +33,7 @@ export function HabitRow({ habit, value, onToggle, onIncrement, onDecrement }: H
           type="button"
           onClick={onDecrement}
           title="הפחתת 1"
-          className="shrink-0 rounded-full px-2 py-1 text-sm text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+          className="shrink-0 rounded-full px-2 py-1 text-sm text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
         >
           −
         </button>

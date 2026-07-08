@@ -25,7 +25,7 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatDayHeading(date)}
         </h1>
-        <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
+        <div className="flex items-center gap-3 text-sm text-ink/65 dark:text-inkdark/65">
           <button onClick={() => onChangeDate(addDays(date, -1))} className="hover:text-ink dark:hover:text-inkdark">
             הקודם
           </button>

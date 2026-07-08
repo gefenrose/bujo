@@ -23,7 +23,7 @@ export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: Yearl
     <div>
       <div className="mb-6 hidden items-baseline justify-between sm:flex">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">{yearOf(month)}</h1>
-        <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
+        <div className="flex items-center gap-3 text-sm text-ink/65 dark:text-inkdark/65">
           <button onClick={() => onChangeMonth(addYears(month, -1))} className="hover:text-ink dark:hover:text-inkdark">
             הקודמת
           </button>
@@ -46,7 +46,7 @@ export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: Yearl
                 type="button"
                 onClick={() => onChangeMonth(m)}
                 className={`text-sm ${
-                  expanded ? 'font-medium text-ink dark:text-inkdark' : 'text-ink/50 dark:text-inkdark/50'
+                  expanded ? 'font-medium text-ink dark:text-inkdark' : 'text-ink/65 dark:text-inkdark/65'
                 }`}
               >
                 {monthName(m)}
@@ -70,8 +70,8 @@ export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: Yearl
                           onClick={() => onSelectDate(date)}
                           className="flex w-12 shrink-0 items-baseline gap-1.5 text-start"
                         >
-                          <span className="text-sm tabular-nums text-ink/70 dark:text-inkdark/70">{day}</span>
-                          <span className="text-[0.7rem] uppercase text-ink/30 dark:text-inkdark/30">
+                          <span className="text-sm tabular-nums text-ink/75 dark:text-inkdark/75">{day}</span>
+                          <span className="text-[0.7rem] uppercase text-ink/50 dark:text-inkdark/50">
                             {weekdayShort(date)}
                           </span>
                         </button>
@@ -87,12 +87,12 @@ export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: Yearl
                                   entry.status === 'done' || entry.status === 'cancelled' ? 'line-through' : ''
                                 } ${
                                   entry.status === 'migrated' || entry.status === 'cancelled'
-                                    ? 'text-ink/40 dark:text-inkdark/40'
+                                    ? 'text-ink/60 dark:text-inkdark/60'
                                     : 'text-ink/80 dark:text-inkdark/80'
                                 }`}
                               >
                                 {entry.time && (
-                                  <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                                  <span className="me-1 text-xs tabular-nums text-ink/60 dark:text-inkdark/60">
                                     {formatTime(entry.time, preferences.timeFormat)}
                                   </span>
                                 )}

@@ -23,7 +23,7 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatWeekHeading(date, preferences.startOfWeek)}
         </h1>
-        <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
+        <div className="flex items-center gap-3 text-sm text-ink/65 dark:text-inkdark/65">
           <button onClick={() => onChangeDate(addWeeks(date, -1))} className="hover:text-ink dark:hover:text-inkdark">
             הקודם
           </button>
@@ -50,10 +50,10 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
                 onClick={() => onSelectDate(d)}
                 className="flex w-16 shrink-0 flex-col items-start gap-0 text-start"
               >
-                <span className="text-[0.7rem] uppercase text-ink/30 dark:text-inkdark/30">
+                <span className="text-[0.7rem] uppercase text-ink/50 dark:text-inkdark/50">
                   יום {weekdayShort(d)}
                 </span>
-                <span className="text-sm tabular-nums text-ink/70 dark:text-inkdark/70">{day}</span>
+                <span className="text-sm tabular-nums text-ink/75 dark:text-inkdark/75">{day}</span>
               </button>
 
               {entries.length > 0 ? (
@@ -68,12 +68,12 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
                           entry.status === 'done' || entry.status === 'cancelled' ? 'line-through' : ''
                         } ${
                           entry.status === 'migrated' || entry.status === 'cancelled'
-                            ? 'text-ink/40 dark:text-inkdark/40'
+                            ? 'text-ink/60 dark:text-inkdark/60'
                             : 'text-ink/80 dark:text-inkdark/80'
                         }`}
                       >
                         {entry.time && (
-                          <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                          <span className="me-1 text-xs tabular-nums text-ink/60 dark:text-inkdark/60">
                             {formatTime(entry.time, preferences.timeFormat)}
                           </span>
                         )}
@@ -85,7 +85,7 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
               ) : (
                 <button
                   onClick={() => onSelectDate(d)}
-                  className="flex-1 py-0.5 text-start text-sm text-ink/15 dark:text-inkdark/15"
+                  className="flex-1 py-0.5 text-start text-sm text-ink/35 dark:text-inkdark/35"
                 >
                   —
                 </button>

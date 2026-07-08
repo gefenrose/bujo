@@ -23,7 +23,7 @@ export function TaskOutcomeBar({ counts }: TaskOutcomeBarProps) {
   const total = counts.open + counts.done + counts.migrated + counts.cancelled
 
   if (total === 0) {
-    return <p className="text-sm text-ink/30 dark:text-inkdark/30">עדיין לא נרשמו משימות.</p>
+    return <p className="text-sm text-ink/50 dark:text-inkdark/50">עדיין לא נרשמו משימות.</p>
   }
 
   return (
@@ -48,10 +48,10 @@ export function TaskOutcomeBar({ counts }: TaskOutcomeBarProps) {
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
         {SEGMENTS.map((seg) => (
-          <span key={seg.key} className="flex items-center gap-1.5 text-xs text-ink/60 dark:text-inkdark/60">
+          <span key={seg.key} className="flex items-center gap-1.5 text-xs text-ink/70 dark:text-inkdark/70">
             <span className={`h-2 w-2 rounded-full ${seg.dotClass}`} />
             {seg.label}
-            <span className="tabular-nums text-ink/40 dark:text-inkdark/40">{counts[seg.key]}</span>
+            <span className="tabular-nums text-ink/60 dark:text-inkdark/60">{counts[seg.key]}</span>
           </span>
         ))}
       </div>

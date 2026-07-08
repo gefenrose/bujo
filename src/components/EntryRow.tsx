@@ -201,7 +201,7 @@ export function EntryRow({
           type="button"
           onClick={() => setSubtasksOpen((v) => !v)}
           title="תת-משימות"
-          className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+          className="rounded p-1 text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
         >
           <SubtaskIcon className="h-3.5 w-3.5" />
         </button>
@@ -210,7 +210,7 @@ export function EntryRow({
         type="button"
         onClick={() => setAddingTag(true)}
         title="הוספת תגית"
-        className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+        className="rounded p-1 text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
       >
         <TagIcon className="h-3.5 w-3.5" />
       </button>
@@ -218,7 +218,7 @@ export function EntryRow({
         type="button"
         onClick={() => fileInputRef.current?.click()}
         title="הוספת תמונה"
-        className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+        className="rounded p-1 text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
       >
         <ImageIcon className="h-3.5 w-3.5" />
       </button>
@@ -226,7 +226,7 @@ export function EntryRow({
         type="button"
         onClick={onTogglePriority}
         title="סימון עדיפות"
-        className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
+        className="rounded p-1 text-ink/60 hover:text-amber-600 dark:text-inkdark/60 dark:hover:text-amber-500"
       >
         <StarIcon className="h-3.5 w-3.5" />
       </button>
@@ -235,7 +235,7 @@ export function EntryRow({
           type="button"
           onClick={onMigrate}
           title="העברה ליום הבא"
-          className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+          className="rounded p-1 text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
         >
           <ArrowRightIcon className="h-3.5 w-3.5 -scale-x-100" />
         </button>
@@ -244,7 +244,7 @@ export function EntryRow({
         type="button"
         onClick={onDelete}
         title="מחיקה"
-        className="rounded p-1 text-ink/40 hover:text-red-600 dark:text-inkdark/40 dark:hover:text-red-400"
+        className="rounded p-1 text-ink/60 hover:text-red-600 dark:text-inkdark/60 dark:hover:text-red-400"
       >
         <CloseIcon className="h-3.5 w-3.5" />
       </button>
@@ -264,7 +264,7 @@ export function EntryRow({
             <StarIcon filled className="h-4 w-4" />
           </span>
           <span
-            className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-ink/50 dark:text-inkdark/50"
+            className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1.5 text-ink/65 dark:text-inkdark/65"
             style={{ opacity: typeRevealOpacity }}
           >
             <span className="text-base leading-none">{TYPE_GLYPH[nextEntryType(entry.type)]}</span>
@@ -287,7 +287,7 @@ export function EntryRow({
             <button
               type="button"
               data-drag-handle
-              className="mt-[0.4em] shrink-0 cursor-grab touch-none text-ink/20 opacity-0 transition-opacity active:cursor-grabbing group-hover:opacity-100 dark:text-inkdark/20"
+              className="mt-[0.4em] shrink-0 cursor-grab touch-none text-ink/40 opacity-0 transition-opacity active:cursor-grabbing group-hover:opacity-100 dark:text-inkdark/40"
               {...dragHandleProps.attributes}
               {...dragHandleProps.listeners}
             >
@@ -335,7 +335,7 @@ export function EntryRow({
               className="flex min-w-0 flex-1 flex-wrap cursor-text items-baseline gap-x-2 gap-y-1 py-0.5"
             >
               {entry.time && (
-                <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
+                <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/60 dark:text-inkdark/60">
                   <ClockIcon className="h-3 w-3" />
                   {formatTime(entry.time, preferences.timeFormat)}
                   <button
@@ -355,7 +355,7 @@ export function EntryRow({
                 style={{ fontWeight: 'var(--content-font-weight)' }}
                 className={`min-w-0 text-[0.95rem] leading-snug ${struck ? 'line-through decoration-1' : ''} ${
                   dimmed
-                    ? 'text-ink/40 dark:text-inkdark/40'
+                    ? 'text-ink/60 dark:text-inkdark/60'
                     : preferences.entryColorStyle === 'titleAndIcon' && colorClass
                       ? colorClass
                       : 'text-ink dark:text-inkdark'
@@ -366,7 +366,7 @@ export function EntryRow({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="group/tag flex shrink-0 items-center gap-1 rounded-full bg-ink/[0.06] ps-2 pe-1 py-0.5 text-xs text-ink/50 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.08] dark:text-inkdark/50 dark:hover:bg-inkdark/15 dark:hover:text-inkdark"
+                  className="group/tag flex shrink-0 items-center gap-1 rounded-full bg-ink/[0.06] ps-2 pe-1 py-0.5 text-xs text-ink/65 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.08] dark:text-inkdark/65 dark:hover:bg-inkdark/15 dark:hover:text-inkdark"
                 >
                   <button
                     type="button"
@@ -397,7 +397,7 @@ export function EntryRow({
               type="button"
               onClick={() => setSubtasksOpen((v) => !v)}
               title="תת-משימות"
-              className="mt-0.5 flex shrink-0 items-center gap-0.5 rounded px-1 py-0.5 text-xs tabular-nums text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+              className="mt-0.5 flex shrink-0 items-center gap-0.5 rounded px-1 py-0.5 text-xs tabular-nums text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
             >
               {doneCount}/{subtasks.length}
               <ChevronIcon className={`h-3 w-3 transition-transform ${subtasksOpen ? 'rotate-180' : ''}`} />
@@ -439,7 +439,7 @@ export function EntryRow({
             type="button"
             onClick={() => setMobileActionsOpen((v) => !v)}
             title="פעולות נוספות"
-            className="rounded p-1 text-ink/30 dark:text-inkdark/30 sm:hidden"
+            className="rounded p-1 text-ink/50 dark:text-inkdark/50 sm:hidden"
           >
             <MoreIcon className="h-3.5 w-3.5" />
           </button>
@@ -457,7 +457,7 @@ export function EntryRow({
           <button
             type="button"
             onClick={() => onSetImagesHidden(false)}
-            className="ms-10 flex items-center gap-1 py-1 text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+            className="ms-10 flex items-center gap-1 py-1 text-xs text-ink/60 hover:text-ink dark:text-inkdark/60 dark:hover:text-inkdark"
           >
             <ImageIcon className="h-3.5 w-3.5" />
             {images.length} תמונות — הצגה
@@ -482,7 +482,7 @@ export function EntryRow({
               type="button"
               onClick={() => onSetImagesHidden(true)}
               title="הסתרת תמונות"
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
             >
               <EyeOffIcon className="h-4 w-4" />
             </button>
@@ -507,7 +507,7 @@ export function EntryRow({
               <span
                 className={`min-w-0 flex-1 text-sm ${
                   subtask.done
-                    ? 'text-ink/40 line-through decoration-1 dark:text-inkdark/40'
+                    ? 'text-ink/60 line-through decoration-1 dark:text-inkdark/60'
                     : 'text-ink/80 dark:text-inkdark/80'
                 }`}
               >
@@ -516,7 +516,7 @@ export function EntryRow({
               <button
                 type="button"
                 onClick={() => onDeleteSubtask(subtask.id)}
-                className="shrink-0 text-ink/20 opacity-0 hover:text-red-600 group-hover/subtask:opacity-100 dark:text-inkdark/20 dark:hover:text-red-400"
+                className="shrink-0 text-ink/40 opacity-0 hover:text-red-600 group-hover/subtask:opacity-100 dark:text-inkdark/40 dark:hover:text-red-400"
               >
                 <CloseIcon className="h-3 w-3" />
               </button>
@@ -531,7 +531,7 @@ export function EntryRow({
               if (e.key === 'Escape') setSubtaskDraft('')
             }}
             placeholder="תת-משימה חדשה"
-            className="bg-transparent py-0.5 text-sm text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
+            className="bg-transparent py-0.5 text-sm text-ink outline-none placeholder:text-ink/45 dark:text-inkdark dark:placeholder:text-inkdark/45"
           />
         </div>
       )}

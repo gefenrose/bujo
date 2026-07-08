@@ -21,8 +21,8 @@ export function MobileQuickAdd({ date, onAdd, onClose }: MobileQuickAddProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-sm text-ink/50 dark:text-inkdark/50">{formatDayHeading(date)}</span>
-          <button type="button" onClick={onClose} className="text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark">
+          <span className="text-sm text-ink/65 dark:text-inkdark/65">{formatDayHeading(date)}</span>
+          <button type="button" onClick={onClose} className="text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark">
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>

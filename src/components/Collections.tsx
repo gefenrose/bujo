@@ -33,7 +33,7 @@ export function Collections({ journal, selectedId, onTagClick }: CollectionsProp
 
   if (!selected) {
     return (
-      <p className="text-sm text-ink/40 dark:text-inkdark/40">
+      <p className="text-sm text-ink/60 dark:text-inkdark/60">
         כדאי ליצור אוסף למעקב אחר ספרים, רעיונות, מטרות, או כל דבר אחר מחוץ לשגרת היומיום — אפשר להוסיף אחד בסרגל הצד.
       </p>
     )
@@ -65,7 +65,7 @@ export function Collections({ journal, selectedId, onTagClick }: CollectionsProp
         )}
         <button
           onClick={() => journal.deleteCollection(selected.id)}
-          className="text-sm text-ink/30 hover:text-red-600 dark:text-inkdark/30 dark:hover:text-red-400"
+          className="text-sm text-ink/50 hover:text-red-600 dark:text-inkdark/50 dark:hover:text-red-400"
         >
           מחיקת האוסף
         </button>

@@ -25,12 +25,12 @@ export function Toasts({ reminders, onDismissReminder, undoActions, onUndo, onDi
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-ink dark:text-inkdark">{toast.title}</p>
-            <p className="text-xs text-ink/50 dark:text-inkdark/50">{toast.body}</p>
+            <p className="text-xs text-ink/65 dark:text-inkdark/65">{toast.body}</p>
           </div>
           <button
             type="button"
             onClick={() => onDismissReminder(toast.id)}
-            className="shrink-0 text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+            className="shrink-0 text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark"
           >
             <CloseIcon className="h-3.5 w-3.5" />
           </button>
