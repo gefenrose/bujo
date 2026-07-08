@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from 'react'
 import type { EntryType } from '../types'
 import { parseTimeInput } from '../lib/date'
+import { usePreferences } from '../hooks/usePreferences'
 import { ClockIcon, CloseIcon } from './icons/Icons'
 import { TimeField } from './TimeField'
 
@@ -17,7 +18,8 @@ const TYPES: { type: EntryType; glyph: string; label: string }[] = [
 ]
 
 export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…', autoFocus = false }: EntryInputProps) {
-  const [type, setType] = useState<EntryType>('task')
+  const { preferences } = usePreferences()
+  const [type, setType] = useState<EntryType>(preferences.defaultEntryType)
   const [value, setValue] = useState('')
   const [time, setTime] = useState('')
   const [showTime, setShowTime] = useState(false)

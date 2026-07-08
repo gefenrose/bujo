@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Journal } from './useJournal'
-import { todayISO } from '../lib/date'
+import { subtractMinutesFromTime, todayISO } from '../lib/date'
 import { habitValue, isHabitScheduledOn } from '../lib/habits'
+import { usePreferences } from './usePreferences'
 import {
   getNotificationPermission,
   requestNotificationPermission,
@@ -50,6 +51,7 @@ function currentHHMM(): string {
  * there is no server, so it cannot wake the app or notify in the background.
  */
 export function useReminders(journal: Journal) {
+  const { preferences } = usePreferences()
   const [permission, setPermission] = useState<NotificationPermissionState>(getNotificationPermission)
   const [toasts, setToasts] = useState<ReminderToast[]>([])
   const firedRef = useRef<FiredState>(loadFired())
@@ -62,6 +64,8 @@ export function useReminders(journal: Journal) {
   const dismissToast = (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id))
 
   useEffect(() => {
+    const minutesBefore = preferences.reminderMinutesBefore ?? 0
+
     const check = () => {
       const today = todayISO()
       if (firedRef.current.date !== today) firedRef.current = { date: today, ids: [] }
@@ -70,20 +74,28 @@ export function useReminders(journal: Journal) {
 
       for (const entry of journal.entries) {
         if (entry.date !== today || !entry.time || entry.status !== 'open') continue
-        if (entry.time > nowTime) continue
+        if (subtractMinutesFromTime(entry.time, minutesBefore) > nowTime) continue
         const fireId = `entry:${entry.id}:${today}`
         if (firedRef.current.ids.includes(fireId)) continue
         due.push({ id: fireId, title: entry.text, body: `מתוזמן לשעה ${entry.time}` })
       }
 
       for (const habit of journal.habits) {
-        if (!habit.time || !isHabitScheduledOn(habit, today) || habit.time > nowTime) continue
+        if (!habit.time || !isHabitScheduledOn(habit, today)) continue
+        if (subtractMinutesFromTime(habit.time, minutesBefore) > nowTime) continue
         const value = habitValue(journal.habitLogs, habit.id, today)
         const done = habit.type === 'check' ? value > 0 : value >= (habit.target ?? 1)
         if (done) continue
         const fireId = `habit:${habit.id}:${today}`
         if (firedRef.current.ids.includes(fireId)) continue
         due.push({ id: fireId, title: habit.name, body: `תזכורת הרגל — ${habit.time}` })
+      }
+
+      if (preferences.dailyReminderTime && preferences.dailyReminderTime <= nowTime) {
+        const fireId = `daily:${today}`
+        if (!firedRef.current.ids.includes(fireId)) {
+          due.push({ id: fireId, title: 'סקירת היום', body: 'זמן לעבור על היומן של היום' })
+        }
       }
 
       if (due.length === 0) return
@@ -97,7 +109,7 @@ export function useReminders(journal: Journal) {
     check()
     const interval = setInterval(check, CHECK_INTERVAL_MS)
     return () => clearInterval(interval)
-  }, [journal.entries, journal.habits, journal.habitLogs])
+  }, [journal.entries, journal.habits, journal.habitLogs, preferences.reminderMinutesBefore, preferences.dailyReminderTime])
 
   useEffect(() => {
     if (toasts.length === 0) return

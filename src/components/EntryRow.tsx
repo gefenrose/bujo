@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import type { Entry } from '../types'
 import { nextEntryType } from '../lib/entries'
 import { formatTime, parseTimeInput } from '../lib/date'
+import { readAndResizeImage } from '../lib/images'
+import { usePreferences } from '../hooks/usePreferences'
 import { Bullet } from './Bullet'
+import { ImageLightbox } from './ImageLightbox'
 import { TimeField } from './TimeField'
 import {
   GripIcon,
@@ -12,6 +15,8 @@ import {
   CloseIcon,
   ClockIcon,
   ChevronIcon,
+  EyeOffIcon,
+  ImageIcon,
   TagIcon,
   SubtaskIcon,
   MoreIcon,
@@ -33,6 +38,11 @@ interface EntryRowProps {
   onAddTag: (tag: string) => void
   onRemoveTag: (tag: string) => void
   onTagClick: (tag: string) => void
+  onAddImage: (dataUrl: string) => void
+  onRemoveImage: (dataUrl: string) => void
+  onSetImagesHidden: (hidden: boolean) => void
+  /** Resolved collection color (per the "Entry Color Style" preference), applied to the icon and/or title. */
+  colorClass?: string
   dragHandleProps?: {
     attributes: DraggableAttributes
     listeners: DraggableSyntheticListeners
@@ -60,9 +70,16 @@ export function EntryRow({
   onAddTag,
   onRemoveTag,
   onTagClick,
+  onAddImage,
+  onRemoveImage,
+  onSetImagesHidden,
+  colorClass,
   dragHandleProps,
 }: EntryRowProps) {
+  const { preferences } = usePreferences()
   const [editing, setEditing] = useState(false)
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [draft, setDraft] = useState(entry.text)
   const [timeDraft, setTimeDraft] = useState(entry.time ?? '')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -71,7 +88,7 @@ export function EntryRow({
   const [swiping, setSwiping] = useState(false)
   const gestureRef = useRef<{ x: number; y: number; active: boolean } | null>(null)
 
-  const [subtasksOpen, setSubtasksOpen] = useState(false)
+  const [subtasksOpen, setSubtasksOpen] = useState(preferences.showSubtasksByDefault)
   const [subtaskDraft, setSubtaskDraft] = useState('')
   const [addingTag, setAddingTag] = useState(false)
   const [tagDraft, setTagDraft] = useState('')
@@ -84,7 +101,21 @@ export function EntryRow({
 
   const subtasks = entry.subtasks ?? []
   const tags = entry.tags ?? []
+  const images = entry.images ?? []
+  const imagesHidden = entry.imagesHidden ?? preferences.imageLayout[entry.type] === 'hidden'
   const doneCount = subtasks.filter((s) => s.done).length
+
+  const handleImageSelected = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    try {
+      const dataUrl = await readAndResizeImage(file)
+      onAddImage(dataUrl)
+    } catch {
+      // ignore unreadable files
+    }
+  }
 
   const commitSubtask = () => {
     const trimmed = subtaskDraft.trim()
@@ -185,6 +216,14 @@ export function EntryRow({
       </button>
       <button
         type="button"
+        onClick={() => fileInputRef.current?.click()}
+        title="הוספת תמונה"
+        className="rounded p-1 text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+      >
+        <ImageIcon className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
         onClick={onTogglePriority}
         title="סימון עדיפות"
         className="rounded p-1 text-ink/40 hover:text-amber-600 dark:text-inkdark/40 dark:hover:text-amber-500"
@@ -256,7 +295,11 @@ export function EntryRow({
             </button>
           )}
 
-          <Bullet entry={entry} onClick={onToggle} />
+          <Bullet
+            entry={entry}
+            onClick={onToggle}
+            colorClass={preferences.entryColorStyle !== 'none' ? colorClass : undefined}
+          />
 
           {editing ? (
             <div
@@ -294,7 +337,7 @@ export function EntryRow({
               {entry.time && (
                 <span className="group/time flex shrink-0 items-center gap-0.5 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
                   <ClockIcon className="h-3 w-3" />
-                  {formatTime(entry.time)}
+                  {formatTime(entry.time, preferences.timeFormat)}
                   <button
                     type="button"
                     onClick={(e) => {
@@ -309,8 +352,13 @@ export function EntryRow({
                 </span>
               )}
               <span
+                style={{ fontWeight: 'var(--content-font-weight)' }}
                 className={`min-w-0 text-[0.95rem] leading-snug ${struck ? 'line-through decoration-1' : ''} ${
-                  dimmed ? 'text-ink/40 dark:text-inkdark/40' : 'text-ink dark:text-inkdark'
+                  dimmed
+                    ? 'text-ink/40 dark:text-inkdark/40'
+                    : preferences.entryColorStyle === 'titleAndIcon' && colorClass
+                      ? colorClass
+                      : 'text-ink dark:text-inkdark'
                 }`}
               >
                 {entry.text}
@@ -395,12 +443,53 @@ export function EntryRow({
           >
             <MoreIcon className="h-3.5 w-3.5" />
           </button>
+
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelected} />
         </div>
       </div>
 
       {mobileActionsOpen && (
         <div className="me-10 flex items-center gap-3 py-1 sm:hidden">{actionButtons}</div>
       )}
+
+      {images.length > 0 &&
+        (imagesHidden ? (
+          <button
+            type="button"
+            onClick={() => onSetImagesHidden(false)}
+            className="ms-10 flex items-center gap-1 py-1 text-xs text-ink/40 hover:text-ink dark:text-inkdark/40 dark:hover:text-inkdark"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            {images.length} תמונות — הצגה
+          </button>
+        ) : (
+          <div className="ms-10 flex flex-wrap items-center gap-1.5 py-1">
+            {images.map((src) => (
+              <div key={src} className="group/image relative h-14 w-14 shrink-0 overflow-hidden rounded-md">
+                <button type="button" onClick={() => setLightboxSrc(src)} className="block h-full w-full">
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onRemoveImage(src)}
+                  className="absolute end-0.5 top-0.5 rounded-full bg-black/50 p-0.5 text-white opacity-0 group-hover/image:opacity-100"
+                >
+                  <CloseIcon className="h-2.5 w-2.5" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => onSetImagesHidden(true)}
+              title="הסתרת תמונות"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md text-ink/30 hover:text-ink dark:text-inkdark/30 dark:hover:text-inkdark"
+            >
+              <EyeOffIcon className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+
+      {lightboxSrc && <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
 
       {entry.type === 'task' && subtasksOpen && (
         <div className="ms-10 flex flex-col gap-0.5 py-1">

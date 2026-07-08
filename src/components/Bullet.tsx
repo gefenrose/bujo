@@ -1,8 +1,13 @@
 import type { Entry } from '../types'
+import type { IconShape } from '../lib/preferences'
+import { usePreferences } from '../hooks/usePreferences'
+import { CalendarIcon, TriangleIcon } from './icons/Icons'
 
 interface BulletProps {
   entry: Entry
   onClick?: () => void
+  /** Overrides the default ink color (e.g. for the "inherit collection color" preference). */
+  colorClass?: string
 }
 
 const TYPE_LABEL: Record<Entry['type'], string> = { task: 'משימה', event: 'אירוע', note: 'הערה' }
@@ -13,7 +18,8 @@ const STATUS_LABEL: Record<Entry['status'], string> = {
   cancelled: 'בוטלה',
 }
 
-export function Bullet({ entry, onClick }: BulletProps) {
+export function Bullet({ entry, onClick, colorClass }: BulletProps) {
+  const { preferences } = usePreferences()
   const clickable = entry.type === 'task' && (entry.status === 'open' || entry.status === 'done')
 
   return (
@@ -25,13 +31,13 @@ export function Bullet({ entry, onClick }: BulletProps) {
         clickable ? 'cursor-pointer' : 'cursor-default'
       }`}
     >
-      <BulletGlyph entry={entry} />
+      <BulletGlyph entry={entry} shape={preferences.entryIcons[entry.type]} colorClass={colorClass} />
     </button>
   )
 }
 
-function BulletGlyph({ entry }: { entry: Entry }) {
-  const ink = 'text-ink/70 dark:text-inkdark/70'
+function BulletGlyph({ entry, shape, colorClass }: { entry: Entry; shape: IconShape; colorClass?: string }) {
+  const ink = colorClass ?? 'text-ink/70 dark:text-inkdark/70'
 
   if (entry.type === 'task') {
     if (entry.status === 'done') {
@@ -42,17 +48,30 @@ function BulletGlyph({ entry }: { entry: Entry }) {
     }
     if (entry.status === 'cancelled') {
       return (
-        <span className="relative block h-1.5 w-1.5 rounded-full bg-current text-ink/40 dark:text-inkdark/40">
+        <span className={`relative block h-1.5 w-1.5 rounded-full bg-current text-ink/40 dark:text-inkdark/40`}>
           <span className="absolute left-1/2 top-1/2 h-px w-3 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-current" />
         </span>
       )
     }
-    return <span className="block h-1.5 w-1.5 rounded-full bg-ink/80 dark:bg-inkdark/80" />
   }
 
-  if (entry.type === 'event') {
-    return <span className="block h-1.5 w-1.5 rounded-full border border-ink/70 dark:border-inkdark/70" />
-  }
+  return <ShapeGlyph shape={shape} className={ink} />
+}
 
-  return <span className={`text-sm leading-none ${ink}`}>–</span>
+function ShapeGlyph({ shape, className }: { shape: IconShape; className: string }) {
+  switch (shape) {
+    case 'square':
+      return <span className={`block h-2.5 w-2.5 rounded-[2px] border border-current ${className}`} />
+    case 'circle':
+      return <span className={`block h-1.5 w-1.5 rounded-full border border-current ${className}`} />
+    case 'triangle':
+      return <TriangleIcon className={`h-2.5 w-2.5 ${className}`} />
+    case 'dash':
+      return <span className={`text-sm leading-none ${className}`}>–</span>
+    case 'calendar':
+      return <CalendarIcon className={`h-3 w-3 ${className}`} />
+    case 'dot':
+    default:
+      return <span className={`block h-1.5 w-1.5 rounded-full bg-current ${className}`} />
+  }
 }

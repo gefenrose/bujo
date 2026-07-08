@@ -30,6 +30,10 @@ export interface Entry {
   tags?: string[]
   /** linked Google Calendar event id, for two-way calendar sync (event entries only) */
   googleEventId?: string
+  /** attached photos, stored as resized/compressed data URLs */
+  images?: string[]
+  /** per-entry override of the imageLayout preference for this entry's type */
+  imagesHidden?: boolean
   createdAt: number
 }
 

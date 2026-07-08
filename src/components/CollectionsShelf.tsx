@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import type { Journal } from '../hooks/useJournal'
+import { rowColor } from '../lib/collectionColors'
+import { usePreferences } from '../hooks/usePreferences'
 import { ListIcon } from './icons/Icons'
 
 interface CollectionsShelfProps {
@@ -12,14 +14,6 @@ interface CollectionsShelfProps {
   showAddButton?: boolean
 }
 
-const ROW_COLORS = [
-  'text-blue-500 dark:text-blue-400',
-  'text-rose-500 dark:text-rose-400',
-  'text-emerald-500 dark:text-emerald-400',
-  'text-amber-500 dark:text-amber-400',
-  'text-violet-500 dark:text-violet-400',
-]
-
 /** Persistent collections nav: a vertical sidebar on wide screens, a horizontal shelf on narrow ones. */
 export function CollectionsShelf({
   journal,
@@ -28,6 +22,7 @@ export function CollectionsShelf({
   layout = 'shelf',
   showAddButton = true,
 }: CollectionsShelfProps) {
+  const { preferences } = usePreferences()
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState('')
   const list = layout === 'list'
@@ -62,7 +57,7 @@ export function CollectionsShelf({
               : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
           }`}
         >
-          {list && <ListIcon className={`h-4 w-4 shrink-0 ${ROW_COLORS[i % ROW_COLORS.length]}`} />}
+          {list && <ListIcon className={`h-4 w-4 shrink-0 ${rowColor(i, preferences.autoAssignColors)}`} />}
           <span className="block min-w-0 flex-1 truncate">{c.name}</span>
         </button>
       ))}

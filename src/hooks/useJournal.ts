@@ -201,6 +201,22 @@ export function useJournal() {
     setEntries((prev) => prev.map((e) => (e.id === entryId ? { ...e, tags: e.tags?.filter((t) => t !== tag) } : e)))
   }, [])
 
+  const addImage = useCallback((entryId: string, dataUrl: string) => {
+    setEntries((prev) =>
+      prev.map((e) => (e.id === entryId ? { ...e, images: [...(e.images ?? []), dataUrl] } : e)),
+    )
+  }, [])
+
+  const removeImage = useCallback((entryId: string, dataUrl: string) => {
+    setEntries((prev) =>
+      prev.map((e) => (e.id === entryId ? { ...e, images: e.images?.filter((i) => i !== dataUrl) } : e)),
+    )
+  }, [])
+
+  const setImagesHidden = useCallback((entryId: string, hidden: boolean) => {
+    setEntries((prev) => prev.map((e) => (e.id === entryId ? { ...e, imagesHidden: hidden } : e)))
+  }, [])
+
   const cycleStatus = useCallback((id: string) => {
     setEntries((prev) =>
       prev.map((e) => {
@@ -499,6 +515,9 @@ export function useJournal() {
     deleteSubtask,
     addTag,
     removeTag,
+    addImage,
+    removeImage,
+    setImagesHidden,
     cycleStatus,
     togglePriority,
     migrateEntry,

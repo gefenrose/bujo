@@ -1,22 +1,29 @@
 import { useEffect, useState } from 'react'
+import { usePreferences } from './usePreferences'
 
-const STORAGE_KEY = 'bujo:theme'
-
-function getInitialTheme(): 'light' | 'dark' {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+function systemPrefersDark(): boolean {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme)
+  const { preferences, updatePreferences } = usePreferences()
+  const [systemDark, setSystemDark] = useState(systemPrefersDark)
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const listener = () => setSystemDark(mql.matches)
+    mql.addEventListener('change', listener)
+    return () => mql.removeEventListener('change', listener)
+  }, [])
+
+  const theme: 'light' | 'dark' =
+    preferences.themeMode === 'system' ? (systemDark ? 'dark' : 'light') : preferences.themeMode
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
-    localStorage.setItem(STORAGE_KEY, theme)
   }, [theme])
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+  const toggle = () => updatePreferences({ themeMode: theme === 'dark' ? 'light' : 'dark' })
 
   return { theme, toggle }
 }

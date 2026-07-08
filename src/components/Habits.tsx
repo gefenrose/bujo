@@ -3,6 +3,7 @@ import type { Journal } from '../hooks/useJournal'
 import type { HabitType } from '../types'
 import { daysInWeek, isToday, parseTimeInput, weekdayShort } from '../lib/date'
 import { habitValue, isHabitScheduledOn } from '../lib/habits'
+import { usePreferences } from '../hooks/usePreferences'
 import { HabitManageRow } from './habits/HabitManageRow'
 import { HabitRow } from './habits/HabitRow'
 import { HabitWeekDots } from './habits/HabitWeekDots'
@@ -16,6 +17,7 @@ interface HabitsProps {
 }
 
 export function Habits({ journal, date, onChangeDate }: HabitsProps) {
+  const { preferences } = usePreferences()
   const [managing, setManaging] = useState(false)
   const [creating, setCreating] = useState(false)
   const [name, setName] = useState('')
@@ -36,7 +38,7 @@ export function Habits({ journal, date, onChangeDate }: HabitsProps) {
     journal.addHabit({ name: trimmed, type, target, days, time: parseTimeInput(time) })
   }
 
-  const week = daysInWeek(date)
+  const week = daysInWeek(date, preferences.startOfWeek)
   const scheduledHabits = journal.habits.filter((h) => isHabitScheduledOn(h, date))
 
   return (

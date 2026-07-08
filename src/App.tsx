@@ -19,6 +19,7 @@ import {
   yearOf,
 } from './lib/date'
 import { isHabitScheduledOn } from './lib/habits'
+import { usePreferences } from './hooks/usePreferences'
 import type { Filter } from './types'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
@@ -28,6 +29,7 @@ import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
 import { CollectionsShelf } from './components/CollectionsShelf'
 import { FilterView } from './components/FilterView'
+import { SettingsView } from './components/SettingsView'
 import { Analytics } from './components/Analytics'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
@@ -40,7 +42,17 @@ import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
 import { MobileQuickAdd } from './components/mobile/MobileQuickAdd'
 import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, PlusIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
-type View = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'inbox' | 'collections' | 'habits' | 'analytics' | 'filter'
+type View =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'yearly'
+  | 'inbox'
+  | 'collections'
+  | 'habits'
+  | 'analytics'
+  | 'filter'
+  | 'settings'
 type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 const TIME_NAV: { view: View; label: string }[] = [
@@ -53,6 +65,7 @@ const MOBILE_TAB_VIEWS: MobileTabView[] = ['daily', 'weekly', 'monthly', 'yearly
 
 function App() {
   const journal = useJournal()
+  const { preferences } = usePreferences()
   const { theme, toggle } = useTheme()
   const reminders = useReminders(journal)
   const googleAccount = useGoogleAccount()
@@ -70,6 +83,7 @@ function App() {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
   const [mobileQuickAddOpen, setMobileQuickAddOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState<Filter | null>(null)
+  const [previousView, setPreviousView] = useState<View>('daily')
 
   const goToDate = (d: string) => {
     setDate(d)
@@ -122,7 +136,7 @@ function App() {
       case 'weekly':
         return {
           title: 'השבוע',
-          subtitle: mobileWeekSubtitle(date),
+          subtitle: mobileWeekSubtitle(date, preferences.startOfWeek),
           onPrev: () => setDate(addWeeks(date, -1)),
           onNext: () => setDate(addWeeks(date, 1)),
           onTitleClick: () => setDate(todayISO()),
@@ -153,10 +167,15 @@ function App() {
         return { title: journal.collections.find((c) => c.id === collectionId)?.name ?? 'אוספים' }
       case 'filter':
         return { title: activeFilter?.name ?? 'סינון' }
+      case 'settings':
+        return { title: 'העדפות' }
     }
   }
 
   const scheduledHabitsToday = journal.habits.filter((h) => isHabitScheduledOn(h, date))
+  const incompleteToday = preferences.showIncompleteCount
+    ? journal.entries.filter((e) => e.date === todayISO() && e.type === 'task' && e.status === 'open').length
+    : 0
   const onMainTab = MOBILE_TAB_VIEWS.includes(view as MobileTabView)
   const header = mobileHeaderProps()
 
@@ -238,16 +257,18 @@ function App() {
           </nav>
         </header>
 
-        <MobileHeader
-          title={header.title}
-          subtitle={header.subtitle}
-          onPrev={header.onPrev}
-          onNext={header.onNext}
-          onTitleClick={header.onTitleClick}
-          onMenuClick={() => setMobileDrawerOpen(true)}
-          onMoreClick={() => setMobileMoreOpen(true)}
-          moreActive={googleAccount.status === 'connected' || reminders.permission === 'granted'}
-        />
+        {view !== 'settings' && (
+          <MobileHeader
+            title={header.title}
+            subtitle={header.subtitle}
+            onPrev={header.onPrev}
+            onNext={header.onNext}
+            onTitleClick={header.onTitleClick}
+            onMenuClick={() => setMobileDrawerOpen(true)}
+            onMoreClick={() => setMobileMoreOpen(true)}
+            moreActive={googleAccount.status === 'connected' || reminders.permission === 'granted'}
+          />
+        )}
 
         <div className="flex flex-1 flex-col gap-6 py-6 sm:flex-row sm:gap-8 sm:py-8">
           <div className="hidden sm:contents">
@@ -276,6 +297,7 @@ function App() {
             {view === 'filter' && activeFilter && (
               <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
             )}
+            {view === 'settings' && <SettingsView onClose={() => setView(previousView)} />}
           </main>
         </div>
 
@@ -327,7 +349,7 @@ function App() {
         <RepeatIcon className="h-5 w-5" />
       </button>
 
-      <MobileTabBar view={view} onChangeView={changeMobileTab} />
+      <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
 
       <Toasts
         reminders={reminders.toasts}
@@ -368,7 +390,10 @@ function App() {
             setSearchQuery('')
             setSearchOpen(true)
           }}
-          onSettings={() => setMobileMoreOpen(true)}
+          onSettings={() => {
+            setPreviousView(view)
+            setView('settings')
+          }}
           onClose={() => setMobileDrawerOpen(false)}
         />
       )}

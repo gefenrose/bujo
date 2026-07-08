@@ -11,6 +11,8 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-ki
 import type { Journal } from '../hooks/useJournal'
 import type { Entry, EntryType } from '../types'
 import { nextEntryType } from '../lib/entries'
+import { rowColor } from '../lib/collectionColors'
+import { usePreferences } from '../hooks/usePreferences'
 import { SortableEntryRow } from './SortableEntryRow'
 import { EntryInput } from './EntryInput'
 
@@ -34,6 +36,7 @@ export function EntryList({
   emptyMessage,
   hideAddOnMobile,
 }: EntryListProps) {
+  const { preferences } = usePreferences()
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
@@ -46,6 +49,13 @@ export function EntryList({
     const newIndex = entries.findIndex((e) => e.id === over.id)
     if (oldIndex === -1 || newIndex === -1) return
     journal.reorderEntries(arrayMove(entries, oldIndex, newIndex).map((e) => e.id))
+  }
+
+  const colorClassFor = (entry: Entry): string | undefined => {
+    if (preferences.entryColorStyle === 'none' || !entry.collectionId) return undefined
+    const index = journal.collections.findIndex((c) => c.id === entry.collectionId)
+    if (index === -1) return undefined
+    return rowColor(index, preferences.autoAssignColors)
   }
 
   return (
@@ -70,6 +80,10 @@ export function EntryList({
               onAddTag={(tag) => journal.addTag(entry.id, tag)}
               onRemoveTag={(tag) => journal.removeTag(entry.id, tag)}
               onTagClick={onTagClick}
+              onAddImage={(dataUrl) => journal.addImage(entry.id, dataUrl)}
+              onRemoveImage={(dataUrl) => journal.removeImage(entry.id, dataUrl)}
+              onSetImagesHidden={(hidden) => journal.setImagesHidden(entry.id, hidden)}
+              colorClass={colorClassFor(entry)}
             />
           ))}
         </SortableContext>

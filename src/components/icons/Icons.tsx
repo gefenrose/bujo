@@ -335,6 +335,58 @@ export function FilterIcon({ className }: IconProps) {
   )
 }
 
+export function TriangleIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M10 3.5 17 16H3z" />
+    </svg>
+  )
+}
+
+export function ImageIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="2.5" y="3.5" width="15" height="13" rx="1.5" />
+      <circle cx="7" cy="8" r="1.3" fill="currentColor" stroke="none" />
+      <path d="M17.5 13.5 13 9 5 16.5" />
+    </svg>
+  )
+}
+
+export function EyeOffIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3 3l14 14M8.3 5.4A6.5 6.5 0 0 1 10 5.2c4 0 6.7 3.3 7.3 4.5-.3.6-1.1 1.9-2.4 3M5.6 6.7C4 7.9 3 9.3 2.7 9.8c.6 1.2 3.3 4.5 7.3 4.5.9 0 1.7-.2 2.4-.4M8.2 8.2a2 2 0 0 0 2.8 2.8" />
+    </svg>
+  )
+}
+
 export function BellIcon({ className, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg

@@ -2,6 +2,7 @@ import type { Journal } from '../hooks/useJournal'
 import { addWeeks, daysInWeek, formatTime, formatWeekHeading, isToday, weekdayShort } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
 import { moodLevel, moodValue } from '../lib/mood'
+import { usePreferences } from '../hooks/usePreferences'
 import { Bullet } from './Bullet'
 import { MoodFaceIcon } from './icons/MoodFaceIcon'
 
@@ -13,13 +14,14 @@ interface WeeklyLogProps {
 }
 
 export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyLogProps) {
-  const days = daysInWeek(date)
+  const { preferences } = usePreferences()
+  const days = daysInWeek(date, preferences.startOfWeek)
 
   return (
     <div>
       <div className="mb-6 hidden items-baseline justify-between sm:flex">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
-          {formatWeekHeading(date)}
+          {formatWeekHeading(date, preferences.startOfWeek)}
         </h1>
         <div className="flex items-center gap-3 text-sm text-ink/50 dark:text-inkdark/50">
           <button onClick={() => onChangeDate(addWeeks(date, -1))} className="hover:text-ink dark:hover:text-inkdark">
@@ -72,7 +74,7 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
                       >
                         {entry.time && (
                           <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
-                            {formatTime(entry.time)}
+                            {formatTime(entry.time, preferences.timeFormat)}
                           </span>
                         )}
                         {entry.text}

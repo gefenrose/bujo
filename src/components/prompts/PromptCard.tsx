@@ -66,6 +66,7 @@ export function PromptCard({ prompt, answer, onChangeAnswer, onRenameQuestion, o
         }}
         placeholder="כתיבת תשובה…"
         rows={2}
+        style={{ fontWeight: 'var(--content-font-weight)' }}
         className="mt-1 w-full resize-none bg-transparent text-sm leading-snug text-ink outline-none placeholder:text-ink/25 dark:text-inkdark dark:placeholder:text-inkdark/25"
       />
     </div>

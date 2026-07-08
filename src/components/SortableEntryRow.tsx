@@ -19,6 +19,10 @@ interface SortableEntryRowProps {
   onAddTag: (tag: string) => void
   onRemoveTag: (tag: string) => void
   onTagClick: (tag: string) => void
+  onAddImage: (dataUrl: string) => void
+  onRemoveImage: (dataUrl: string) => void
+  onSetImagesHidden: (hidden: boolean) => void
+  colorClass?: string
 }
 
 export function SortableEntryRow(props: SortableEntryRowProps) {

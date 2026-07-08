@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { Journal } from '../../hooks/useJournal'
 import type { Filter } from '../../types'
 import { allUsedTags } from '../../lib/filters'
+import { rowColor } from '../../lib/collectionColors'
+import { usePreferences } from '../../hooks/usePreferences'
 import { CollectionsShelf } from '../CollectionsShelf'
 import {
   CloseIcon,
@@ -29,14 +31,6 @@ interface MobileMainDrawerProps {
   onClose: () => void
 }
 
-const FILTER_COLORS = [
-  'text-blue-500 dark:text-blue-400',
-  'text-rose-500 dark:text-rose-400',
-  'text-emerald-500 dark:text-emerald-400',
-  'text-amber-500 dark:text-amber-400',
-  'text-violet-500 dark:text-violet-400',
-]
-
 /** Mobile-only slide-in drawer (opened via the header hamburger): app nav, collections, saved filters and pinned tags. */
 export function MobileMainDrawer({
   journal,
@@ -49,6 +43,7 @@ export function MobileMainDrawer({
   onSettings,
   onClose,
 }: MobileMainDrawerProps) {
+  const { preferences } = usePreferences()
   const [addMenuOpen, setAddMenuOpen] = useState(false)
   const [creatingList, setCreatingList] = useState(false)
   const [newListName, setNewListName] = useState('')
@@ -94,6 +89,7 @@ export function MobileMainDrawer({
                 onSettings()
                 onClose()
               }}
+              title="העדפות"
               className="flex h-8 w-8 items-center justify-center text-ink/60 dark:text-inkdark/60"
             >
               <SettingsIcon className="h-4 w-4" />
@@ -173,7 +169,7 @@ export function MobileMainDrawer({
                     }}
                     className="flex min-w-0 flex-1 items-center gap-2 text-start"
                   >
-                    <FilterIcon className={`h-4 w-4 shrink-0 ${FILTER_COLORS[i % FILTER_COLORS.length]}`} />
+                    <FilterIcon className={`h-4 w-4 shrink-0 ${rowColor(i, preferences.autoAssignColors)}`} />
                     <span className="truncate">{filter.name}</span>
                   </button>
                   <button

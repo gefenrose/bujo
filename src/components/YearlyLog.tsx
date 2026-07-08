@@ -2,6 +2,7 @@ import type { Journal } from '../hooks/useJournal'
 import { addYears, daysInMonth, formatTime, isToday, monthName, monthsInYear, weekdayShort, yearOf } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
 import { moodLevel, moodValue } from '../lib/mood'
+import { usePreferences } from '../hooks/usePreferences'
 import { Bullet } from './Bullet'
 import { MoodFaceIcon } from './icons/MoodFaceIcon'
 
@@ -14,6 +15,7 @@ interface YearlyLogProps {
 }
 
 export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: YearlyLogProps) {
+  const { preferences } = usePreferences()
   const months = monthsInYear(month)
   const expandedMonth = months.find((m) => m.slice(0, 7) === month.slice(0, 7)) ?? months[0]
 
@@ -91,7 +93,7 @@ export function YearlyLog({ journal, month, onChangeMonth, onSelectDate }: Yearl
                               >
                                 {entry.time && (
                                   <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
-                                    {formatTime(entry.time)}
+                                    {formatTime(entry.time, preferences.timeFormat)}
                                   </span>
                                 )}
                                 {entry.text}

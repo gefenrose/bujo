@@ -2,6 +2,7 @@ import type { Journal } from '../hooks/useJournal'
 import { addMonths, daysInMonth, formatMonthHeading, formatTime, isToday, weekdayShort } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
 import { moodLevel, moodValue } from '../lib/mood'
+import { usePreferences } from '../hooks/usePreferences'
 import { Bullet } from './Bullet'
 import { MoodFaceIcon } from './icons/MoodFaceIcon'
 
@@ -13,6 +14,7 @@ interface MonthlyLogProps {
 }
 
 export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: MonthlyLogProps) {
+  const { preferences } = usePreferences()
   const days = daysInMonth(month)
 
   return (
@@ -72,7 +74,7 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
                       >
                         {entry.time && (
                           <span className="me-1 text-xs tabular-nums text-ink/40 dark:text-inkdark/40">
-                            {formatTime(entry.time)}
+                            {formatTime(entry.time, preferences.timeFormat)}
                           </span>
                         )}
                         {entry.text}
