@@ -21,7 +21,7 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
 
   return (
     <div>
-      <div className="mb-6 flex items-baseline justify-between">
+      <div className="mb-6 hidden items-baseline justify-between sm:flex">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatDayHeading(date)}
         </h1>
@@ -64,6 +64,7 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
         onTagClick={onTagClick}
         emptyMessage="עדיין לא נרשם כלום — אפשר להתחיל לכתוב למעלה."
+        hideAddOnMobile
       />
 
       <DailyPrompts journal={journal} date={date} />

@@ -7,6 +7,7 @@ import { TimeField } from './TimeField'
 interface EntryInputProps {
   onSubmit: (text: string, type: EntryType, time?: string) => void
   placeholder?: string
+  autoFocus?: boolean
 }
 
 const TYPES: { type: EntryType; glyph: string; label: string }[] = [
@@ -15,7 +16,7 @@ const TYPES: { type: EntryType; glyph: string; label: string }[] = [
   { type: 'note', glyph: '–', label: 'הערה' },
 ]
 
-export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' }: EntryInputProps) {
+export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…', autoFocus = false }: EntryInputProps) {
   const [type, setType] = useState<EntryType>('task')
   const [value, setValue] = useState('')
   const [time, setTime] = useState('')
@@ -60,6 +61,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…' 
         </button>
       </div>
       <input
+        autoFocus={autoFocus}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}

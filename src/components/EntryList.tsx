@@ -21,9 +21,19 @@ interface EntryListProps {
   onAdd: (text: string, type: EntryType, time?: string) => void
   onTagClick: (tag: string) => void
   emptyMessage: string
+  /** Hide the inline add-entry input on mobile viewports, where a floating quick-add button is used instead. */
+  hideAddOnMobile?: boolean
 }
 
-export function EntryList({ journal, entries, onMigrate, onAdd, onTagClick, emptyMessage }: EntryListProps) {
+export function EntryList({
+  journal,
+  entries,
+  onMigrate,
+  onAdd,
+  onTagClick,
+  emptyMessage,
+  hideAddOnMobile,
+}: EntryListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
@@ -64,7 +74,9 @@ export function EntryList({ journal, entries, onMigrate, onAdd, onTagClick, empt
           ))}
         </SortableContext>
       </DndContext>
-      <EntryInput onSubmit={onAdd} />
+      <div className={hideAddOnMobile ? 'hidden sm:block' : undefined}>
+        <EntryInput onSubmit={onAdd} />
+      </div>
       {entries.length === 0 && (
         <p className="mt-2 text-sm text-ink/30 dark:text-inkdark/30">{emptyMessage}</p>
       )}

@@ -17,7 +17,7 @@ export function WeeklyLog({ journal, date, onChangeDate, onSelectDate }: WeeklyL
 
   return (
     <div>
-      <div className="mb-6 flex items-baseline justify-between">
+      <div className="mb-6 hidden items-baseline justify-between sm:flex">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatWeekHeading(date)}
         </h1>

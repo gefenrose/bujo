@@ -25,6 +25,12 @@ export function addMonths(iso: string, delta: number): string {
   return toISODate(d)
 }
 
+export function addYears(iso: string, delta: number): string {
+  const d = fromISODate(iso)
+  d.setFullYear(d.getFullYear() + delta, d.getMonth(), 1)
+  return toISODate(d)
+}
+
 const WEEKDAYS = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת']
 const WEEKDAYS_SHORT = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש']
 const MONTHS = [
@@ -41,6 +47,19 @@ export function formatDayHeading(iso: string): string {
 export function formatMonthHeading(iso: string): string {
   const d = fromISODate(iso)
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`
+}
+
+export function monthName(iso: string): string {
+  return MONTHS[fromISODate(iso).getMonth()]
+}
+
+export function yearOf(iso: string): number {
+  return fromISODate(iso).getFullYear()
+}
+
+export function monthsInYear(iso: string): string[] {
+  const year = yearOf(iso)
+  return Array.from({ length: 12 }, (_, i) => toISODate(new Date(year, i, 1)))
 }
 
 export function formatShortDate(iso: string): string {
@@ -120,4 +139,26 @@ export function formatWeekHeading(iso: string): string {
     return `${start.getDate()}–${end.getDate()} ב${MONTHS[start.getMonth()]} ${start.getFullYear()}`
   }
   return `${start.getDate()} ב${MONTHS_SHORT[start.getMonth()]} – ${end.getDate()} ב${MONTHS_SHORT[end.getMonth()]}`
+}
+
+/** 1-indexed week number within its year, counting Sunday-started weeks from Jan 1. */
+export function weekOfYear(iso: string): number {
+  const start = fromISODate(startOfWeek(iso))
+  const jan1 = new Date(start.getFullYear(), 0, 1)
+  const diffDays = Math.round((start.getTime() - jan1.getTime()) / 86_400_000)
+  return Math.floor(diffDays / 7) + 1
+}
+
+/** Short mobile-header title for the Day view: "היום" or the long weekday name. */
+export function mobileDayTitle(iso: string): string {
+  return isToday(iso) ? 'היום' : `יום ${WEEKDAYS[fromISODate(iso).getDay()]}`
+}
+
+export function mobileDaySubtitle(iso: string): string {
+  const d = fromISODate(iso)
+  return `יום ${WEEKDAYS_SHORT[d.getDay()]}, ${d.getDate()} ב${MONTHS_SHORT[d.getMonth()]}`
+}
+
+export function mobileWeekSubtitle(iso: string): string {
+  return `שבוע ${weekOfYear(iso)} · ${fromISODate(startOfWeek(iso)).getFullYear()}`
 }

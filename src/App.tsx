@@ -5,10 +5,24 @@ import { useReminders } from './hooks/useReminders'
 import { useGoogleAccount } from './hooks/useGoogleAccount'
 import { useGoogleCalendar } from './hooks/useGoogleCalendar'
 import { useGoogleDriveBackup } from './hooks/useGoogleDriveBackup'
-import { todayISO } from './lib/date'
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  isToday,
+  mobileDaySubtitle,
+  mobileDayTitle,
+  mobileWeekSubtitle,
+  monthName,
+  todayISO,
+  yearOf,
+} from './lib/date'
+import { isHabitScheduledOn } from './lib/habits'
 import { DailyLog } from './components/DailyLog'
 import { WeeklyLog } from './components/WeeklyLog'
 import { MonthlyLog } from './components/MonthlyLog'
+import { YearlyLog } from './components/YearlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
 import { CollectionsShelf } from './components/CollectionsShelf'
@@ -17,15 +31,23 @@ import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
 import { GooglePanel } from './components/GooglePanel'
-import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
+import { MobileHeader } from './components/mobile/MobileHeader'
+import { MobileTabBar } from './components/mobile/MobileTabBar'
+import { MobileMoreMenu } from './components/mobile/MobileMoreMenu'
+import { MobileCollectionsDrawer } from './components/mobile/MobileCollectionsDrawer'
+import { MobileQuickAdd } from './components/mobile/MobileQuickAdd'
+import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, PlusIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
 
-type View = 'daily' | 'weekly' | 'monthly' | 'inbox' | 'collections' | 'habits' | 'analytics'
+type View = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'inbox' | 'collections' | 'habits' | 'analytics'
+type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 const TIME_NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומי' },
   { view: 'weekly', label: 'שבועי' },
   { view: 'monthly', label: 'חודשי' },
 ]
+
+const MOBILE_TAB_VIEWS: MobileTabView[] = ['daily', 'weekly', 'monthly', 'yearly']
 
 function App() {
   const journal = useJournal()
@@ -42,6 +64,9 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [googlePanelOpen, setGooglePanelOpen] = useState(false)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  const [mobileMoreOpen, setMobileMoreOpen] = useState(false)
+  const [mobileQuickAddOpen, setMobileQuickAddOpen] = useState(false)
 
   const goToDate = (d: string) => {
     setDate(d)
@@ -58,6 +83,11 @@ function App() {
     setSearchOpen(true)
   }
 
+  const changeMobileTab = (v: MobileTabView) => {
+    setView(v)
+    if (v === 'monthly' || v === 'yearly') setMonth(date)
+  }
+
   const iconButton = (active: boolean) =>
     `flex h-7 w-7 items-center justify-center rounded-full ${
       active
@@ -65,10 +95,65 @@ function App() {
         : 'text-ink/50 hover:text-ink dark:text-inkdark/50 dark:hover:text-inkdark'
     }`
 
+  const mobileHeaderProps = (): {
+    title: string
+    subtitle?: string
+    onPrev?: () => void
+    onNext?: () => void
+    onTitleClick?: () => void
+  } => {
+    switch (view) {
+      case 'daily':
+        return {
+          title: mobileDayTitle(date),
+          subtitle: mobileDaySubtitle(date),
+          onPrev: () => setDate(addDays(date, -1)),
+          onNext: () => setDate(addDays(date, 1)),
+          onTitleClick: isToday(date) ? undefined : () => setDate(todayISO()),
+        }
+      case 'weekly':
+        return {
+          title: 'השבוע',
+          subtitle: mobileWeekSubtitle(date),
+          onPrev: () => setDate(addWeeks(date, -1)),
+          onNext: () => setDate(addWeeks(date, 1)),
+          onTitleClick: () => setDate(todayISO()),
+        }
+      case 'monthly':
+        return {
+          title: 'החודש',
+          subtitle: monthName(month),
+          onPrev: () => setMonth(addMonths(month, -1)),
+          onNext: () => setMonth(addMonths(month, 1)),
+          onTitleClick: () => setMonth(todayISO()),
+        }
+      case 'yearly':
+        return {
+          title: 'השנה',
+          subtitle: String(yearOf(month)),
+          onPrev: () => setMonth(addYears(month, -1)),
+          onNext: () => setMonth(addYears(month, 1)),
+          onTitleClick: () => setMonth(todayISO()),
+        }
+      case 'habits':
+        return { title: 'הרגלים' }
+      case 'analytics':
+        return { title: 'תובנות' }
+      case 'inbox':
+        return { title: 'תיבת קלט' }
+      case 'collections':
+        return { title: journal.collections.find((c) => c.id === collectionId)?.name ?? 'אוספים' }
+    }
+  }
+
+  const scheduledHabitsToday = journal.habits.filter((h) => isHabitScheduledOn(h, date))
+  const onMainTab = MOBILE_TAB_VIEWS.includes(view as MobileTabView)
+  const header = mobileHeaderProps()
+
   return (
     <div className="min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-6">
-        <header className="flex flex-col gap-3 border-b border-ink/10 py-4 dark:border-inkdark/10 sm:flex-row sm:items-center sm:justify-between sm:py-5">
+        <header className="hidden border-b border-ink/10 py-4 dark:border-inkdark/10 sm:flex sm:flex-row sm:items-center sm:justify-between sm:py-5">
           <div className="flex items-center justify-between sm:contents">
             <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
 
@@ -143,10 +228,23 @@ function App() {
           </nav>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 py-6 sm:flex-row sm:gap-8 sm:py-8">
-          <CollectionsShelf journal={journal} selectedId={collectionId} onSelect={goToCollection} />
+        <MobileHeader
+          title={header.title}
+          subtitle={header.subtitle}
+          onPrev={header.onPrev}
+          onNext={header.onNext}
+          onTitleClick={header.onTitleClick}
+          onMenuClick={() => setMobileDrawerOpen(true)}
+          onMoreClick={() => setMobileMoreOpen(true)}
+          moreActive={googleAccount.status === 'connected' || reminders.permission === 'granted'}
+        />
 
-          <main className="min-w-0 flex-1 pb-16">
+        <div className="flex flex-1 flex-col gap-6 py-6 sm:flex-row sm:gap-8 sm:py-8">
+          <div className="hidden sm:contents">
+            <CollectionsShelf journal={journal} selectedId={collectionId} onSelect={goToCollection} />
+          </div>
+
+          <main className="min-w-0 flex-1 pb-40 sm:pb-16">
             {view === 'daily' && (
               <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
             )}
@@ -155,6 +253,9 @@ function App() {
             )}
             {view === 'monthly' && (
               <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
+            )}
+            {view === 'yearly' && (
+              <YearlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
             )}
             {view === 'collections' && (
               <Collections journal={journal} selectedId={collectionId} onTagClick={openSearchForTag} />
@@ -165,18 +266,46 @@ function App() {
           </main>
         </div>
 
-        <footer className="border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30">
+        <footer className="hidden border-t border-ink/10 py-4 text-center text-xs text-ink/30 dark:border-inkdark/10 dark:text-inkdark/30 sm:block">
           {googleDrive.lastBackedUpAt
             ? `נשמר מקומית ומגובה ל-Google Drive · עודכן לאחרונה בשעה ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
             : 'נשמר מקומית בדפדפן זה'}
         </footer>
       </div>
 
+      {onMainTab && (
+        <>
+          <button
+            type="button"
+            onClick={() => setView('habits')}
+            title="הרגלים"
+            className="fixed bottom-20 start-4 z-40 flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-sm text-paper shadow-lg transition-colors hover:opacity-90 dark:bg-inkdark dark:text-paperdark sm:hidden"
+          >
+            <RepeatIcon className="h-4 w-4" />
+            הרגלים
+            {scheduledHabitsToday.length > 0 && (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-paper/20 px-1 text-xs dark:bg-paperdark/20">
+                {scheduledHabitsToday.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setMobileQuickAddOpen(true)}
+            title="הוספת רשומה"
+            className="fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-paper shadow-lg transition-colors hover:opacity-90 dark:bg-inkdark dark:text-paperdark sm:hidden"
+          >
+            <PlusIcon className="h-5 w-5" />
+          </button>
+        </>
+      )}
+
       <button
         type="button"
         onClick={() => setView('habits')}
         title="הרגלים"
-        className={`fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors hover:opacity-90 sm:bottom-6 sm:end-6 ${
+        className={`fixed bottom-6 end-6 z-40 hidden h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors hover:opacity-90 sm:flex ${
           view === 'habits'
             ? 'bg-amber-500 text-paper dark:bg-amber-400 dark:text-paperdark'
             : 'bg-ink text-paper dark:bg-inkdark dark:text-paperdark'
@@ -184,6 +313,8 @@ function App() {
       >
         <RepeatIcon className="h-5 w-5" />
       </button>
+
+      <MobileTabBar view={view} onChangeView={changeMobileTab} />
 
       <Toasts
         reminders={reminders.toasts}
@@ -209,6 +340,41 @@ function App() {
           calendar={googleCalendar}
           drive={googleDrive}
           onClose={() => setGooglePanelOpen(false)}
+        />
+      )}
+
+      {mobileDrawerOpen && (
+        <MobileCollectionsDrawer
+          journal={journal}
+          selectedId={collectionId}
+          onSelect={goToCollection}
+          onClose={() => setMobileDrawerOpen(false)}
+        />
+      )}
+
+      {mobileMoreOpen && (
+        <MobileMoreMenu
+          onClose={() => setMobileMoreOpen(false)}
+          onAnalytics={() => setView('analytics')}
+          onInbox={() => setView('inbox')}
+          onSearch={() => {
+            setSearchQuery('')
+            setSearchOpen(true)
+          }}
+          onGoogle={() => setGooglePanelOpen(true)}
+          googleConnected={googleAccount.status === 'connected'}
+          reminderPermission={reminders.permission}
+          onEnableReminders={reminders.enableReminders}
+          theme={theme}
+          onToggleTheme={toggle}
+        />
+      )}
+
+      {mobileQuickAddOpen && (
+        <MobileQuickAdd
+          date={date}
+          onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
+          onClose={() => setMobileQuickAddOpen(false)}
         />
       )}
     </div>
