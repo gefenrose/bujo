@@ -34,15 +34,6 @@ export function MobileQuickAdd({ date, onAdd, onClose }: MobileQuickAddProps) {
             onClose()
           }}
         />
-        <div className="symbol-sheet-key" aria-label="מפתח הסימנים">
-          <span><b>•</b> משימה</span>
-          <span><b>×</b> הושלמה</span>
-          <span><b>&gt;</b> הועברה</span>
-          <span><b>&lt;</b> נקבעה</span>
-          <span><b>–</b> הערה</span>
-          <span><b>○</b> אירוע</span>
-          <span className="priority-key"><b>★</b> עדיפות</span>
-        </div>
       </div>
     </div>
   )

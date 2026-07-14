@@ -1,12 +1,7 @@
 import type { Journal } from '../hooks/useJournal'
 import { addDays, formatDayHeading, isToday, todayISO } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
-import { habitValue, isHabitScheduledOn } from '../lib/habits'
-import { moodValue } from '../lib/mood'
 import { EntryList } from './EntryList'
-import { HabitStripChip } from './habits/HabitStripChip'
-import { MoodPicker } from './mood/MoodPicker'
-import { DailyPrompts } from './prompts/DailyPrompts'
 
 interface DailyLogProps {
   journal: Journal
@@ -17,8 +12,6 @@ interface DailyLogProps {
 
 export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogProps) {
   const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
-  const scheduledHabits = journal.habits.filter((h) => isHabitScheduledOn(h, date))
-
   return (
     <div className="daily-log">
       <div className="daily-heading mb-6 hidden items-baseline justify-between sm:flex">
@@ -40,28 +33,6 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         </div>
       </div>
 
-      <div className="method-caption hidden sm:flex">
-        <span>רישום מהיר</span>
-        <span>• × &gt; &lt; – ○ ★</span>
-      </div>
-
-      <MoodPicker value={moodValue(journal.moodLogs, date)} onChange={(v) => journal.setMood(date, v)} />
-
-      {scheduledHabits.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {scheduledHabits.map((habit) => (
-            <HabitStripChip
-              key={habit.id}
-              habit={habit}
-              value={habitValue(journal.habitLogs, habit.id, date)}
-              onToggle={() => journal.toggleHabitCheck(habit.id, date)}
-              onIncrement={() => journal.incrementHabit(habit.id, date, 1)}
-              onDecrement={() => journal.incrementHabit(habit.id, date, -1)}
-            />
-          ))}
-        </div>
-      )}
-
       <EntryList
         journal={journal}
         entries={entries}
@@ -69,10 +40,7 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
         onTagClick={onTagClick}
         emptyMessage="עדיין לא נרשם כלום — אפשר להתחיל לכתוב למעלה."
-        hideAddOnMobile
       />
-
-      <DailyPrompts journal={journal} date={date} />
     </div>
   )
 }

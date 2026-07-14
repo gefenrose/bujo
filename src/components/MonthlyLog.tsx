@@ -1,10 +1,6 @@
 import type { Journal } from '../hooks/useJournal'
-import { addMonths, daysInMonth, formatMonthHeading, formatTime, isToday, weekdayShort } from '../lib/date'
+import { addMonths, daysInMonth, formatMonthHeading, isToday } from '../lib/date'
 import { sortByOrder } from '../lib/entries'
-import { moodLevel, moodValue } from '../lib/mood'
-import { usePreferences } from '../hooks/usePreferences'
-import { Bullet } from './Bullet'
-import { MoodFaceIcon } from './icons/MoodFaceIcon'
 
 interface MonthlyLogProps {
   journal: Journal
@@ -14,8 +10,9 @@ interface MonthlyLogProps {
 }
 
 export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: MonthlyLogProps) {
-  const { preferences } = usePreferences()
   const days = daysInMonth(month)
+  const leadingBlanks = new Date(`${days[0]}T12:00:00`).getDay()
+  const cells: Array<string | null> = [...Array.from({ length: leadingBlanks }, () => null), ...days]
 
   return (
     <div>
@@ -33,69 +30,31 @@ export function MonthlyLog({ journal, month, onChangeMonth, onSelectDate }: Mont
         </div>
       </div>
 
-      <div className="flex flex-col">
-        {days.map((date) => {
+      <div className="calendar-weekdays" aria-hidden="true">
+        {['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day) => <span key={day}>{day}</span>)}
+      </div>
+
+      <div className="calendar-grid">
+        {cells.map((date, index) => {
+          if (!date) return <span className="calendar-cell is-empty" key={`empty-${index}`} />
           const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
           const day = Number(date.slice(-2))
-          const mood = moodLevel(moodValue(journal.moodLogs, date))
 
           return (
             <div
               key={date}
-              className={`group flex gap-3 rounded px-1.5 py-1 -mx-1.5 hover:bg-ink/[0.03] dark:hover:bg-inkdark/[0.04] ${
-                isToday(date) ? 'bg-amber-500/[0.06]' : ''
-              }`}
+              className={`calendar-cell ${isToday(date) ? 'is-today' : ''}`}
             >
-              <button
-                onClick={() => onSelectDate(date)}
-                className="flex w-12 shrink-0 items-baseline gap-1.5 text-start"
-              >
-                <span className="text-sm tabular-nums text-ink/75 dark:text-inkdark/75">{day}</span>
-                <span className="text-[0.7rem] uppercase text-ink/50 dark:text-inkdark/50">
-                  {weekdayShort(date)}
-                </span>
-              </button>
-
-              {entries.length > 0 ? (
-                <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1 py-0.5">
-                  {entries.map((entry) => (
-                    <span key={entry.id} className="flex items-baseline gap-1.5">
-                      <span className="inline-flex -translate-y-px items-center">
-                        <Bullet entry={entry} onClick={() => journal.cycleStatus(entry.id)} />
-                      </span>
-                      <span
-                        className={`text-sm ${
-                          entry.status === 'done' || entry.status === 'cancelled' ? 'line-through' : ''
-                        } ${
-                          entry.status === 'migrated' || entry.status === 'cancelled'
-                            ? 'text-ink/60 dark:text-inkdark/60'
-                            : 'text-ink/80 dark:text-inkdark/80'
-                        }`}
-                      >
-                        {entry.time && (
-                          <span className="me-1 text-xs tabular-nums text-ink/60 dark:text-inkdark/60">
-                            {formatTime(entry.time, preferences.timeFormat)}
-                          </span>
-                        )}
-                        {entry.text}
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <button
-                  onClick={() => onSelectDate(date)}
-                  className="flex-1 py-0.5 text-start text-sm text-ink/35 dark:text-inkdark/35"
-                >
-                  —
-                </button>
-              )}
-
-              {mood && (
-                <span className={`shrink-0 self-start pt-0.5 ${mood.text}`} title={mood.label}>
-                  <MoodFaceIcon level={mood.value} className="h-4 w-4" />
-                </span>
-              )}
+              <button type="button" onClick={() => onSelectDate(date)} className="calendar-day-number">{day}</button>
+              <span className="calendar-entry-preview">
+                {entries.slice(0, 2).map((entry) => (
+                  <span key={entry.id}>
+                    <b aria-hidden="true">{entry.type === 'task' ? '•' : entry.type === 'event' ? '○' : '–'}</b>
+                    <span>{entry.text}</span>
+                  </span>
+                ))}
+                {entries.length > 2 && <small>+{entries.length - 2}</small>}
+              </span>
             </div>
           )
         })}

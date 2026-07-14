@@ -1,4 +1,4 @@
-import { ChevronIcon, MenuIcon, SearchIcon } from '../icons/Icons'
+import { ChevronIcon } from '../icons/Icons'
 
 interface MobileHeaderProps {
   title: string
@@ -6,23 +6,13 @@ interface MobileHeaderProps {
   onPrev?: () => void
   onNext?: () => void
   onTitleClick?: () => void
-  onMenuClick: () => void
   onSearchClick: () => void
 }
 
 /** Mobile-only header: hamburger (main drawer), centered title/subtitle with prev/next paging. */
-export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, onMenuClick, onSearchClick }: MobileHeaderProps) {
+export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick }: MobileHeaderProps) {
   return (
-    <header className="method-mobile-header flex items-center justify-between border-b border-ink/20 px-1 py-3 dark:border-inkdark/20 sm:hidden">
-      <button
-        type="button"
-        onClick={onMenuClick}
-        title="תפריט"
-        className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/70 dark:text-inkdark/70"
-      >
-        <MenuIcon className="h-5 w-5" />
-      </button>
-
+    <header className="method-mobile-header flex items-center justify-center border-b border-ink/20 px-1 py-3 dark:border-inkdark/20 sm:hidden">
       <div className="flex min-w-0 flex-1 items-center justify-center gap-1">
         {onPrev && (
           <button
@@ -56,15 +46,6 @@ export function MobileHeader({ title, subtitle, onPrev, onNext, onTitleClick, on
           </button>
         )}
       </div>
-
-      <button
-        type="button"
-        onClick={onSearchClick}
-        title="חיפוש"
-        className="flex h-8 w-8 shrink-0 items-center justify-center text-ink/70 dark:text-inkdark/70"
-      >
-        <SearchIcon className="h-5 w-5" />
-      </button>
     </header>
   )
 }

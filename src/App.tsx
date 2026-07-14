@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useJournal } from './hooks/useJournal'
-import { useTheme } from './hooks/useTheme'
 import { useReminders } from './hooks/useReminders'
 import { useGoogleAccount } from './hooks/useGoogleAccount'
 import { useGoogleCalendar } from './hooks/useGoogleCalendar'
@@ -18,7 +17,6 @@ import {
   todayISO,
   yearOf,
 } from './lib/date'
-import { isHabitScheduledOn } from './lib/habits'
 import { usePreferences } from './hooks/usePreferences'
 import type { Filter } from './types'
 import { DailyLog } from './components/DailyLog'
@@ -27,8 +25,6 @@ import { MonthlyLog } from './components/MonthlyLog'
 import { YearlyLog } from './components/YearlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
-import { DesktopIndex } from './components/DesktopIndex'
-import { DesktopDaySidebar } from './components/DesktopDaySidebar'
 import { FilterView } from './components/FilterView'
 import { SettingsView } from './components/SettingsView'
 import { Analytics } from './components/Analytics'
@@ -39,8 +35,7 @@ import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
 import { MobileTabBar } from './components/mobile/MobileTabBar'
 import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
-import { MobileQuickAdd } from './components/mobile/MobileQuickAdd'
-import { BellIcon, CalendarIcon, ChartIcon, InboxIcon, PlusIcon, RepeatIcon, SearchIcon } from './components/icons/Icons'
+import { PlusIcon, SearchIcon } from './components/icons/Icons'
 
 type View =
   | 'daily'
@@ -56,17 +51,13 @@ type View =
 type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 const TIME_NAV: { view: View; label: string }[] = [
-  { view: 'daily', label: 'יומי' },
-  { view: 'weekly', label: 'שבועי' },
-  { view: 'monthly', label: 'חודשי' },
+  { view: 'daily', label: 'יומן' },
+  { view: 'monthly', label: 'לוח שנה' },
 ]
-
-const MOBILE_TAB_VIEWS: MobileTabView[] = ['daily', 'weekly', 'monthly', 'yearly']
 
 function App() {
   const journal = useJournal()
   const { preferences } = usePreferences()
-  const { theme, toggle } = useTheme()
   const reminders = useReminders(journal)
   const googleAccount = useGoogleAccount()
   const googleCalendar = useGoogleCalendar(googleAccount, journal)
@@ -80,7 +71,6 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [googlePanelOpen, setGooglePanelOpen] = useState(false)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
-  const [mobileQuickAddOpen, setMobileQuickAddOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState<Filter | null>(null)
   const [previousView, setPreviousView] = useState<View>('daily')
 
@@ -108,13 +98,6 @@ function App() {
     setView(v)
     if (v === 'monthly' || v === 'yearly') setMonth(date)
   }
-
-  const iconButton = (active: boolean) =>
-    `flex h-7 w-7 items-center justify-center rounded-full ${
-      active
-        ? 'text-ink dark:text-inkdark'
-        : 'text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark'
-    }`
 
   const mobileHeaderProps = (): {
     title: string
@@ -171,11 +154,9 @@ function App() {
     }
   }
 
-  const scheduledHabitsToday = journal.habits.filter((h) => isHabitScheduledOn(h, date))
   const incompleteToday = preferences.showIncompleteCount
     ? journal.entries.filter((e) => e.date === todayISO() && e.type === 'task' && e.status === 'open').length
     : 0
-  const onMainTab = MOBILE_TAB_VIEWS.includes(view as MobileTabView)
   const header = mobileHeaderProps()
 
   return (
@@ -183,7 +164,6 @@ function App() {
       <header className="method-header hidden sm:grid">
         <div className="brand-lockup">
           <span className="brand-word">bujo</span>
-          <span className="brand-subtitle">המחברת שלך</span>
         </div>
 
         <nav className="method-view-nav" aria-label="תצוגות זמן">
@@ -211,61 +191,34 @@ function App() {
             }}
           >
             <PlusIcon className="h-4 w-4" />
-            רישום מהיר
+            רשומה חדשה
           </button>
           <div className="toolbar-icons">
-              <button onClick={() => setView('analytics')} title="נתונים" className={iconButton(view === 'analytics')}>
-                <ChartIcon className="h-4 w-4" />
-              </button>
-              <button onClick={() => setView('inbox')} title="תיבת קלט" className={iconButton(view === 'inbox')}>
-                <InboxIcon className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setGooglePanelOpen(true)}
-                title="Google"
-                className={
-                  googleAccount.status === 'connected'
-                    ? 'flex h-7 w-7 items-center justify-center rounded-full text-amber-600 dark:text-amber-500'
-                    : iconButton(false)
-                }
-              >
-                <CalendarIcon className="h-4 w-4" />
-              </button>
               <button
                 onClick={() => {
                   setSearchQuery('')
                   setSearchOpen(true)
                 }}
                 title="חיפוש"
-                className={iconButton(false)}
+                className="minimal-icon-button"
               >
                 <SearchIcon className="h-4 w-4" />
-              </button>
-              <button
-                onClick={reminders.enableReminders}
-                title={
-                  reminders.permission === 'granted'
-                    ? 'תזכורות פעילות — פועל כשבujo פתוח בדפדפן זה'
-                    : reminders.permission === 'denied'
-                      ? 'התראות חסומות — יש לאפשר אותן בהגדרות הדפדפן'
-                      : 'הפעלת תזכורות (פועל כשbujo פתוח בדפדפן זה)'
-                }
-                className={
-                  reminders.permission === 'granted'
-                    ? 'flex h-7 w-7 items-center justify-center rounded-full text-amber-600 dark:text-amber-500'
-                    : iconButton(false)
-                }
-              >
-                <BellIcon filled={reminders.permission === 'granted'} className="h-4 w-4" />
-              </button>
-              <button onClick={toggle} title="החלפת ערכת נושא" className={iconButton(false)}>
-                {theme === 'dark' ? '☾' : '☼'}
               </button>
           </div>
         </div>
       </header>
 
       <div className="mobile-shell sm:hidden">
+        <nav className="mobile-primary-nav" aria-label="ניווט ראשי">
+          <span className="brand-word">bujo</span>
+          <div>
+            <button type="button" className={view === 'daily' ? 'is-active' : undefined} onClick={() => setView('daily')}>יומן</button>
+            <button type="button" className={view === 'monthly' ? 'is-active' : undefined} onClick={() => { setMonth(date); setView('monthly') }}>לוח</button>
+          </div>
+          <button type="button" title="חיפוש" onClick={() => { setSearchQuery(''); setSearchOpen(true) }}>
+            <SearchIcon className="h-5 w-5" />
+          </button>
+        </nav>
 
         {view !== 'settings' && (
           <MobileHeader
@@ -274,7 +227,6 @@ function App() {
             onPrev={header.onPrev}
             onNext={header.onNext}
             onTitleClick={header.onTitleClick}
-            onMenuClick={() => setMobileDrawerOpen(true)}
             onSearchClick={() => {
               setSearchQuery('')
               setSearchOpen(true)
@@ -284,24 +236,6 @@ function App() {
       </div>
 
       <div className="method-workspace">
-        <DesktopIndex
-          journal={journal}
-          view={view}
-          selectedCollectionId={collectionId}
-          onDaily={() => setView('daily')}
-          onWeekly={() => setView('weekly')}
-          onMonthly={() => {
-            setMonth(date)
-            setView('monthly')
-          }}
-          onYearly={() => {
-            setMonth(date)
-            setView('yearly')
-          }}
-          onInbox={() => setView('inbox')}
-          onSelectCollection={goToCollection}
-        />
-
         <main className="journal-canvas min-w-0 flex-1 pb-40 sm:pb-16">
           <div className="journal-page">
             {view === 'daily' && (
@@ -326,49 +260,9 @@ function App() {
               <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
             )}
             {view === 'settings' && <SettingsView onClose={() => setView(previousView)} />}
-            <div className="page-number" aria-hidden="true">196 / 366</div>
           </div>
         </main>
-
-        <DesktopDaySidebar journal={journal} date={date} onOpenHabits={() => setView('habits')} />
       </div>
-
-      <footer className="method-footer hidden sm:flex">
-        <span>BUJO · RAPID LOG</span>
-        <span>
-          {googleDrive.lastBackedUpAt
-            ? `נשמר מקומית ומגובה ל-Google Drive · עודכן ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
-            : 'נשמר מקומית בדפדפן זה'}
-        </span>
-      </footer>
-
-      {onMainTab && (
-        <>
-          <button
-            type="button"
-            onClick={() => setView('habits')}
-            title="הרגלים"
-          className="mobile-habits-button fixed bottom-20 start-4 z-40 flex items-center gap-1.5 px-4 py-2.5 text-sm sm:hidden"
-          >
-            <RepeatIcon className="h-4 w-4" />
-            הרגלים
-            {scheduledHabitsToday.length > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-paper/20 px-1 text-xs dark:bg-paperdark/20">
-                {scheduledHabitsToday.length}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileQuickAddOpen(true)}
-            title="הוספת רשומה"
-          className="mobile-add-button fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center sm:hidden"
-          >
-            <PlusIcon className="h-5 w-5" />
-          </button>
-        </>
-      )}
 
       <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
 
@@ -424,13 +318,6 @@ function App() {
         />
       )}
 
-      {mobileQuickAddOpen && (
-        <MobileQuickAdd
-          date={date}
-          onAdd={(text, type, time) => journal.addEntry({ text, type, date, time })}
-          onClose={() => setMobileQuickAddOpen(false)}
-        />
-      )}
     </div>
   )
 }
