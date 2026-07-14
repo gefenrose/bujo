@@ -89,10 +89,18 @@ export function EntryList({
         </SortableContext>
       </DndContext>
       <div className={hideAddOnMobile ? 'hidden sm:block' : undefined}>
-        <EntryInput onSubmit={onAdd} />
+        <EntryInput onSubmit={onAdd} inputId="rapid-log-input" />
       </div>
       {entries.length === 0 && (
-        <p className="mt-2 text-sm text-ink/50 dark:text-inkdark/50">{emptyMessage}</p>
+        <div className="empty-rapid-log">
+          <p>{emptyMessage}</p>
+          <div aria-label="מפתח סימנים">
+            <span><b>•</b> משימה</span>
+            <span><b>○</b> אירוע</span>
+            <span><b>–</b> הערה</span>
+            <span><b>★</b> עדיפות</span>
+          </div>
+        </div>
       )}
     </div>
   )

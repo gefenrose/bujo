@@ -24,7 +24,7 @@ export function DailyPrompts({ journal, date }: DailyPromptsProps) {
   }
 
   return (
-    <div className="mt-8">
+    <div className="reflection-prompts mt-8">
       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
         {sortedPrompts.map((prompt) => (
           <PromptCard

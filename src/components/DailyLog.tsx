@@ -20,8 +20,8 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
   const scheduledHabits = journal.habits.filter((h) => isHabitScheduledOn(h, date))
 
   return (
-    <div>
-      <div className="mb-6 hidden items-baseline justify-between sm:flex">
+    <div className="daily-log">
+      <div className="daily-heading mb-6 hidden items-baseline justify-between sm:flex">
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatDayHeading(date)}
         </h1>
@@ -38,6 +38,11 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
             הבא
           </button>
         </div>
+      </div>
+
+      <div className="method-caption hidden sm:flex">
+        <span>רישום מהיר</span>
+        <span>• × &gt; &lt; – ○ ★</span>
       </div>
 
       <MoodPicker value={moodValue(journal.moodLogs, date)} onChange={(v) => journal.setMood(date, v)} />

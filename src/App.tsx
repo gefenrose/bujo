@@ -27,7 +27,8 @@ import { MonthlyLog } from './components/MonthlyLog'
 import { YearlyLog } from './components/YearlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
-import { CollectionsShelf } from './components/CollectionsShelf'
+import { DesktopIndex } from './components/DesktopIndex'
+import { DesktopDaySidebar } from './components/DesktopDaySidebar'
 import { FilterView } from './components/FilterView'
 import { SettingsView } from './components/SettingsView'
 import { Analytics } from './components/Analytics'
@@ -178,13 +179,41 @@ function App() {
   const header = mobileHeaderProps()
 
   return (
-    <div className="min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
-      <div className="mx-auto flex min-h-screen max-w-5xl flex-col px-6">
-        <header className="hidden border-b border-ink/10 py-4 dark:border-inkdark/10 sm:flex sm:flex-row sm:items-center sm:justify-between sm:py-5">
-          <div className="flex items-center justify-between sm:contents">
-            <span className="shrink-0 text-[0.95rem] font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
+    <div dir="rtl" className="app-shell min-h-screen bg-paper text-ink dark:bg-paperdark dark:text-inkdark">
+      <header className="method-header hidden sm:grid">
+        <div className="brand-lockup">
+          <span className="brand-word">bujo</span>
+          <span className="brand-subtitle">המחברת שלך</span>
+        </div>
 
-            <div className="flex shrink-0 items-center gap-1 sm:order-3">
+        <nav className="method-view-nav" aria-label="תצוגות זמן">
+          {TIME_NAV.map((n) => (
+            <button
+              key={n.view}
+              onClick={() => {
+                setView(n.view)
+                if (n.view === 'monthly') setMonth(date)
+              }}
+              className={view === n.view ? 'is-active' : undefined}
+            >
+              {n.label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="method-toolbar">
+          <button
+            type="button"
+            className="rapid-log-button"
+            onClick={() => {
+              setView('daily')
+              requestAnimationFrame(() => document.getElementById('rapid-log-input')?.focus())
+            }}
+          >
+            <PlusIcon className="h-4 w-4" />
+            רישום מהיר
+          </button>
+          <div className="toolbar-icons">
               <button onClick={() => setView('analytics')} title="נתונים" className={iconButton(view === 'analytics')}>
                 <ChartIcon className="h-4 w-4" />
               </button>
@@ -232,28 +261,11 @@ function App() {
               <button onClick={toggle} title="החלפת ערכת נושא" className={iconButton(false)}>
                 {theme === 'dark' ? '☾' : '☼'}
               </button>
-            </div>
           </div>
+        </div>
+      </header>
 
-          <nav className="flex items-center gap-1 self-center rounded-full bg-ink/[0.04] p-1 text-sm dark:bg-inkdark/[0.05]">
-            {TIME_NAV.map((n) => (
-              <button
-                key={n.view}
-                onClick={() => {
-                  setView(n.view)
-                  if (n.view === 'monthly') setMonth(date)
-                }}
-                className={`rounded-full px-3 py-1 transition-colors ${
-                  view === n.view
-                    ? 'bg-paper text-ink shadow-sm dark:bg-paperdark dark:text-inkdark'
-                    : 'text-ink/65 hover:text-ink dark:text-inkdark/65 dark:hover:text-inkdark'
-                }`}
-              >
-                {n.label}
-              </button>
-            ))}
-          </nav>
-        </header>
+      <div className="mobile-shell sm:hidden">
 
         {view !== 'settings' && (
           <MobileHeader
@@ -263,15 +275,35 @@ function App() {
             onNext={header.onNext}
             onTitleClick={header.onTitleClick}
             onMenuClick={() => setMobileDrawerOpen(true)}
+            onSearchClick={() => {
+              setSearchQuery('')
+              setSearchOpen(true)
+            }}
           />
         )}
+      </div>
 
-        <div className="flex flex-1 flex-col gap-6 py-6 sm:flex-row sm:gap-8 sm:py-8">
-          <div className="hidden sm:contents">
-            <CollectionsShelf journal={journal} selectedId={collectionId} onSelect={goToCollection} />
-          </div>
+      <div className="method-workspace">
+        <DesktopIndex
+          journal={journal}
+          view={view}
+          selectedCollectionId={collectionId}
+          onDaily={() => setView('daily')}
+          onWeekly={() => setView('weekly')}
+          onMonthly={() => {
+            setMonth(date)
+            setView('monthly')
+          }}
+          onYearly={() => {
+            setMonth(date)
+            setView('yearly')
+          }}
+          onInbox={() => setView('inbox')}
+          onSelectCollection={goToCollection}
+        />
 
-          <main className="min-w-0 flex-1 pb-40 sm:pb-16">
+        <main className="journal-canvas min-w-0 flex-1 pb-40 sm:pb-16">
+          <div className="journal-page">
             {view === 'daily' && (
               <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
             )}
@@ -294,15 +326,21 @@ function App() {
               <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
             )}
             {view === 'settings' && <SettingsView onClose={() => setView(previousView)} />}
-          </main>
-        </div>
+            <div className="page-number" aria-hidden="true">196 / 366</div>
+          </div>
+        </main>
 
-        <footer className="hidden border-t border-ink/10 py-4 text-center text-xs text-ink/50 dark:border-inkdark/10 dark:text-inkdark/50 sm:block">
-          {googleDrive.lastBackedUpAt
-            ? `נשמר מקומית ומגובה ל-Google Drive · עודכן לאחרונה בשעה ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
-            : 'נשמר מקומית בדפדפן זה'}
-        </footer>
+        <DesktopDaySidebar journal={journal} date={date} onOpenHabits={() => setView('habits')} />
       </div>
+
+      <footer className="method-footer hidden sm:flex">
+        <span>BUJO · RAPID LOG</span>
+        <span>
+          {googleDrive.lastBackedUpAt
+            ? `נשמר מקומית ומגובה ל-Google Drive · עודכן ${new Date(googleDrive.lastBackedUpAt).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}`
+            : 'נשמר מקומית בדפדפן זה'}
+        </span>
+      </footer>
 
       {onMainTab && (
         <>
@@ -310,7 +348,7 @@ function App() {
             type="button"
             onClick={() => setView('habits')}
             title="הרגלים"
-            className="fixed bottom-20 start-4 z-40 flex items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-sm text-paper shadow-lg transition-colors hover:opacity-90 dark:bg-inkdark dark:text-paperdark sm:hidden"
+          className="mobile-habits-button fixed bottom-20 start-4 z-40 flex items-center gap-1.5 px-4 py-2.5 text-sm sm:hidden"
           >
             <RepeatIcon className="h-4 w-4" />
             הרגלים
@@ -325,25 +363,12 @@ function App() {
             type="button"
             onClick={() => setMobileQuickAddOpen(true)}
             title="הוספת רשומה"
-            className="fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-ink text-paper shadow-lg transition-colors hover:opacity-90 dark:bg-inkdark dark:text-paperdark sm:hidden"
+          className="mobile-add-button fixed bottom-20 end-4 z-40 flex h-12 w-12 items-center justify-center sm:hidden"
           >
             <PlusIcon className="h-5 w-5" />
           </button>
         </>
       )}
-
-      <button
-        type="button"
-        onClick={() => setView('habits')}
-        title="הרגלים"
-        className={`fixed bottom-6 end-6 z-40 hidden h-12 w-12 items-center justify-center rounded-full shadow-lg transition-colors hover:opacity-90 sm:flex ${
-          view === 'habits'
-            ? 'bg-amber-500 text-paper dark:bg-amber-400 dark:text-paperdark'
-            : 'bg-ink text-paper dark:bg-inkdark dark:text-paperdark'
-        }`}
-      >
-        <RepeatIcon className="h-5 w-5" />
-      </button>
 
       <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
 

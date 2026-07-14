@@ -8,16 +8,16 @@ interface MobileTabBarProps {
 }
 
 const TABS: { view: MobileView; label: string }[] = [
-  { view: 'daily', label: 'יום' },
-  { view: 'weekly', label: 'שבוע' },
-  { view: 'monthly', label: 'חודש' },
-  { view: 'yearly', label: 'שנה' },
+  { view: 'daily', label: 'יומי' },
+  { view: 'weekly', label: 'שבועי' },
+  { view: 'monthly', label: 'חודשי' },
+  { view: 'yearly', label: 'עתידי' },
 ]
 
 /** Mobile-only bottom nav: replaces the desktop top segmented Day/Week/Month control. */
 export function MobileTabBar({ view, onChangeView, incompleteCount = 0 }: MobileTabBarProps) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-ink/10 bg-paper pb-[env(safe-area-inset-bottom)] dark:border-inkdark/10 dark:bg-paperdark sm:hidden">
+    <nav className="method-mobile-tabs fixed inset-x-0 bottom-0 z-30 flex border-t border-ink/20 bg-paper pb-[env(safe-area-inset-bottom)] dark:border-inkdark/20 dark:bg-paperdark sm:hidden">
       {TABS.map((tab) => (
         <button
           key={tab.view}

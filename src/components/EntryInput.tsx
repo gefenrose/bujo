@@ -9,6 +9,7 @@ interface EntryInputProps {
   onSubmit: (text: string, type: EntryType, time?: string) => void
   placeholder?: string
   autoFocus?: boolean
+  inputId?: string
 }
 
 const TYPES: { type: EntryType; glyph: string; label: string }[] = [
@@ -17,7 +18,7 @@ const TYPES: { type: EntryType; glyph: string; label: string }[] = [
   { type: 'note', glyph: '–', label: 'הערה' },
 ]
 
-export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…', autoFocus = false }: EntryInputProps) {
+export function EntryInput({ onSubmit, placeholder = 'מה תרשום?', autoFocus = false, inputId }: EntryInputProps) {
   const { preferences } = usePreferences()
   const [type, setType] = useState<EntryType>(preferences.defaultEntryType)
   const [value, setValue] = useState('')
@@ -51,7 +52,7 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
   }
 
   return (
-    <div className="flex items-center gap-2.5 rounded px-1.5 py-1 -mx-1.5">
+    <div className="rapid-entry-composer flex items-center gap-2.5 px-1.5 py-1 -mx-1.5">
       <div className="flex h-3.5 w-3.5 shrink-0 items-center justify-center">
         <button
           type="button"
@@ -63,12 +64,13 @@ export function EntryInput({ onSubmit, placeholder = 'הוספת רשומה…',
         </button>
       </div>
       <input
+        id={inputId}
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
+        className="rapid-entry-input min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
       />
       {showTime || time ? (
         <div className="flex shrink-0 items-center gap-1">

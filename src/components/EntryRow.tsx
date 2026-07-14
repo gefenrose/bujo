@@ -281,7 +281,7 @@ export function EntryRow({
             transition: swiping ? 'none' : 'transform 200ms ease-out',
             touchAction: 'pan-y',
           }}
-          className="group relative flex items-start gap-1.5 rounded bg-paper px-1.5 py-1 hover:bg-ink/[0.03] dark:bg-paperdark dark:hover:bg-inkdark/[0.04]"
+          className="rapid-entry-row group relative flex items-start gap-1.5 bg-paper px-1.5 py-1 hover:bg-ink/[0.03] dark:bg-paperdark dark:hover:bg-inkdark/[0.04]"
         >
           {dragHandleProps && (
             <button
@@ -366,7 +366,7 @@ export function EntryRow({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="group/tag flex shrink-0 items-center gap-1 rounded-full bg-ink/[0.06] ps-2 pe-1 py-0.5 text-xs text-ink/65 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.08] dark:text-inkdark/65 dark:hover:bg-inkdark/15 dark:hover:text-inkdark"
+                  className="entry-tag group/tag flex shrink-0 items-center gap-1 ps-2 pe-1 py-0.5 text-xs text-ink/65 hover:bg-ink/10 hover:text-ink dark:bg-inkdark/[0.08] dark:text-inkdark/65 dark:hover:bg-inkdark/15 dark:hover:text-inkdark"
                 >
                   <button
                     type="button"
