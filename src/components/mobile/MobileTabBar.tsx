@@ -1,4 +1,4 @@
-type MobileView = 'daily' | 'weekly' | 'monthly' | 'yearly'
+type MobileView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
 
 interface MobileTabBarProps {
   view: string
@@ -10,6 +10,7 @@ interface MobileTabBarProps {
 const TABS: { view: MobileView; label: string }[] = [
   { view: 'daily', label: 'יומן' },
   { view: 'monthly', label: 'לוח שנה' },
+  { view: 'analytics', label: 'תובנות' },
 ]
 
 /** Mobile-only bottom nav: replaces the desktop top segmented Day/Week/Month control. */

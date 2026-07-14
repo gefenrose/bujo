@@ -27,7 +27,7 @@ import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
 import { FilterView } from './components/FilterView'
 import { SettingsView } from './components/SettingsView'
-import { Analytics } from './components/Analytics'
+import { MoodHabitInsights } from './components/MoodHabitInsights'
 import { Habits } from './components/Habits'
 import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
@@ -48,11 +48,12 @@ type View =
   | 'analytics'
   | 'filter'
   | 'settings'
-type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly'
+type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
 
 const TIME_NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומן' },
   { view: 'monthly', label: 'לוח שנה' },
+  { view: 'analytics', label: 'תובנות' },
 ]
 
 function App() {
@@ -214,13 +215,14 @@ function App() {
           <div>
             <button type="button" className={view === 'daily' ? 'is-active' : undefined} onClick={() => setView('daily')}>יומן</button>
             <button type="button" className={view === 'monthly' ? 'is-active' : undefined} onClick={() => { setMonth(date); setView('monthly') }}>לוח</button>
+            <button type="button" className={view === 'analytics' ? 'is-active' : undefined} onClick={() => setView('analytics')}>תובנות</button>
           </div>
           <button type="button" title="חיפוש" onClick={() => { setSearchQuery(''); setSearchOpen(true) }}>
             <SearchIcon className="h-5 w-5" />
           </button>
         </nav>
 
-        {view !== 'settings' && (
+        {view !== 'settings' && view !== 'analytics' && (
           <MobileHeader
             title={header.title}
             subtitle={header.subtitle}
@@ -238,6 +240,14 @@ function App() {
       <div className="method-workspace">
         <main className="journal-canvas min-w-0 flex-1 pb-40 sm:pb-16">
           <div className="journal-page">
+            <div className="journal-stickers" aria-hidden="true">
+              <span className="date-tab-sticker">
+                <small>{monthName(date)}</small>
+                <strong>{Number(date.slice(-2))}</strong>
+              </span>
+              <span className="calendar-sticker"><i /></span>
+              <span className="leaf-sticker"><i /><i /><i /><i /></span>
+            </div>
             {view === 'daily' && (
               <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
             )}
@@ -255,7 +265,7 @@ function App() {
             )}
             {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
             {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
-            {view === 'analytics' && <Analytics journal={journal} />}
+            {view === 'analytics' && <MoodHabitInsights journal={journal} />}
             {view === 'filter' && activeFilter && (
               <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
             )}
