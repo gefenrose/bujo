@@ -33,6 +33,7 @@ import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
 import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
+import { MobileTabBar } from './components/mobile/MobileTabBar'
 import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
 import { PlusIcon, SearchIcon } from './components/icons/Icons'
 import pressedOliveSprig from './assets/pressed-olive-sprig-v2.png'
@@ -49,6 +50,8 @@ type View =
   | 'analytics'
   | 'filter'
   | 'settings'
+type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
+
 const TIME_NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומן' },
   { view: 'monthly', label: 'לוח שנה' },
@@ -92,6 +95,11 @@ function App() {
   const openSearchForTag = (tag: string) => {
     setSearchQuery(tag)
     setSearchOpen(true)
+  }
+
+  const changeMobileTab = (v: MobileTabView) => {
+    setView(v)
+    if (v === 'monthly' || v === 'yearly') setMonth(date)
   }
 
   const mobileHeaderProps = (): {
@@ -149,6 +157,9 @@ function App() {
     }
   }
 
+  const incompleteToday = preferences.showIncompleteCount
+    ? journal.entries.filter((e) => e.date === todayISO() && e.type === 'task' && e.status === 'open').length
+    : 0
   const header = mobileHeaderProps()
 
   return (
@@ -203,11 +214,6 @@ function App() {
       <div className="mobile-shell sm:hidden">
         <nav className="mobile-primary-nav" aria-label="ניווט ראשי">
           <span className="brand-word">bujo</span>
-          <div>
-            <button type="button" className={view === 'daily' ? 'is-active' : undefined} onClick={() => setView('daily')}>יומן</button>
-            <button type="button" className={view === 'monthly' ? 'is-active' : undefined} onClick={() => { setMonth(date); setView('monthly') }}>לוח</button>
-            <button type="button" className={view === 'analytics' ? 'is-active' : undefined} onClick={() => setView('analytics')}>תובנות</button>
-          </div>
           <button type="button" title="חיפוש" onClick={() => { setSearchQuery(''); setSearchOpen(true) }}>
             <SearchIcon className="h-5 w-5" />
           </button>
@@ -264,6 +270,8 @@ function App() {
           </div>
         </main>
       </div>
+
+      <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
 
       <Toasts
         reminders={reminders.toasts}
