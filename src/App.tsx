@@ -245,28 +245,30 @@ function App() {
               <img className="calendar-sticker" src={calendarSticker} alt="" />
               <img className="leaf-sticker" src={pressedOliveSprig} alt="" />
             </div>
-            {view === 'daily' && (
-              <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
-            )}
-            {view === 'weekly' && (
-              <WeeklyLog journal={journal} date={date} onChangeDate={setDate} onSelectDate={goToDate} />
-            )}
-            {view === 'monthly' && (
-              <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
-            )}
-            {view === 'yearly' && (
-              <YearlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
-            )}
-            {view === 'collections' && (
-              <Collections journal={journal} selectedId={collectionId} onTagClick={openSearchForTag} />
-            )}
-            {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
-            {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
-            {view === 'analytics' && <MoodHabitInsights journal={journal} />}
-            {view === 'filter' && activeFilter && (
-              <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
-            )}
-            {view === 'settings' && <SettingsView onClose={() => setView(previousView)} />}
+            <div key={view} className="journal-view" data-view={view}>
+              {view === 'daily' && (
+                <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
+              )}
+              {view === 'weekly' && (
+                <WeeklyLog journal={journal} date={date} onChangeDate={setDate} onSelectDate={goToDate} />
+              )}
+              {view === 'monthly' && (
+                <MonthlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
+              )}
+              {view === 'yearly' && (
+                <YearlyLog journal={journal} month={month} onChangeMonth={setMonth} onSelectDate={goToDate} />
+              )}
+              {view === 'collections' && (
+                <Collections journal={journal} selectedId={collectionId} onTagClick={openSearchForTag} />
+              )}
+              {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
+              {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
+              {view === 'analytics' && <MoodHabitInsights journal={journal} />}
+              {view === 'filter' && activeFilter && (
+                <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
+              )}
+              {view === 'settings' && <SettingsView onClose={() => setView(previousView)} />}
+            </div>
           </div>
         </main>
       </div>

@@ -3447,3 +3447,249 @@ body,
   background-position: center top;
   background-size: 384px 384px;
 }
+
+/* Fluid spring motion ---------------------------------------------------- */
+:root {
+  --motion-spring: cubic-bezier(.2, 1.35, .32, 1);
+  --motion-fluid: cubic-bezier(.22, .82, .3, 1);
+}
+
+@keyframes journal-view-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(.985);
+  }
+  58% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.004);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes paper-sticker-settle {
+  0% {
+    opacity: 0;
+    translate: 0 -18px;
+    scale: .9;
+  }
+  62% {
+    opacity: 1;
+    translate: 0 3px;
+    scale: 1.025;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes mood-sticker-bounce {
+  0% { transform: scale(.84) rotate(4deg); }
+  48% { transform: scale(1.24) rotate(-7deg); }
+  72% { transform: scale(1.08) rotate(-2deg); }
+  100% { transform: scale(1.14) rotate(-4deg); }
+}
+
+@keyframes rapid-row-arrive {
+  0% {
+    opacity: 0;
+    translate: 12px 0;
+  }
+  65% {
+    opacity: 1;
+    translate: -2px 0;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes picker-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(.965);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.008);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.journal-view {
+  min-width: 0;
+  animation: journal-view-enter 480ms var(--motion-spring) both;
+  transform-origin: 50% 12%;
+}
+
+.date-tab-sticker,
+.calendar-sticker,
+.leaf-sticker,
+.daily-heart-sticker {
+  animation: paper-sticker-settle 620ms var(--motion-spring) both;
+}
+
+.calendar-sticker { animation-delay: 80ms; }
+.leaf-sticker { animation-delay: 140ms; }
+.daily-heart-sticker { animation-delay: 110ms; }
+
+.rapid-entry-row {
+  animation: rapid-row-arrive 380ms var(--motion-spring) both;
+  transition:
+    background-color 220ms var(--motion-fluid),
+    box-shadow 300ms var(--motion-fluid),
+    translate 380ms var(--motion-spring);
+}
+
+.rapid-entry-row:hover {
+  translate: -2px 0;
+}
+
+.method-view-nav button,
+.method-mobile-tabs button,
+.rapid-log-button,
+.minimal-icon-button,
+.daily-date-nav button,
+.daily-habit-inputs button,
+.calendar-cell:not(.is-empty),
+.symbol-picker-options button {
+  transition:
+    color 180ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 300ms var(--motion-fluid),
+    transform 420ms var(--motion-spring),
+    translate 420ms var(--motion-spring),
+    scale 420ms var(--motion-spring);
+}
+
+.method-view-nav button:hover,
+.daily-date-nav button:hover {
+  translate: 0 -2px;
+}
+
+.method-view-nav button:active,
+.method-mobile-tabs button:active,
+.rapid-log-button:active,
+.minimal-icon-button:active,
+.daily-date-nav button:active,
+.daily-habit-inputs button:active,
+.calendar-cell:not(.is-empty):active,
+.symbol-picker-options button:active {
+  scale: .91;
+  transition-duration: 90ms;
+}
+
+.rapid-log-button:hover {
+  translate: 0 -2px;
+  box-shadow: 0 6px 0 rgba(73, 45, 25, .13);
+}
+
+.minimal-icon-button:hover {
+  scale: 1.12;
+  rotate: -5deg;
+}
+
+.method-view-nav button::after {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 430ms var(--motion-spring);
+}
+
+.method-view-nav button.is-active::after {
+  transform: scaleX(1);
+}
+
+.method-mobile-tabs button[class*='font-medium'] {
+  animation: paper-sticker-settle 430ms var(--motion-spring) both;
+}
+
+.daily-mood-input button {
+  transition:
+    box-shadow 320ms var(--motion-fluid),
+    background-color 220ms ease,
+    transform 440ms var(--motion-spring);
+}
+
+.daily-mood-input button:hover,
+.daily-mood-input button:focus-visible {
+  transform: translateY(-4px) scale(1.04) rotate(3deg);
+}
+
+.daily-mood-input button:active {
+  transform: translateY(1px) scale(.86) rotate(-2deg);
+  transition-duration: 90ms;
+}
+
+.daily-mood-input button.is-selected {
+  animation: mood-sticker-bounce 520ms var(--motion-spring) both;
+}
+
+.daily-habit-inputs button.is-done {
+  scale: 1.04;
+}
+
+.rapid-entry-composer {
+  transition:
+    background-color 260ms ease,
+    border-color 260ms ease,
+    box-shadow 360ms var(--motion-fluid),
+    transform 420ms var(--motion-spring);
+}
+
+.rapid-entry-composer:focus-within {
+  transform: translateY(-2px) scale(1.004);
+}
+
+.symbol-picker {
+  animation: picker-pop 420ms var(--motion-spring) both;
+  transform-origin: 50% 100%;
+}
+
+.symbol-picker-options button:hover {
+  translate: -3px 0;
+}
+
+.calendar-cell:not(.is-empty):hover {
+  translate: 0 -3px;
+  scale: 1.025;
+  box-shadow: 0 5px 12px rgba(66, 43, 23, .09);
+}
+
+.empty-rapid-log {
+  animation: journal-view-enter 560ms 120ms var(--motion-fluid) both;
+}
+
+@media (max-width: 639px) {
+  .journal-view {
+    animation-duration: 420ms;
+    transform-origin: 50% 6%;
+  }
+
+  .rapid-entry-row:hover,
+  .symbol-picker-options button:hover,
+  .calendar-cell:not(.is-empty):hover {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
