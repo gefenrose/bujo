@@ -10,6 +10,7 @@
   --font-sans: Arial, 'Helvetica Neue', sans-serif;
 }
 
+
 /* Minimal calendar + journal direction ------------------------------------ */
 :root {
   --paper: #faf9f6;
@@ -2316,25 +2317,56 @@ body,
 
 .daily-mood-input > div {
   direction: ltr;
-  gap: 3px;
+  gap: 2px;
 }
 
 .daily-mood-input button {
+  position: relative;
   display: flex;
-  width: 22px;
-  height: 22px;
+  width: 42px;
+  height: 42px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--rule);
-  border-radius: 50%;
-  color: var(--muted);
-  font-size: .62rem;
+  border: 0;
+  border-radius: 12px;
+  background: var(--mood-sticker-bg, #eee7da);
+  box-shadow: 0 2px 3px rgba(62, 45, 27, .12);
+  opacity: 1;
+  transform: scale(.94);
+  transition: transform 150ms ease;
+}
+
+.daily-mood-input button:nth-child(1) { --mood-sticker-bg: #dce2ea; }
+.daily-mood-input button:nth-child(2) { --mood-sticker-bg: #d4e8ef; }
+.daily-mood-input button:nth-child(3) { --mood-sticker-bg: #f0e3bd; }
+.daily-mood-input button:nth-child(4) { --mood-sticker-bg: #f1d6c8; }
+.daily-mood-input button:nth-child(5) { --mood-sticker-bg: #f0d88e; }
+
+.mood-sticker-icon {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 1px rgba(62, 45, 27, .16));
+}
+
+.daily-mood-input button:hover,
+.daily-mood-input button:focus-visible {
+  transform: translateY(-1px) rotate(2deg);
 }
 
 .daily-mood-input button.is-selected {
-  border-color: var(--accent);
+  background: var(--mood-sticker-bg);
+  box-shadow: 0 3px 5px rgba(62, 45, 27, .2);
+  transform: scale(1.14) rotate(-4deg);
+}
+
+.daily-mood-input button.is-selected::after {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  margin-top: 43px;
+  border-radius: 50%;
   background: var(--accent);
-  color: white;
+  content: '';
 }
 
 .daily-habit-inputs {
@@ -2573,6 +2605,25 @@ body,
     flex-direction: column;
     gap: 12px;
     margin-bottom: 22px;
+  }
+
+  .daily-mood-input {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .daily-mood-input > div {
+    gap: 0;
+  }
+
+  .daily-mood-input button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mood-sticker-icon {
+    width: 38px;
+    height: 38px;
   }
 
   .daily-habit-inputs {
@@ -2990,5 +3041,342 @@ body,
     background:
       radial-gradient(circle at 20% 30%, rgba(100,78,50,.05) 0 .55px, transparent .8px),
       color-mix(in srgb, var(--paper) 96%, transparent);
+  }
+
+  .date-tab-sticker,
+  .daily-signals::after {
+    display: none;
+  }
+}
+
+/* Warm organic cascade lock ---------------------------------------------- */
+:root {
+  --desk: #cdae84;
+  --desk-line: rgba(89, 59, 34, .07);
+  --paper: #fbf3e4;
+  --paper-deep: #eadbc4;
+  --ink: #3a2b20;
+  --muted: #857463;
+  --rule: rgba(91, 66, 43, .2);
+  --rule-strong: rgba(69, 48, 31, .5);
+  --accent: #c28d28;
+  --priority: #a6533e;
+  --sticker-red: #b9654d;
+  --sticker-blue: #5f8198;
+  --sticker-green: #74805b;
+}
+
+html,
+body,
+.app-shell {
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 18% 15%, rgba(255, 244, 220, .22), transparent 24%),
+    repeating-linear-gradient(88deg, transparent 0 18px, var(--desk-line) 19px, transparent 20px 39px),
+    var(--desk) !important;
+}
+
+.method-header,
+.method-workspace,
+.mobile-shell {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(104, 72, 39, .07) 0 .55px, transparent .9px),
+    radial-gradient(circle at 74% 63%, rgba(255, 255, 255, .72) 0 .65px, transparent 1px),
+    repeating-linear-gradient(4deg, transparent 0 10px, rgba(110, 78, 43, .018) 11px, transparent 12px 24px);
+  background-size: 15px 15px, 19px 19px, auto;
+}
+
+.method-header {
+  min-height: 78px;
+  border-color: rgba(83, 58, 37, .22);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -5px 16px rgba(65, 41, 23, .09), 10px 0 18px -15px rgba(62, 39, 21, .45), -10px 0 18px -15px rgba(62, 39, 21, .45);
+}
+
+.method-header::before {
+  top: -13px;
+  left: 50px;
+  width: 96px;
+  height: 29px;
+  border: 0;
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(8deg, rgba(115, 78, 38, .06) 0 1px, transparent 1px 5px),
+    rgba(224, 198, 151, .78);
+  clip-path: polygon(1% 7%, 99% 0, 96% 94%, 3% 100%);
+}
+
+.brand-word {
+  color: #39291e;
+  font-size: 1.65rem;
+}
+
+.method-view-nav {
+  gap: 34px;
+  color: #827160;
+}
+
+.method-view-nav button::after {
+  right: -2px;
+  left: -2px;
+  height: 3px;
+  border-radius: 80% 30% 70% 40%;
+}
+
+.rapid-log-button {
+  min-height: 42px;
+  border-color: #3a2b20;
+  border-radius: 8px 7px 9px 6px;
+  background: #3a2b20;
+  box-shadow: 0 3px 0 rgba(73, 45, 25, .17);
+  color: #fff6e8;
+}
+
+.method-workspace {
+  min-height: calc(100vh - 138px);
+  border-radius: 0 0 16px 18px;
+  box-shadow: 0 22px 36px rgba(62, 39, 21, .2), 9px 0 19px -15px rgba(62, 39, 21, .46), -9px 0 19px -15px rgba(62, 39, 21, .46);
+}
+
+.method-workspace::after {
+  right: 12px;
+  bottom: -10px;
+  left: 10px;
+  height: 11px;
+  border-radius: 0 0 12px 14px;
+  background: repeating-linear-gradient(to bottom, #e2d0b5 0 1px, #f7ead7 1px 3px);
+}
+
+.journal-page {
+  max-width: 980px;
+  padding-top: 82px;
+}
+
+.journal-stickers {
+  overflow: visible;
+}
+
+.daily-heading,
+.daily-signals,
+.rapid-entry-row {
+  border-color: rgba(91, 66, 43, .18);
+}
+
+.daily-heading h1,
+.journal-page h1 {
+  color: #3a291d;
+  letter-spacing: -.018em;
+}
+
+.daily-heading h1::before {
+  top: -8px;
+  right: -13px;
+  bottom: -7px;
+  left: -13px;
+  background:
+    repeating-linear-gradient(7deg, rgba(125, 87, 47, .045) 0 1px, transparent 1px 5px),
+    rgba(226, 203, 164, .62);
+  box-shadow: 0 3px 6px rgba(73, 48, 25, .09);
+  clip-path: polygon(1% 7%, 99% 1%, 97% 93%, 2% 100%);
+}
+
+.daily-signals {
+  padding-block: 17px;
+}
+
+.rapid-entry-composer {
+  min-height: 58px;
+  border: 1.5px solid #574331;
+  border-radius: 9px 7px 10px 8px;
+  background: rgba(255, 250, 240, .3);
+  box-shadow: 0 2px 0 rgba(78, 53, 32, .06);
+}
+
+.rapid-entry-composer:hover {
+  background: rgba(255, 250, 240, .48);
+}
+
+.rapid-entry-composer:focus-within {
+  border-color: #9b6c20;
+  background: rgba(255, 250, 240, .62);
+  box-shadow: 0 0 0 3px rgba(194, 141, 40, .13), inset 0 -2px 0 var(--accent);
+}
+
+.rapid-entry-input::placeholder {
+  color: #9a8876;
+}
+
+.date-tab-sticker {
+  border-radius: 3px 9px 7px 2px;
+  background: #d3a13b;
+  box-shadow: 3px 4px 7px rgba(70, 46, 23, .16);
+}
+
+.daily-signals::after {
+  border-color: #faefde;
+  background: #b9664f;
+}
+
+.calendar-sticker {
+  border-color: #fbefdc;
+  border-radius: 8px 5px 10px 6px;
+  box-shadow: 0 4px 7px rgba(65, 43, 24, .15);
+  transform: rotate(-6deg);
+}
+
+.leaf-sticker {
+  right: -120px;
+  bottom: 50px;
+  width: 140px;
+  height: auto;
+  border: 0;
+  border-color: #fbefdc;
+  filter: drop-shadow(0 3px 3px rgba(65, 43, 24, .13));
+  object-fit: contain;
+  transform: scaleX(1.65) rotate(1deg);
+}
+
+.calendar-cell:not(.is-empty):hover {
+  background: rgba(210, 173, 108, .1);
+}
+
+.symbol-picker {
+  border-color: rgba(78, 54, 34, .28);
+  border-radius: 10px 8px 12px 9px;
+  background: color-mix(in srgb, var(--paper) 97%, #fff);
+  box-shadow: 0 16px 35px rgba(66, 43, 23, .15);
+}
+
+@media (max-width: 639px) {
+  html,
+  body,
+  .app-shell {
+    background: #cdae84 !important;
+  }
+
+  .app-shell {
+    padding: 10px 8px 0;
+  }
+
+  .mobile-shell {
+    border-radius: 13px 13px 0 0;
+  }
+
+  .mobile-shell::after {
+    top: -7px;
+    left: 22px;
+    width: 74px;
+    height: 21px;
+    background: rgba(224, 198, 151, .8);
+    clip-path: polygon(1% 8%, 99% 0, 96% 94%, 3% 100%);
+  }
+
+  .method-workspace {
+    min-height: calc(100dvh - 80px);
+    border-radius: 0 0 13px 14px;
+  }
+
+  .journal-page {
+    padding-top: 48px;
+    padding-inline: 24px;
+  }
+
+  .rapid-entry-composer {
+    min-height: 56px;
+  }
+
+  .leaf-sticker {
+    right: 2px;
+    bottom: 86px;
+    width: 90px;
+    transform: scaleX(1.12) rotate(1deg);
+  }
+
+  .method-mobile-tabs {
+    background:
+      radial-gradient(circle at 20% 30%, rgba(100, 78, 50, .06) 0 .55px, transparent .8px),
+      color-mix(in srgb, var(--paper) 97%, transparent);
+    box-shadow: 0 -5px 13px rgba(68, 45, 25, .07);
+  }
+}
+
+/* Journal detail fixes --------------------------------------------------- */
+.daily-date-nav {
+  margin-inline-end: clamp(34px, 6vw, 76px);
+}
+
+.daily-signals::after {
+  display: none;
+}
+
+.daily-heart-sticker {
+  position: absolute;
+  top: 4px;
+  right: -61px;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(65, 45, 27, .14));
+  transform: rotate(3deg);
+}
+
+.calendar-sticker {
+  width: 160px;
+  height: 160px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 3px rgba(65, 43, 24, .14));
+  transform: rotate(-5deg);
+}
+
+.method-header {
+  border-bottom: 1px solid rgba(83, 58, 37, .18);
+}
+
+.method-workspace::after {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .mobile-primary-nav {
+    border-bottom-color: rgba(83, 58, 37, .16);
+    box-shadow: none;
+  }
+
+  .method-mobile-header {
+    border-bottom: 1px solid rgba(83, 58, 37, .16) !important;
+    box-shadow: none !important;
+  }
+
+  .method-mobile-header::after {
+    display: none !important;
+  }
+
+  .journal-page {
+    padding-bottom: 72px;
+  }
+
+  .daily-heart-sticker {
+    position: static;
+    width: 54px;
+    height: 54px;
+    flex: 0 0 auto;
+    margin-inline-start: 2px;
+    order: 0;
+  }
+
+  .daily-mood-input {
+    order: 1;
+  }
+
+  .calendar-sticker {
+    bottom: 10px;
+    left: 0;
+    width: 92px;
+    height: 92px;
   }
 }

@@ -33,9 +33,10 @@ import { Toasts } from './components/Toasts'
 import { Search } from './components/Search'
 import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
-import { MobileTabBar } from './components/mobile/MobileTabBar'
 import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
 import { PlusIcon, SearchIcon } from './components/icons/Icons'
+import pressedOliveSprig from './assets/pressed-olive-sprig-v2.png'
+import calendarSticker from './assets/calendar-sticker.png'
 
 type View =
   | 'daily'
@@ -48,8 +49,6 @@ type View =
   | 'analytics'
   | 'filter'
   | 'settings'
-type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
-
 const TIME_NAV: { view: View; label: string }[] = [
   { view: 'daily', label: 'יומן' },
   { view: 'monthly', label: 'לוח שנה' },
@@ -93,11 +92,6 @@ function App() {
   const openSearchForTag = (tag: string) => {
     setSearchQuery(tag)
     setSearchOpen(true)
-  }
-
-  const changeMobileTab = (v: MobileTabView) => {
-    setView(v)
-    if (v === 'monthly' || v === 'yearly') setMonth(date)
   }
 
   const mobileHeaderProps = (): {
@@ -155,9 +149,6 @@ function App() {
     }
   }
 
-  const incompleteToday = preferences.showIncompleteCount
-    ? journal.entries.filter((e) => e.date === todayISO() && e.type === 'task' && e.status === 'open').length
-    : 0
   const header = mobileHeaderProps()
 
   return (
@@ -238,15 +229,15 @@ function App() {
       </div>
 
       <div className="method-workspace">
-        <main className="journal-canvas min-w-0 flex-1 pb-40 sm:pb-16">
+        <main className="journal-canvas min-w-0 flex-1 pb-16">
           <div className="journal-page">
             <div className="journal-stickers" aria-hidden="true">
               <span className="date-tab-sticker">
                 <small>{monthName(date)}</small>
                 <strong>{Number(date.slice(-2))}</strong>
               </span>
-              <span className="calendar-sticker"><i /></span>
-              <span className="leaf-sticker"><i /><i /><i /><i /></span>
+              <img className="calendar-sticker" src={calendarSticker} alt="" />
+              <img className="leaf-sticker" src={pressedOliveSprig} alt="" />
             </div>
             {view === 'daily' && (
               <DailyLog journal={journal} date={date} onChangeDate={setDate} onTagClick={openSearchForTag} />
@@ -273,8 +264,6 @@ function App() {
           </div>
         </main>
       </div>
-
-      <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
 
       <Toasts
         reminders={reminders.toasts}

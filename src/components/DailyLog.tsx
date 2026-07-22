@@ -4,6 +4,8 @@ import { sortByOrder } from '../lib/entries'
 import { habitValue, isHabitScheduledOn } from '../lib/habits'
 import { moodValue } from '../lib/mood'
 import { EntryList } from './EntryList'
+import { MoodStickerIcon } from './icons/MoodStickerIcon'
+import heartSticker from '../assets/heart-sticker.png'
 
 interface DailyLogProps {
   journal: Journal
@@ -11,6 +13,14 @@ interface DailyLogProps {
   onChangeDate: (date: string) => void
   onTagClick: (tag: string) => void
 }
+
+const MOOD_OPTIONS = [
+  { value: 1, label: 'סוער' },
+  { value: 2, label: 'עצוב' },
+  { value: 3, label: 'ניטרלי' },
+  { value: 4, label: 'שמח' },
+  { value: 5, label: 'מאושר' },
+] as const
 
 export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogProps) {
   const entries = sortByOrder(journal.entries.filter((e) => e.date === date))
@@ -22,7 +32,7 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
         <h1 className="text-lg font-medium tracking-tight text-ink dark:text-inkdark">
           {formatDayHeading(date)}
         </h1>
-        <div className="flex items-center gap-3 text-sm text-ink/65 dark:text-inkdark/65">
+        <div className="daily-date-nav flex items-center gap-3 text-sm text-ink/65 dark:text-inkdark/65">
           <button onClick={() => onChangeDate(addDays(date, -1))} className="hover:text-ink dark:hover:text-inkdark">
             הקודם
           </button>
@@ -39,18 +49,20 @@ export function DailyLog({ journal, date, onChangeDate, onTagClick }: DailyLogPr
 
       <section className="daily-signals" aria-label="תיעוד מצב רוח והרגלים">
         <div className="daily-mood-input">
+          <img className="daily-heart-sticker" src={heartSticker} alt="" aria-hidden="true" />
           <span>מצב רוח</span>
           <div>
-            {[1, 2, 3, 4, 5].map((value) => (
+            {MOOD_OPTIONS.map(({ value, label }) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => journal.setMood(date, value)}
                 className={mood === value ? 'is-selected' : undefined}
-                aria-label={`מצב רוח ${value} מתוך 5`}
+                aria-label={`${label}, מצב רוח ${value} מתוך 5`}
                 aria-pressed={mood === value}
+                title={label}
               >
-                {value}
+                <MoodStickerIcon level={value} className="mood-sticker-icon" />
               </button>
             ))}
           </div>
