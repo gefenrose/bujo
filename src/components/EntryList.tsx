@@ -60,6 +60,9 @@ export function EntryList({
 
   return (
     <div className="flex flex-col">
+      <div className={hideAddOnMobile ? 'hidden sm:block' : undefined}>
+        <EntryInput onSubmit={onAdd} inputId="rapid-log-input" />
+      </div>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={entries.map((e) => e.id)} strategy={verticalListSortingStrategy}>
           {entries.map((entry) => (
@@ -88,9 +91,6 @@ export function EntryList({
           ))}
         </SortableContext>
       </DndContext>
-      <div className={hideAddOnMobile ? 'hidden sm:block' : undefined}>
-        <EntryInput onSubmit={onAdd} inputId="rapid-log-input" />
-      </div>
       {entries.length === 0 && (
         <div className="empty-rapid-log">
           <p>{emptyMessage}</p>
