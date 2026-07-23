@@ -3869,3 +3869,48 @@ body,
     transition-duration: .01ms !important;
   }
 }
+
+/* Interaction-layer fixes ----------------------------------------------- */
+.journal-stickers {
+  z-index: 0;
+  opacity: .5;
+  transition: opacity 240ms ease;
+}
+
+.journal-view {
+  position: relative;
+  z-index: 1;
+  animation-fill-mode: backwards;
+}
+
+.journal-page:has(.journal-view[data-view='monthly']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='yearly']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='analytics']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='reflection']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='collections']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='habits']) .journal-stickers,
+.journal-page:has(.journal-view[data-view='filter']) .journal-stickers {
+  opacity: .14;
+}
+
+@media (max-width: 639px) {
+  .rapid-entry-composer:focus-within,
+  .journal-view:has(.symbol-picker) {
+    transform: none;
+  }
+
+  .journal-view:has(.symbol-picker) {
+    animation: none;
+  }
+
+  .journal-page .symbol-picker {
+    z-index: 80;
+    top: auto;
+    right: 8px;
+    bottom: calc(59px + env(safe-area-inset-bottom));
+    left: 8px;
+    width: auto;
+    max-height: min(68dvh, 560px);
+    overscroll-behavior: contain;
+  }
+}
