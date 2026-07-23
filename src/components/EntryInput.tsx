@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent } from 'react'
+import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import type { EntryType } from '../types'
 import { parseTimeInput } from '../lib/date'
 import { usePreferences } from '../hooks/usePreferences'
@@ -24,6 +24,8 @@ const MODIFIER_SYMBOLS = [
   { glyph: '<', label: 'נקבעה', description: 'נכנסה ליומן עתידי' },
   { glyph: '★', label: 'עדיפות', description: 'חשובה במיוחד', priority: true },
 ]
+
+const isMobileViewport = () => window.matchMedia('(max-width: 639px)').matches
 
 export function EntryInput({ onSubmit, placeholder = 'מה תרשום?', autoFocus = false, inputId }: EntryInputProps) {
   const { preferences } = usePreferences()
@@ -65,6 +67,13 @@ export function EntryInput({ onSubmit, placeholder = 'מה תרשום?', autoFoc
     }
   }
 
+  const handleInputPointerDown = (e: PointerEvent<HTMLInputElement>) => {
+    if (!isMobileViewport() || symbolPickerOpen || document.activeElement === inputRef.current) return
+    e.preventDefault()
+    inputRef.current?.blur()
+    setSymbolPickerOpen(true)
+  }
+
   return (
     <div
       className="rapid-entry-composer relative flex items-center gap-2.5 px-1.5 py-1 -mx-1.5"
@@ -75,7 +84,13 @@ export function EntryInput({ onSubmit, placeholder = 'מה תרשום?', autoFoc
       <div className="flex h-3.5 w-3.5 shrink-0 items-center justify-center">
         <button
           type="button"
-          onClick={() => setSymbolPickerOpen((open) => !open)}
+          onClick={() =>
+            setSymbolPickerOpen((open) => {
+              const nextOpen = !open
+              if (nextOpen && isMobileViewport()) inputRef.current?.blur()
+              return nextOpen
+            })
+          }
           title={`בחירת סוג רשומה — ${TYPES.find((option) => option.type === type)?.label}`}
           aria-expanded={symbolPickerOpen}
           aria-haspopup="listbox"
@@ -90,8 +105,13 @@ export function EntryInput({ onSubmit, placeholder = 'מה תרשום?', autoFoc
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        onFocus={() => setSymbolPickerOpen(true)}
-        onClick={() => setSymbolPickerOpen(true)}
+        onPointerDown={handleInputPointerDown}
+        onFocus={() => {
+          if (!isMobileViewport()) setSymbolPickerOpen(true)
+        }}
+        onClick={() => {
+          if (!isMobileViewport()) setSymbolPickerOpen(true)
+        }}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className="rapid-entry-input min-w-0 flex-1 bg-transparent py-0.5 text-[0.95rem] leading-snug text-ink outline-none placeholder:text-ink/50 dark:text-inkdark dark:placeholder:text-inkdark/50"
