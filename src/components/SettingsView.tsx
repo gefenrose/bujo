@@ -6,7 +6,6 @@ import type {
   IconShape,
   ImageLayoutMode,
   TextSize,
-  ThemeMode,
   TimeFormat,
 } from '../lib/preferences'
 import { parseTimeInput } from '../lib/date'
@@ -156,17 +155,6 @@ export function SettingsView({ onClose }: SettingsViewProps) {
       </div>
 
       <Section title="תצוגה">
-        <SelectRow<ThemeMode>
-          label="מצב תצוגה"
-          description="מצב מערכת עוקב אחרי הגדרות המכשיר"
-          value={preferences.themeMode}
-          onChange={(themeMode) => updatePreferences({ themeMode })}
-          options={[
-            { value: 'system', label: 'מערכת' },
-            { value: 'light', label: 'בהיר' },
-            { value: 'dark', label: 'כהה' },
-          ]}
-        />
         <SelectRow<TextSize>
           label="גודל טקסט"
           value={preferences.textSize}

@@ -9,10 +9,12 @@ import {
 import { PreferencesContext } from './usePreferences'
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [preferences, setPreferences] = useState<Preferences>(loadPreferences)
+  const [preferences, setPreferences] = useState<Preferences>(() => ({ ...loadPreferences(), themeMode: 'light' }))
 
   useEffect(() => {
     savePreferences(preferences)
+    document.documentElement.classList.remove('dark')
+    document.documentElement.style.colorScheme = 'light'
     document.documentElement.style.fontSize = `${TEXT_SIZE_PX[preferences.textSize]}px`
     document.documentElement.style.setProperty('--content-font-weight', String(FONT_WEIGHT_VALUE[preferences.fontWeight]))
   }, [preferences])

@@ -31,7 +31,7 @@ export interface Preferences {
 const STORAGE_KEY = 'bujo:preferences:v1'
 
 export const DEFAULT_PREFERENCES: Preferences = {
-  themeMode: 'system',
+  themeMode: 'light',
   textSize: 'medium',
   fontWeight: 'regular',
   entryColorStyle: 'titleAndIcon',
@@ -55,6 +55,7 @@ export function loadPreferences(): Preferences {
     return {
       ...DEFAULT_PREFERENCES,
       ...parsed,
+      themeMode: 'light',
       entryIcons: { ...DEFAULT_PREFERENCES.entryIcons, ...parsed.entryIcons },
       imageLayout: { ...DEFAULT_PREFERENCES.imageLayout, ...parsed.imageLayout },
     }

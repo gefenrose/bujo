@@ -3914,3 +3914,24 @@ body,
     overscroll-behavior: contain;
   }
 }
+
+/* The physical journal has one intentional paper palette. */
+html.dark {
+  color-scheme: light;
+  --color-paperdark: #f7f3ea;
+  --color-inkdark: #1c1c1a;
+  --desk: #cdae84;
+  --desk-deep: #b7a68e;
+  --cloth: #37332d;
+  --cloth-light: #4a443b;
+  --paper: #fbf3e4;
+  --paper-deep: #eadbc4;
+  --ink: #3a2b20;
+  --muted: #857463;
+  --rule: rgba(91, 66, 43, .2);
+  --rule-strong: rgba(69, 48, 31, .5);
+  --dot: rgba(63, 54, 44, .13);
+  --accent: #c28d28;
+  --priority: #a6533e;
+  --paper-shadow: rgba(55, 42, 28, .22);
+}

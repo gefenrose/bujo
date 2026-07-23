@@ -1,29 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { usePreferences } from './usePreferences'
 
-function systemPrefersDark(): boolean {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-}
-
 export function useTheme() {
-  const { preferences, updatePreferences } = usePreferences()
-  const [systemDark, setSystemDark] = useState(systemPrefersDark)
+  const { updatePreferences } = usePreferences()
 
   useEffect(() => {
-    const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    const listener = () => setSystemDark(mql.matches)
-    mql.addEventListener('change', listener)
-    return () => mql.removeEventListener('change', listener)
+    document.documentElement.classList.remove('dark')
+    document.documentElement.style.colorScheme = 'light'
   }, [])
 
-  const theme: 'light' | 'dark' =
-    preferences.themeMode === 'system' ? (systemDark ? 'dark' : 'light') : preferences.themeMode
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
-
-  const toggle = () => updatePreferences({ themeMode: theme === 'dark' ? 'light' : 'dark' })
+  const theme = 'light' as const
+  const toggle = () => updatePreferences({ themeMode: 'light' })
 
   return { theme, toggle }
 }
