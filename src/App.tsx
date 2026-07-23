@@ -25,6 +25,9 @@ import { MonthlyLog } from './components/MonthlyLog'
 import { YearlyLog } from './components/YearlyLog'
 import { Inbox } from './components/Inbox'
 import { Collections } from './components/Collections'
+import { DesktopIndex } from './components/DesktopIndex'
+import { DesktopDaySidebar } from './components/DesktopDaySidebar'
+import { MigrationReview } from './components/MigrationReview'
 import { FilterView } from './components/FilterView'
 import { SettingsView } from './components/SettingsView'
 import { MoodHabitInsights } from './components/MoodHabitInsights'
@@ -35,7 +38,7 @@ import { GooglePanel } from './components/GooglePanel'
 import { MobileHeader } from './components/mobile/MobileHeader'
 import { MobileTabBar } from './components/mobile/MobileTabBar'
 import { MobileMainDrawer } from './components/mobile/MobileMainDrawer'
-import { PlusIcon, SearchIcon } from './components/icons/Icons'
+import { MenuIcon, PlusIcon, SearchIcon } from './components/icons/Icons'
 import pressedOliveSprig from './assets/pressed-olive-sprig-v2.png'
 import calendarSticker from './assets/calendar-sticker.png'
 
@@ -48,14 +51,15 @@ type View =
   | 'collections'
   | 'habits'
   | 'analytics'
+  | 'reflection'
   | 'filter'
   | 'settings'
 type MobileTabView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
 
 const TIME_NAV: { view: View; label: string }[] = [
-  { view: 'daily', label: 'יומן' },
-  { view: 'monthly', label: 'לוח שנה' },
-  { view: 'analytics', label: 'תובנות' },
+  { view: 'daily', label: 'יומן יומי' },
+  { view: 'monthly', label: 'יומן חודשי' },
+  { view: 'yearly', label: 'יומן עתידי' },
 ]
 
 function App() {
@@ -146,6 +150,8 @@ function App() {
         return { title: 'הרגלים' }
       case 'analytics':
         return { title: 'תובנות' }
+      case 'reflection':
+        return { title: 'סקירה והעברה' }
       case 'inbox':
         return { title: 'תיבת קלט' }
       case 'collections':
@@ -213,6 +219,9 @@ function App() {
 
       <div className="mobile-shell sm:hidden">
         <nav className="mobile-primary-nav" aria-label="ניווט ראשי">
+          <button type="button" title="פתיחת האינדקס" onClick={() => setMobileDrawerOpen(true)}>
+            <MenuIcon className="h-5 w-5" />
+          </button>
           <span className="brand-word">bujo</span>
           <button type="button" title="חיפוש" onClick={() => { setSearchQuery(''); setSearchOpen(true) }}>
             <SearchIcon className="h-5 w-5" />
@@ -234,7 +243,28 @@ function App() {
         )}
       </div>
 
-      <div className="method-workspace">
+      <div className="method-workspace has-method-index">
+        <DesktopIndex
+          journal={journal}
+          view={view}
+          selectedCollectionId={collectionId}
+          onDaily={() => setView('daily')}
+          onWeekly={() => setView('weekly')}
+          onMonthly={() => {
+            setMonth(date)
+            setView('monthly')
+          }}
+          onYearly={() => {
+            setMonth(date)
+            setView('yearly')
+          }}
+          onInbox={() => setView('inbox')}
+          onReflection={() => setView('reflection')}
+          onHabits={() => setView('habits')}
+          onAnalytics={() => setView('analytics')}
+          onSelectCollection={goToCollection}
+        />
+
         <main className="journal-canvas min-w-0 flex-1 pb-16">
           <div className="journal-page">
             <div className="journal-stickers" aria-hidden="true">
@@ -264,6 +294,7 @@ function App() {
               {view === 'inbox' && <Inbox journal={journal} onTagClick={openSearchForTag} />}
               {view === 'habits' && <Habits journal={journal} date={date} onChangeDate={setDate} />}
               {view === 'analytics' && <MoodHabitInsights journal={journal} />}
+              {view === 'reflection' && <MigrationReview journal={journal} onSelectDate={goToDate} />}
               {view === 'filter' && activeFilter && (
                 <FilterView journal={journal} filter={activeFilter} onTagClick={openSearchForTag} />
               )}
@@ -271,9 +302,15 @@ function App() {
             </div>
           </div>
         </main>
+        <DesktopDaySidebar journal={journal} date={date} onOpenHabits={() => setView('habits')} />
       </div>
 
-      <MobileTabBar view={view} onChangeView={changeMobileTab} incompleteCount={incompleteToday} />
+      <MobileTabBar
+        view={view}
+        onChangeView={changeMobileTab}
+        onOpenIndex={() => setMobileDrawerOpen(true)}
+        incompleteCount={incompleteToday}
+      />
 
       <Toasts
         reminders={reminders.toasts}
@@ -311,6 +348,7 @@ function App() {
           onInbox={() => setView('inbox')}
           onHabits={() => setView('habits')}
           onAnalytics={() => setView('analytics')}
+          onReflection={() => setView('reflection')}
           onSearch={() => {
             setSearchQuery('')
             setSearchOpen(true)

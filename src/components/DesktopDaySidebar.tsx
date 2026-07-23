@@ -15,7 +15,7 @@ export function DesktopDaySidebar({ journal, date, onOpenHabits }: DesktopDaySid
     .slice(0, 4)
 
   return (
-    <aside className="day-sidebar hidden sm:flex" aria-label="סיכום היום">
+    <aside className="day-sidebar hidden xl:flex" aria-label="סיכום היום">
       <section>
         <div className="rail-heading">
           <h2>הרגלים</h2>

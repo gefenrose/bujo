@@ -3,18 +3,19 @@ type MobileView = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'analytics'
 interface MobileTabBarProps {
   view: string
   onChangeView: (view: MobileView) => void
+  onOpenIndex: () => void
   /** Shown as a small badge on the Day tab, when > 0. */
   incompleteCount?: number
 }
 
 const TABS: { view: MobileView; label: string }[] = [
-  { view: 'daily', label: 'יומן' },
-  { view: 'monthly', label: 'לוח שנה' },
-  { view: 'analytics', label: 'תובנות' },
+  { view: 'daily', label: 'יומי' },
+  { view: 'monthly', label: 'חודשי' },
+  { view: 'yearly', label: 'עתידי' },
 ]
 
 /** Mobile-only bottom nav: replaces the desktop top segmented Day/Week/Month control. */
-export function MobileTabBar({ view, onChangeView, incompleteCount = 0 }: MobileTabBarProps) {
+export function MobileTabBar({ view, onChangeView, onOpenIndex, incompleteCount = 0 }: MobileTabBarProps) {
   return (
     <nav className="method-mobile-tabs fixed inset-x-0 bottom-0 z-30 flex border-t border-ink/20 bg-paper pb-[env(safe-area-inset-bottom)] dark:border-inkdark/20 dark:bg-paperdark sm:hidden">
       {TABS.map((tab) => (
@@ -36,6 +37,13 @@ export function MobileTabBar({ view, onChangeView, incompleteCount = 0 }: Mobile
           )}
         </button>
       ))}
+      <button
+        type="button"
+        onClick={onOpenIndex}
+        className="relative flex-1 py-3 text-sm text-ink/60 transition-colors dark:text-inkdark/60"
+      >
+        אינדקס
+      </button>
     </nav>
   )
 }

@@ -31,6 +31,7 @@ interface MobileMainDrawerProps {
   onInbox: () => void
   onHabits: () => void
   onAnalytics: () => void
+  onReflection: () => void
   onSearch: () => void
   onSettings: () => void
   onGoogle: () => void
@@ -49,6 +50,7 @@ export function MobileMainDrawer({
   onInbox,
   onHabits,
   onAnalytics,
+  onReflection,
   onSearch,
   onSettings,
   onGoogle,
@@ -85,7 +87,7 @@ export function MobileMainDrawer({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-4 pt-4">
-          <span className="text-base font-medium tracking-tight text-ink dark:text-inkdark">bujo</span>
+          <span className="text-base font-medium tracking-tight text-ink dark:text-inkdark">אינדקס</span>
           <div className="flex items-center gap-1">
             <button
               type="button"
@@ -112,6 +114,7 @@ export function MobileMainDrawer({
         </div>
 
         <div className="flex flex-col gap-1 px-2 pt-3">
+          <NavRow onClick={() => { onReflection(); onClose() }} icon={<RepeatIcon className="h-4 w-4" />} label="סקירה והעברה" />
           <NavRow onClick={() => { onInbox(); onClose() }} icon={<InboxIcon className="h-4 w-4" />} label="תיבת קלט" />
           <NavRow onClick={() => { onHabits(); onClose() }} icon={<RepeatIcon className="h-4 w-4" />} label="הרגלים" />
           <NavRow onClick={() => { onAnalytics(); onClose() }} icon={<ChartIcon className="h-4 w-4" />} label="תובנות" />
